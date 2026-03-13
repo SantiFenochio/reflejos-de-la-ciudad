@@ -44,3 +44,13 @@ export const SECCION_QUERY = `*[_type == "articulo" && lower(categoria) == $secc
   "imagen": imagenPrincipal,
   autor
 }`
+
+// Publicidades activas por posición
+export const PUBLICIDADES_QUERY = `*[_type == "publicidad" && activa == true && posicion == $posicion]
+  | order(orden asc) {
+    _id,
+    nombre,
+    linkDestino,
+    posicion,
+    "imagenUrl": imagen.asset->url
+  }`

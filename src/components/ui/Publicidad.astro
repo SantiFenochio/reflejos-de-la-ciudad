@@ -1,0 +1,48 @@
+---
+// src/components/ui/Publicidad.astro
+interface Props {
+  pub: {
+    _id:        string
+    nombre:     string
+    imagenUrl?: string
+    linkDestino?: string
+    posicion:   string
+  }
+}
+
+const { pub } = Astro.props
+if (!pub?.imagenUrl) return
+---
+
+<div style="margin-bottom: 1.25rem;">
+  {pub.linkDestino ? (
+    <a
+      href={pub.linkDestino}
+      target="_blank"
+      rel="noopener noreferrer sponsored"
+      aria-label={`Publicidad: ${pub.nombre}`}
+      style="display: block;"
+    >
+      <img
+        src={pub.imagenUrl}
+        alt={pub.nombre}
+        loading="lazy"
+        style="width: 100%; display: block; border: 1px solid var(--color-borde);"
+      />
+    </a>
+  ) : (
+    <img
+      src={pub.imagenUrl}
+      alt={pub.nombre}
+      loading="lazy"
+      style="width: 100%; display: block; border: 1px solid var(--color-borde);"
+    />
+  )}
+  <p style="
+    font-family: var(--font-cuerpo);
+    font-size: 0.6rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--color-secundario); opacity: 0.5;
+    text-align: right; margin-top: 0.2rem;
+  ">Publicidad</p>
+</div>

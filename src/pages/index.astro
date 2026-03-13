@@ -2,10 +2,12 @@
 // src/pages/index.astro
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { sanityClient, urlFor } from '../lib/sanity';
-import { HOME_QUERY } from '../lib/queries';
+import { HOME_QUERY, PUBLICIDADES_QUERY } from '../lib/queries';
 import type { Articulo } from '../types/article';
+import Publicidad from '../components/ui/Publicidad.astro';
 
 const notas: Articulo[] = await sanityClient.fetch(HOME_QUERY);
+const pubsSidebar = await sanityClient.fetch(PUBLICIDADES_QUERY, { posicion: 'sidebar' });
 
 const hero   = notas[0] ?? null;
 const grilla = notas.slice(1, 7);
@@ -167,16 +169,25 @@ const masLeidas = [
       </ol>
     </div>
 
-    <!-- BANNER PUBLICITARIO -->
-    <div style="border:1px dashed var(--color-borde);background-color:var(--color-hueso);padding:1.5rem;text-align:center;">
-      <p style="font-family:var(--font-cuerpo);font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;color:var(--color-secundario);margin-bottom:0.6rem;">Espacio Publicitario</p>
-      <p style="font-family:var(--font-titular);font-size:1.25rem;font-weight:700;color:var(--color-periodico);margin-bottom:0.4rem;line-height:1.2;">Anunciá en Reflejos</p>
-      <p style="font-family:var(--font-cuerpo);font-size:0.82rem;color:var(--color-secundario);margin-bottom:1.25rem;line-height:1.4;">Llegá a toda la comunidad de San Martín</p>
-      <a href="mailto:redaccion@reflejosdelaciudad.com.ar"
-         style="display:block;width:100%;background-color:#111;color:#fff;font-family:var(--font-cuerpo);font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;padding:0.65rem 1rem;text-decoration:none;"
-         onmouseover="this.style.backgroundColor='#333'"
-         onmouseout="this.style.backgroundColor='#111'">Consultanos</a>
-    </div>
+    <!-- PUBLICIDADES SIDEBAR (dinámicas desde Sanity) -->
+    {pubsSidebar.length > 0 ? (
+      <div>
+        {pubsSidebar.map((pub: any) => (
+          <Publicidad pub={pub} />
+        ))}
+      </div>
+    ) : (
+      <!-- Banner placeholder si no hay publicidades cargadas -->
+      <div style="border:1px dashed var(--color-borde);background-color:var(--color-hueso);padding:1.5rem;text-align:center;">
+        <p style="font-family:var(--font-cuerpo);font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;color:var(--color-secundario);margin-bottom:0.6rem;">Espacio Publicitario</p>
+        <p style="font-family:var(--font-titular);font-size:1.25rem;font-weight:700;color:var(--color-periodico);margin-bottom:0.4rem;line-height:1.2;">Anunciá en Reflejos</p>
+        <p style="font-family:var(--font-cuerpo);font-size:0.82rem;color:var(--color-secundario);margin-bottom:1.25rem;line-height:1.4;">Llegá a toda la comunidad de San Martín</p>
+        <a href="mailto:redaccion@reflejosdelaciudad.com.ar"
+           style="display:block;width:100%;background-color:#111;color:#fff;font-family:var(--font-cuerpo);font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;padding:0.65rem 1rem;text-decoration:none;"
+           onmouseover="this.style.backgroundColor='#333'"
+           onmouseout="this.style.backgroundColor='#111'">Consultanos</a>
+      </div>
+    )}
 
   </aside>
 
