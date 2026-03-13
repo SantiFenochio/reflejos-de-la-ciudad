@@ -1,7 +1,7 @@
 ---
 // src/pages/nota/[slug].astro
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { sanityClient, urlFor } from '../../lib/sanity';
+import { sanityClient, urlFor, portableTextToHtml } from '../../lib/sanity';
 import { ARTICULO_QUERY } from '../../lib/queries';
 import type { Articulo } from '../../types/article';
 
@@ -41,6 +41,8 @@ const urlEnc    = encodeURIComponent(paginaURL);
 const shareWA   = `https://wa.me/?text=${tituloEnc}%20${urlEnc}`;
 const shareX    = `https://twitter.com/intent/tweet?text=${tituloEnc}&url=${urlEnc}`;
 const shareFB   = `https://www.facebook.com/sharer/sharer.php?u=${urlEnc}`;
+
+const cuerpoHtml = portableTextToHtml(articulo.cuerpo ?? []);
 ---
 
 <BaseLayout title={articulo.titulo} description={articulo.bajada}>
@@ -99,21 +101,8 @@ const shareFB   = `https://www.facebook.com/sharer/sharer.php?u=${urlEnc}`;
   </div>
 )}
 
-<!-- 4. CUERPO — Portable Text simple (sin @portabletext/astro) -->
-<div class="nota-cuerpo">
-  {articulo.cuerpo?.map((bloque: any, i: number) => {
-    if (bloque._type !== 'block') return null;
-    const texto = bloque.children?.map((c: any) => c.text).join('') ?? '';
-    if (!texto.trim()) return null;
-    if (bloque.style === 'h3') {
-      return <h3 style="font-family:var(--font-titular);font-size:1.35rem;font-weight:700;line-height:1.3;color:var(--color-periodico);margin:1.75rem 0 0.75rem;">{texto}</h3>;
-    }
-    if (bloque.style === 'blockquote') {
-      return <blockquote style="font-family:var(--font-titular);font-style:italic;font-size:1.15rem;line-height:1.6;border-left:3px solid #1C1C1C;padding-left:1.25rem;margin:1.5rem 0;color:var(--color-secundario);">{texto}</blockquote>;
-    }
-    return <p class={i === 0 ? 'primer-parrafo' : ''}>{texto}</p>;
-  })}
-</div>
+<!-- 4. CUERPO — Portable Text -->
+<div class="nota-cuerpo portable-text" set:html={cuerpoHtml} />
 
 <!-- 5. COMPARTIR -->
 <div class="nota-compartir">
