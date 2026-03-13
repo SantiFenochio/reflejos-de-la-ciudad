@@ -28,3 +28,6 @@ pnpm-debug.log*
 
 # logs (genérico)
 *.log
+
+# Scripts de migración (contienen tokens)
+migrate.mjs
