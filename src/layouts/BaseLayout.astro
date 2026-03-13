@@ -1,0 +1,101 @@
+---
+// src/layouts/BaseLayout.astro
+// El import del CSS en el frontmatter hace que Vite + @tailwindcss/vite lo procese
+import '../styles/global.css';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+
+interface Props {
+  title?:       string;
+  description?: string;
+  image?:       string;
+  noIndex?:     boolean;
+}
+
+const {
+  title       = 'Reflejos de la Ciudad',
+  description = 'Semanario digital del barrio San Martín, Villa Ballester y alrededores. Buenos Aires, Argentina.',
+  image       = '/og-default.jpg',
+  noIndex     = false,
+} = Astro.props;
+
+const siteBase  = Astro.site ?? new URL('https://reflejosdelaciudad.com.ar');
+const canonical = new URL(Astro.url.pathname, siteBase);
+const ogImage   = new URL(image, siteBase);
+const fullTitle = title === 'Reflejos de la Ciudad'
+  ? title
+  : `${title} — Reflejos de la Ciudad`;
+---
+
+<!doctype html>
+<html lang="es-AR" class="scroll-smooth">
+  <head>
+
+    <!-- ══ META BÁSICO ════════════════════════════════════════ -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+
+
+    <!-- ══ SEO ════════════════════════════════════════════════ -->
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noIndex && <meta name="robots" content="noindex, nofollow" />}
+
+    <!-- ══ OPEN GRAPH (Facebook / WhatsApp / LinkedIn) ══════ -->
+    <meta property="og:type"        content="website" />
+    <meta property="og:url"         content={canonical} />
+    <meta property="og:title"       content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image"       content={ogImage} />
+    <meta property="og:locale"      content="es_AR" />
+    <meta property="og:site_name"   content="Reflejos de la Ciudad" />
+
+    <!-- ══ TWITTER CARD ═════════════════════════════════════ -->
+    <meta name="twitter:card"        content="summary_large_image" />
+    <meta name="twitter:title"       content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image"       content={ogImage} />
+
+    <!-- ══ FAVICON ══════════════════════════════════════════ -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
+    <!-- ══ GOOGLE FONTS ═════════════════════════════════════
+         Playfair Display → títulos  (font-titular en @theme)
+         Source Serif 4   → cuerpo   (font-cuerpo  en @theme)
+    ══════════════════════════════════════════════════════════ -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- ══ SLOT HEAD: meta o scripts extra por página ═══════ -->
+    <slot name="head" />
+
+  </head>
+
+
+  <body class="min-h-screen flex flex-col bg-hueso text-periodico">
+
+    <!-- ══ HEADER ════════════════════════════════════════════════
+         Componente Header: franja superior + logo + nav completo
+    ═══════════════════════════════════════════════════════════════ -->
+    <Header />
+
+    <!-- ══ CONTENIDO PRINCIPAL ═══════════════════════════════════
+         <slot /> sin nombre recibe el contenido de cada página
+    ═══════════════════════════════════════════════════════════════ -->
+    <main class="flex-1 w-full max-w-screen-xl mx-auto px-4 py-6">
+      <slot />
+    </main>
+
+    <!-- ══ FOOTER ════════════════════════════════════════════════
+         Componente Footer: 3 columnas + barra de copyright
+    ═══════════════════════════════════════════════════════════════ -->
+    <Footer />
+
+  </body>
+</html>

@@ -1,0 +1,224 @@
+---
+// src/components/layout/Header.astro
+// Header completo: franja superior + logo + separador doble + navbar
+
+const secciones = [
+  { label: 'Inicio',    href: '/'           },
+  { label: 'Sociedad',  href: '/sociedad'   },
+  { label: 'Deportes',  href: '/deportes'   },
+  { label: 'Salud',     href: '/salud'      },
+  { label: 'Educación', href: '/educacion'  },
+  { label: 'Seguridad', href: '/seguridad'  },
+  { label: 'Cultura',   href: '/cultura'    },
+  { label: 'Economía',  href: '/economia'   },
+  { label: 'Vecinos',   href: '/vecinos'    },
+  { label: 'Política',  href: '/politica'   },
+  { label: 'Opiniones', href: '/opiniones'  },
+  { label: 'Breves',    href: '/breves'     },
+];
+---
+
+<!-- ════════════════════════════════════════════════════
+     1. FRANJA SUPERIOR: fecha + ubicación
+     ════════════════════════════════════════════════════ -->
+<div style="background-color: #1C1C1C; color: #F5F5F0;">
+  <div class="max-w-screen-xl mx-auto px-4 py-1.5 flex items-center justify-between">
+
+    <!-- Fecha dinámica en español — se hidrata con JS del lado cliente -->
+    <span
+      id="header-fecha"
+      class="text-xs tracking-wide"
+      style="font-family: var(--font-cuerpo); opacity: 0.85;"
+    >
+      <!-- Fallback SSR: se reemplaza en cliente -->
+      Cargando fecha...
+    </span>
+
+    <span
+      class="text-xs tracking-widest uppercase"
+      style="font-family: var(--font-cuerpo); opacity: 0.65;"
+    >
+      San Martín &middot; Buenos Aires
+    </span>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     2. BLOQUE DEL LOGO
+     ════════════════════════════════════════════════════ -->
+<div style="background-color: #ffffff;" class="py-6 flex items-center justify-center">
+  <a href="/" aria-label="Inicio — Reflejos de la Ciudad">
+    <img
+      src="/logo.png"
+      alt="Reflejos de la Ciudad"
+      style="max-height: 80px; width: auto; object-fit: contain;"
+      onerror="this.style.display='none'; document.getElementById('logo-fallback').style.display='block';"
+    />
+    <!-- Fallback tipográfico si el PNG no carga -->
+    <span
+      id="logo-fallback"
+      style="
+        display: none;
+        font-family: var(--font-titular);
+        font-weight: 700;
+        font-size: 2rem;
+        color: var(--color-periodico);
+        letter-spacing: -0.02em;
+      "
+    >
+      Reflejos de la Ciudad
+    </span>
+  </a>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     3. SEPARADOR DOBLE — estilo diario impreso
+     ════════════════════════════════════════════════════ -->
+<div style="
+  border-top: 3px double #1C1C1C;
+  margin: 0;
+"></div>
+
+
+<!-- ════════════════════════════════════════════════════
+     4. BARRA DE NAVEGACIÓN
+     Desktop: fila horizontal con separadores "|"
+     Mobile:  hamburguesa que despliega columna
+     ════════════════════════════════════════════════════ -->
+<nav
+  style="background-color: #ffffff; border-bottom: 1px solid #D0D0D0;"
+  aria-label="Secciones del diario"
+>
+
+  <!-- ── Desktop nav ─────────────────────────────────── -->
+  <div class="hidden md:flex items-center justify-center max-w-screen-xl mx-auto px-4 py-2 flex-wrap gap-y-1">
+    {secciones.map((s, i) => (
+      <>
+        <a
+          href={s.href}
+          style="
+            font-family: var(--font-cuerpo);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: #4A4A4A;
+            transition: color 0.15s ease;
+            padding-inline: 0.5rem;
+            white-space: nowrap;
+          "
+          onmouseover="this.style.color='#1C1C1C'"
+          onmouseout="this.style.color='#4A4A4A'"
+        >
+          {s.label}
+        </a>
+        {i < secciones.length - 1 && (
+          <span style="color: #D0D0D0; font-size: 0.75rem; select: none;" aria-hidden="true">|</span>
+        )}
+      </>
+    ))}
+  </div>
+
+
+  <!-- ── Mobile nav ──────────────────────────────────── -->
+  <div class="flex md:hidden items-center justify-end px-4 py-2">
+    <button
+      id="nav-toggle"
+      aria-label="Abrir menú de secciones"
+      aria-expanded="false"
+      aria-controls="nav-mobile"
+      style="
+        font-size: 1.5rem;
+        color: #1C1C1C;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.25rem 0.5rem;
+        line-height: 1;
+      "
+    >
+      ☰
+    </button>
+  </div>
+
+  <!-- Panel desplegable mobile -->
+  <div
+    id="nav-mobile"
+    hidden
+    style="border-top: 1px solid #D0D0D0; background-color: #ffffff;"
+  >
+    {secciones.map((s) => (
+      <a
+        href={s.href}
+        style="
+          display: block;
+          padding: 0.625rem 1.25rem;
+          font-family: var(--font-cuerpo);
+          font-size: 0.8rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          color: #4A4A4A;
+          border-bottom: 1px solid #F0F0EC;
+          transition: color 0.15s ease, background-color 0.15s ease;
+        "
+        onmouseover="this.style.color='#1C1C1C'; this.style.backgroundColor='#F5F5F0';"
+        onmouseout="this.style.color='#4A4A4A'; this.style.backgroundColor='transparent';"
+      >
+        {s.label}
+      </a>
+    ))}
+  </div>
+
+</nav>
+
+
+<!-- ════════════════════════════════════════════════════
+     SCRIPTS
+     - Fecha dinámica en español (cliente)
+     - Toggle menú hamburguesa mobile
+     ════════════════════════════════════════════════════ -->
+<script>
+  // ── Fecha dinámica en español argentino ──────────────
+  (function () {
+    const el = document.getElementById('header-fecha');
+    if (!el) return;
+
+    const ahora = new Date();
+    const fecha = ahora.toLocaleDateString('es-AR', {
+      weekday: 'long',
+      day:     'numeric',
+      month:   'long',
+      year:    'numeric',
+    });
+
+    // Capitaliza la primera letra: "viernes 13..." → "Viernes 13..."
+    el.textContent = fecha.charAt(0).toUpperCase() + fecha.slice(1);
+  })();
+
+  // ── Toggle menú hamburguesa ───────────────────────────
+  (function () {
+    const btn   = document.getElementById('nav-toggle');
+    const panel = document.getElementById('nav-mobile');
+    if (!btn || !panel) return;
+
+    btn.addEventListener('click', function () {
+      const isOpen = !panel.hidden;
+      panel.hidden = isOpen;
+      btn.setAttribute('aria-expanded', String(!isOpen));
+      btn.textContent = isOpen ? '☰' : '✕';
+      btn.setAttribute('aria-label', isOpen ? 'Abrir menú de secciones' : 'Cerrar menú de secciones');
+    });
+
+    // Cerrar panel al hacer click en cualquier link mobile
+    panel.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', function () {
+        panel.hidden = true;
+        btn.setAttribute('aria-expanded', 'false');
+        btn.textContent = '☰';
+        btn.setAttribute('aria-label', 'Abrir menú de secciones');
+      });
+    });
+  })();
+</script>

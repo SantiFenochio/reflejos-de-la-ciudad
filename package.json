@@ -12,6 +12,15 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^6.0.4"
+    "@sanity/client": "^7.17.0",
+    "@sanity/image-url": "^2.0.3",
+    "@sanity/vision": "^5.15.0",
+    "@tailwindcss/vite": "^4.2.1",
+    "astro": "^6.0.4",
+    "styled-components": "^6.3.11",
+    "tailwindcss": "^4.2.1"
+  },
+  "devDependencies": {
+    "sanity": "^5.15.0"
   }
 }

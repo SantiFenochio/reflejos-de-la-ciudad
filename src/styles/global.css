@@ -1,0 +1,108 @@
+@import "tailwindcss";
+
+/* ════════════════════════════════════════════════════════════════
+   TEMA: Reflejos de la Ciudad
+   Diario digital — San Martín, Villa Ballester, Buenos Aires
+   Paleta inspirada en diarios impresos argentinos clásicos
+
+   CLASES GENERADAS AUTOMÁTICAMENTE por TailwindCSS v4:
+   --color-hueso      → bg-hueso, text-hueso, border-hueso
+   --color-periodico  → bg-periodico, text-periodico, border-periodico
+   --color-secundario → text-secundario, bg-secundario
+   --color-borde      → border-borde, bg-borde
+   --color-acento     → bg-acento, text-acento
+   --color-footer-bg  → bg-footer-bg
+   --color-footer-fg  → text-footer-fg
+   --font-titular     → font-titular
+   --font-cuerpo      → font-cuerpo
+   ════════════════════════════════════════════════════════════════ */
+
+@theme {
+
+  /* ── PALETA DE COLORES ──────────────────────────────────────── */
+  --color-hueso:       #F5F5F0;  /* Fondo: blanco hueso, papel de diario  */
+  --color-periodico:   #1C1C1C;  /* Texto principal: negro de imprenta    */
+  --color-secundario:  #4A4A4A;  /* Texto secundario, epígrafes, fechas   */
+  --color-borde:       #D0D0D0;  /* Bordes, filetes, separadores          */
+  --color-acento:      #111111;  /* Badges de sección, hover, destacados  */
+  --color-footer-bg:   #1C1C1C;  /* Footer fondo oscuro                   */
+  --color-footer-fg:   #F5F5F0;  /* Footer texto claro                    */
+
+  /* ── TIPOGRAFÍA ─────────────────────────────────────────────── */
+  --font-titular: "Playfair Display", Georgia, "Times New Roman", serif;
+  --font-cuerpo:  "Source Serif 4", "Source Serif Pro", Georgia, serif;
+  --font-mono:    ui-monospace, "Cascadia Code", "Courier New", monospace;
+
+
+  /* ── ESCALA TIPOGRÁFICA PERIODÍSTICA ────────────────────────── */
+  --text-volanta: 0.75rem;    /* Volanta sobre el título              */
+  --text-titulo:  2.25rem;    /* Título principal de nota             */
+  --text-bajada:  1.125rem;   /* Copete / bajada                      */
+  --text-cuerpo:  1rem;       /* Texto corrido del artículo           */
+
+  /* ── ESPACIADO ──────────────────────────────────────────────── */
+  --spacing-columna: 1.5rem;
+
+}
+
+/* ════════════════════════════════════════════════════════════════
+   ESTILOS BASE GLOBALES
+   ════════════════════════════════════════════════════════════════ */
+
+@layer base {
+
+  html {
+    font-family: var(--font-cuerpo);
+    background-color: var(--color-hueso);
+    color: var(--color-periodico);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-titular);
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--color-periodico);
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid var(--color-borde);
+    margin-block: 1rem;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Volanta: etiqueta de sección sobre el título */
+  .volanta {
+    font-family: var(--font-cuerpo);
+    font-size: var(--text-volanta);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-secundario);
+  }
+
+}
