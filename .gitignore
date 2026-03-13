@@ -29,5 +29,6 @@ pnpm-debug.log*
 # logs (genérico)
 *.log
 
-# Scripts de migración (contienen tokens)
+# Scripts de migración y scraping (locales, no van al repo)
 migrate.mjs
+scrape.mjs
