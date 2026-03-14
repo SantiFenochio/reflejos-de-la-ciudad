@@ -9,17 +9,12 @@ export async function getStaticPaths() {
   const notas: Articulo[] = await sanityClient.fetch(
     `*[_type == "articulo"]{ slug }`
   );
-  return notas.map(nota => ({
-    params: { slug: nota.slug.current }
-  }));
+  return notas.map(nota => ({ params: { slug: nota.slug.current } }));
 }
 
 const { slug } = Astro.params;
 const articulo: Articulo = await sanityClient.fetch(ARTICULO_QUERY, { slug });
-
-if (!articulo) {
-  return Astro.redirect('/');
-}
+if (!articulo) return Astro.redirect('/');
 
 function formatearFecha(iso: string): string {
   return new Date(iso).toLocaleDateString('es-AR', {
@@ -27,14 +22,23 @@ function formatearFecha(iso: string): string {
   });
 }
 
-const imagenUrl = articulo.imagen
-  ? urlFor(articulo.imagen).width(1200).height(600).url()
+// Imagen hero (grande) y OG (1200x630 estandar para redes)
+const imagenHero = articulo.imagen
+  ? urlFor(articulo.imagen).width(1400).height(620).url()
   : null;
+const imagenOg = articulo.imagen
+  ? urlFor(articulo.imagen).width(1200).height(630).url()
+  : '/Logo.png';
 
-const tituloCorto = articulo.titulo.length > 40
-  ? articulo.titulo.slice(0, 40) + '...'
+const tituloCorto = articulo.titulo.length > 55
+  ? articulo.titulo.slice(0, 55) + '…'
   : articulo.titulo;
 
+const catLabel = articulo.categoria
+  ? articulo.categoria.charAt(0).toUpperCase() + articulo.categoria.slice(1).toLowerCase()
+  : '';
+
+// Links de compartir
 const paginaURL = `https://reflejosdelaciudad.com.ar/nota/${slug}`;
 const tituloEnc = encodeURIComponent(articulo.titulo);
 const urlEnc    = encodeURIComponent(paginaURL);
@@ -45,153 +49,339 @@ const shareFB   = `https://www.facebook.com/sharer/sharer.php?u=${urlEnc}`;
 const cuerpoHtml = portableTextToHtml(articulo.cuerpo ?? []);
 ---
 
-<BaseLayout title={articulo.titulo} description={articulo.bajada}>
+<BaseLayout
+  title={articulo.titulo}
+  description={articulo.bajada || articulo.titulo}
+  image={imagenOg}
+  ogType="article"
+>
 
-<!-- 1. BREADCRUMB -->
-<nav aria-label="Ruta de navegación" style="padding-top:1.25rem;padding-bottom:0.75rem;">
-  <ol style="display:flex;align-items:center;flex-wrap:wrap;gap:0.25rem;font-family:var(--font-cuerpo);font-size:0.78rem;color:var(--color-secundario);list-style:none;padding:0;margin:0;">
-    <li><a href="/" style="color:var(--color-secundario);text-decoration:none;"
-           onmouseover="this.style.textDecoration='underline'"
-           onmouseout="this.style.textDecoration='none'">Inicio</a></li>
-    <li aria-hidden="true" style="opacity:0.5;">&rsaquo;</li>
-    <li><a href={`/${articulo.categoria.toLowerCase()}`}
-           style="color:var(--color-secundario);text-decoration:none;"
-           onmouseover="this.style.textDecoration='underline'"
-           onmouseout="this.style.textDecoration='none'">
-      {articulo.categoria.charAt(0) + articulo.categoria.slice(1).toLowerCase()}
-    </a></li>
-    <li aria-hidden="true" style="opacity:0.5;">&rsaquo;</li>
-    <li style="opacity:0.7;">{tituloCorto}</li>
-  </ol>
-</nav>
-
-<!-- 2. CABECERA -->
-<header class="nota-cabecera">
-  <span style="display:inline-block;font-family:var(--font-cuerpo);font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;background-color:#111;color:#fff;padding:0.2rem 0.6rem;margin-bottom:1rem;">
-    {articulo.categoria}
-  </span>
-  <h1 style="font-family:var(--font-titular);font-weight:900;font-size:clamp(1.75rem,4vw,2.5rem);line-height:1.15;color:#1C1C1C;margin-bottom:1rem;">
-    {articulo.titulo}
-  </h1>
-  <p style="font-family:var(--font-titular);font-weight:300;font-style:italic;font-size:1.2rem;color:var(--color-secundario);line-height:1.5;margin-bottom:1.25rem;">
-    {articulo.bajada}
-  </p>
-  <hr style="border:none;border-top:1px solid var(--color-borde);margin-bottom:1rem;" />
-  <div style="display:flex;align-items:center;flex-wrap:wrap;gap:0.5rem;font-family:var(--font-cuerpo);font-size:0.82rem;color:var(--color-secundario);margin-bottom:1.75rem;">
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-    <span style="font-weight:700;">Por {articulo.autor}</span>
-    <span aria-hidden="true" style="opacity:0.4;">&middot;</span>
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-    <span>{formatearFecha(articulo.fechaPublicacion)}</span>
-  </div>
-</header>
-
-<!-- 3. IMAGEN PRINCIPAL (solo si existe) -->
-{imagenUrl && (
-  <div class="nota-imagen" style="margin-bottom:2rem;">
-    <figure style="margin:0;">
-      <img src={imagenUrl} alt={articulo.titulo}
-           style="width:100%;aspect-ratio:16/9;object-fit:cover;border:1px solid var(--color-borde);display:block;" />
-      {articulo.imagenCaption && (
-        <figcaption style="font-family:var(--font-cuerpo);font-size:0.8rem;font-style:italic;color:var(--color-secundario);text-align:center;margin-top:0.6rem;line-height:1.4;">
-          {articulo.imagenCaption}
-        </figcaption>
+<!-- ============================================================
+     HERO FULL-BLEED: imagen + overlay + categoria + titulo
+     Mismo patron que portada, con margen negativo para romper
+     el padding del <main> del BaseLayout (px-4 py-6)
+     ============================================================ -->
+<section class="nh-section">
+  <div class="nh-wrap">
+    {imagenHero ? (
+      <img src={imagenHero} alt={articulo.titulo} class="nh-img" loading="eager" />
+    ) : (
+      <div class="nh-placeholder"></div>
+    )}
+    <div class="nh-overlay"></div>
+    <div class="nh-content">
+      {articulo.categoria && (
+        <span class="nh-badge">{articulo.categoria}</span>
       )}
-    </figure>
+      <h1 class="nh-titulo">{articulo.titulo}</h1>
+    </div>
   </div>
-)}
+</section>
 
-<!-- 4. CUERPO — Portable Text -->
+<!-- ============================================================
+     META: breadcrumb + bajada + autor/fecha
+     ============================================================ -->
+<div class="nota-meta">
+
+  <!-- Breadcrumb -->
+  <nav aria-label="Ruta de navegacion" class="nota-breadcrumb">
+    <ol>
+      <li><a href="/">Inicio</a></li>
+      <li aria-hidden="true">&rsaquo;</li>
+      {articulo.categoria && (
+        <>
+          <li>
+            <a href={`/${articulo.categoria.toLowerCase()}`}>{catLabel}</a>
+          </li>
+          <li aria-hidden="true">&rsaquo;</li>
+        </>
+      )}
+      <li class="nota-breadcrumb-actual">{tituloCorto}</li>
+    </ol>
+  </nav>
+
+  <!-- Bajada -->
+  {articulo.bajada && (
+    <p class="nota-bajada">{articulo.bajada}</p>
+  )}
+
+  <!-- Autor + Fecha -->
+  <div class="nota-byline">
+    <span class="nota-byline-icon" aria-hidden="true">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+    </span>
+    <span class="nota-autor">Por {articulo.autor}</span>
+    <span class="nota-byline-sep" aria-hidden="true">&middot;</span>
+    <span class="nota-byline-icon" aria-hidden="true">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    </span>
+    <time datetime={articulo.fechaPublicacion}>{formatearFecha(articulo.fechaPublicacion)}</time>
+  </div>
+
+  <hr class="nota-hr" />
+</div>
+
+<!-- ============================================================
+     CUERPO DEL ARTICULO — Portable Text, 720px centrado
+     ============================================================ -->
 <div class="nota-cuerpo portable-text" set:html={cuerpoHtml} />
 
-<!-- 5. COMPARTIR -->
+<!-- ============================================================
+     COMPARTIR: WhatsApp, X, Facebook
+     ============================================================ -->
 <div class="nota-compartir">
-  <hr style="border:none;border-top:1px solid var(--color-borde);margin-bottom:1.25rem;" />
-  <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
-    <span style="font-family:var(--font-cuerpo);font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;color:var(--color-secundario);">Compartir:</span>
-    <a href={shareWA} target="_blank" rel="noopener noreferrer" aria-label="Compartir en WhatsApp"
-       style="display:inline-flex;align-items:center;gap:0.4rem;background-color:#25D366;color:#fff;font-family:var(--font-cuerpo);font-size:0.75rem;font-weight:600;padding:0.45rem 0.9rem;text-decoration:none;"
-       onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+  <hr class="nota-hr" />
+  <div class="compartir-inner">
+    <span class="compartir-label">Compartir</span>
+    <a href={shareWA} target="_blank" rel="noopener noreferrer sponsored" class="share-btn share-wa" aria-label="Compartir en WhatsApp">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.533 5.854L0 24l6.335-1.508A11.93 11.93 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.8 9.8 0 0 1-5.034-1.388l-.361-.214-3.762.896.952-3.664-.235-.374A9.786 9.786 0 0 1 2.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>
       WhatsApp
     </a>
-    <a href={shareX} target="_blank" rel="noopener noreferrer" aria-label="Compartir en X"
-       style="display:inline-flex;align-items:center;gap:0.4rem;background-color:#000;color:#fff;font-family:var(--font-cuerpo);font-size:0.75rem;font-weight:600;padding:0.45rem 0.9rem;text-decoration:none;"
-       onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.258 5.63 5.906-5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    <a href={shareX} target="_blank" rel="noopener noreferrer" class="share-btn share-x" aria-label="Compartir en X">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.258 5.63 5.906-5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
       X
     </a>
-    <a href={shareFB} target="_blank" rel="noopener noreferrer" aria-label="Compartir en Facebook"
-       style="display:inline-flex;align-items:center;gap:0.4rem;background-color:#1877F2;color:#fff;font-family:var(--font-cuerpo);font-size:0.75rem;font-weight:600;padding:0.45rem 0.9rem;text-decoration:none;"
-       onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987H7.898V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>
+    <a href={shareFB} target="_blank" rel="noopener noreferrer" class="share-btn share-fb" aria-label="Compartir en Facebook">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987H7.898V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>
       Facebook
     </a>
   </div>
 </div>
 
-
-<!-- 6. RELACIONADAS -->
+<!-- ============================================================
+     NOTAS RELACIONADAS — 3 de la misma categoria
+     ============================================================ -->
 {articulo.relacionadas && articulo.relacionadas.length > 0 && (
-  <div style="margin-top:3rem;">
-    <div style="border-top:3px double #1C1C1C;margin-bottom:1.5rem;"></div>
-    <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.75rem;">
-      <div style="flex:1;border-top:1px solid var(--color-borde);"></div>
-      <span style="font-family:var(--font-cuerpo);font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.18em;color:var(--color-secundario);white-space:nowrap;">También te puede interesar</span>
-      <div style="flex:1;border-top:1px solid var(--color-borde);"></div>
+  <section class="nota-relacionadas">
+    <div class="rel-header">
+      <span class="rel-barra"></span>
+      <h2 class="rel-titulo">También te puede interesar</h2>
+      <div class="rel-linea"></div>
     </div>
-    <div class="relacionadas-grid">
+    <div class="rel-grid">
       {articulo.relacionadas.map((nota) => {
         const relImg = nota.imagen
           ? urlFor(nota.imagen).width(600).height(338).url()
           : `https://picsum.photos/seed/${nota.slug?.current}/600/338`;
         return (
-          <article style="display:flex;flex-direction:column;gap:0.6rem;">
-            <a href={`/nota/${nota.slug?.current}`} style="display:block;overflow:hidden;">
-              <img src={relImg} alt={nota.titulo} loading="lazy"
-                   style="width:100%;aspect-ratio:16/9;object-fit:cover;transition:transform 0.3s ease;"
-                   onmouseover="this.style.transform='scale(1.03)'"
-                   onmouseout="this.style.transform='scale(1)'" />
+          <article class="rel-card">
+            <a href={`/nota/${nota.slug?.current}`} class="rel-img-wrap">
+              <img src={relImg} alt={nota.titulo} loading="lazy" class="rel-img" />
             </a>
-            <span style="display:inline-block;align-self:flex-start;font-family:var(--font-cuerpo);font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;background-color:#111;color:#fff;padding:0.2rem 0.5rem;">
-              {nota.categoria}
-            </span>
-            <h3 style="font-family:var(--font-titular);font-size:1rem;font-weight:600;line-height:1.35;color:var(--color-periodico);margin:0;">
-              <a href={`/nota/${nota.slug?.current}`} style="text-decoration:none;color:inherit;"
-                 onmouseover="this.style.textDecoration='underline'"
-                 onmouseout="this.style.textDecoration='none'">{nota.titulo}</a>
-            </h3>
-            {nota.fechaPublicacion && (
-              <span style="font-family:var(--font-cuerpo);font-size:0.75rem;color:var(--color-secundario);">
-                {formatearFecha(nota.fechaPublicacion)}
-              </span>
-            )}
+            <div class="rel-body">
+              {nota.categoria && (
+                <span class="rel-badge">{nota.categoria}</span>
+              )}
+              <h3 class="rel-card-titulo">
+                <a href={`/nota/${nota.slug?.current}`} class="rel-card-lnk">{nota.titulo}</a>
+              </h3>
+              {nota.fechaPublicacion && (
+                <time class="rel-fecha" datetime={nota.fechaPublicacion}>
+                  {formatearFecha(nota.fechaPublicacion)}
+                </time>
+              )}
+            </div>
           </article>
         );
       })}
     </div>
-  </div>
+  </section>
 )}
 
 </BaseLayout>
 
 <style>
-  .nota-cabecera, .nota-compartir { max-width: 48rem; margin-inline: auto; }
-  .nota-imagen { max-width: 56rem; margin-inline: auto; }
-  .nota-cuerpo { max-width: 40rem; margin-inline: auto; margin-bottom: 2.5rem; }
+  /* ============================================================
+     HERO DE NOTA
+     ============================================================ */
+  .nh-section { margin: -1.5rem -1rem 0; }
 
+  .nh-wrap {
+    position: relative; width: 100%; height: 280px;
+    overflow: hidden; background: #1a1a1a;
+  }
+  @media (min-width: 640px)  { .nh-wrap { height: 380px; } }
+  @media (min-width: 1024px) { .nh-wrap { height: 500px; } }
+
+  .nh-placeholder { position: absolute; inset: 0; background: #1a1a1a; }
+
+  .nh-img {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; object-position: center top;
+  }
+  .nh-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.45) 50%, rgba(0,0,0,0.2) 100%);
+  }
+  .nh-content {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 1.25rem 1rem;
+    max-width: 1280px;
+  }
+  @media (min-width: 768px) { .nh-content { padding: 2rem 1.5rem; } }
+
+  .nh-badge {
+    display: inline-block; background: #C0392B; color: #fff;
+    font-family: var(--font-cuerpo); font-size: 0.63rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.12em;
+    padding: 0.25rem 0.65rem; margin-bottom: 0.65rem;
+  }
+  .nh-titulo {
+    font-family: var(--font-titular);
+    font-size: clamp(1.35rem, 3.5vw, 2.6rem);
+    font-weight: 700; line-height: 1.15; color: #fff;
+    max-width: 52rem; margin: 0;
+    text-shadow: 0 1px 5px rgba(0,0,0,0.4);
+  }
+</style>
+
+<style>
+  /* ============================================================
+     META, BREADCRUMB, BYLINE
+     ============================================================ */
+  .nota-meta {
+    max-width: 45rem; margin: 0 auto;
+    padding-top: 1.5rem;
+  }
+
+  /* Breadcrumb */
+  .nota-breadcrumb ol {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 0.25rem;
+    list-style: none; padding: 0; margin: 0 0 1.25rem;
+    font-family: var(--font-cuerpo); font-size: 0.75rem; color: #888;
+  }
+  .nota-breadcrumb a { color: #888; text-decoration: none; transition: color 0.15s; }
+  .nota-breadcrumb a:hover { color: #C0392B; text-decoration: none; }
+  .nota-breadcrumb-actual { opacity: 0.6; }
+
+  /* Bajada */
+  .nota-bajada {
+    font-family: var(--font-titular);
+    font-size: 1.2rem; font-weight: 400; font-style: italic;
+    color: #4A4A4A; line-height: 1.55; margin: 0 0 1.25rem;
+  }
+
+  /* Byline */
+  .nota-byline {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 0.4rem;
+    font-family: var(--font-cuerpo); font-size: 0.82rem; color: #666;
+    margin-bottom: 1rem;
+  }
+  .nota-autor { font-weight: 700; color: #1a1a1a; }
+  .nota-byline-sep { opacity: 0.4; }
+  .nota-byline-icon { display: flex; align-items: center; opacity: 0.5; }
+
+  /* HR separador */
+  .nota-hr { border: none; border-top: 1px solid #D0D0D0; margin: 0 0 2rem; }
+
+  /* ============================================================
+     CUERPO DEL ARTICULO
+     ============================================================ */
+  .nota-cuerpo {
+    max-width: 45rem; margin: 0 auto 2.5rem;
+  }
   .nota-cuerpo p {
     font-family: var(--font-cuerpo);
-    font-size: 1.125rem; line-height: 1.8;
-    color: #1C1C1C; margin-bottom: 1.5rem;
+    font-size: 1.125rem; line-height: 1.85;
+    color: #1a1a1a; margin-bottom: 1.5rem;
   }
-  .nota-cuerpo .primer-parrafo::first-letter {
-    font-family: var(--font-titular);
-    font-size: 3.5rem; font-weight: 700;
-    line-height: 0.85; float: left;
-    margin-right: 0.1em; margin-top: 0.1em;
-    color: var(--color-periodico);
+  .nota-cuerpo h2, .nota-cuerpo h3 {
+    font-family: var(--font-titular); font-weight: 700; color: #1a1a1a;
+    margin: 2rem 0 0.75rem; padding-bottom: 0.375rem;
+    border-bottom: 2px solid #D0D0D0;
   }
-  .relacionadas-grid { display: grid; grid-template-columns: 1fr; gap: 1.75rem; margin-bottom: 2rem; }
-  @media (min-width: 640px) { .relacionadas-grid { grid-template-columns: repeat(3, 1fr); } }
+  .nota-cuerpo h2 { font-size: 1.5rem; }
+  .nota-cuerpo h3 { font-size: 1.25rem; }
+  .nota-cuerpo blockquote {
+    border-left: 4px solid #C0392B;
+    margin: 2rem 0; padding: 0.75rem 1.5rem;
+    background: #FAF9F7;
+    font-style: italic; font-size: 1.15rem; line-height: 1.6; color: #555;
+  }
+  .nota-cuerpo strong { font-weight: 700; color: #1a1a1a; }
+  /* Drop cap en primer parrafo */
+  .nota-cuerpo p:first-of-type::first-letter {
+    font-family: var(--font-titular); font-size: 3.5rem; font-weight: 900;
+    line-height: 0.85; float: left; margin-right: 0.08em; margin-top: 0.1em;
+    color: #1a1a1a;
+  }
+</style>
+
+<style>
+  /* ============================================================
+     COMPARTIR
+     ============================================================ */
+  .nota-compartir { max-width: 45rem; margin: 0 auto; }
+
+  .compartir-inner {
+    display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;
+    padding-bottom: 2rem;
+  }
+  .compartir-label {
+    font-family: var(--font-cuerpo); font-size: 0.68rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.18em; color: #999;
+    white-space: nowrap;
+  }
+  .share-btn {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    color: #fff; font-family: var(--font-cuerpo); font-size: 0.75rem;
+    font-weight: 700; padding: 0.45rem 0.9rem;
+    text-decoration: none; transition: opacity 0.15s;
+  }
+  .share-btn:hover { opacity: 0.82; text-decoration: none; }
+  .share-wa { background: #25D366; }
+  .share-x  { background: #000000; }
+  .share-fb { background: #1877F2; }
+
+  /* ============================================================
+     RELACIONADAS
+     ============================================================ */
+  .nota-relacionadas { margin-top: 3rem; padding-top: 0.5rem; }
+
+  .rel-header {
+    display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.75rem;
+    border-top: 3px solid #1a1a1a; padding-top: 1.25rem;
+  }
+  .rel-barra {
+    display: inline-block; width: 4px; height: 1.3rem;
+    background: #C0392B; flex-shrink: 0;
+  }
+  .rel-titulo {
+    font-family: var(--font-cuerpo); font-size: 0.68rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.2em; color: #1a1a1a; margin: 0;
+  }
+  .rel-linea { flex: 1; height: 1px; background: #D0D0D0; }
+
+  .rel-grid {
+    display: grid; grid-template-columns: 1fr; gap: 1.75rem; margin-bottom: 2rem;
+  }
+  @media (min-width: 640px) { .rel-grid { grid-template-columns: repeat(3, 1fr); } }
+
+  .rel-card { display: flex; flex-direction: column; transition: box-shadow 0.2s; }
+  .rel-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+
+  .rel-img-wrap {
+    display: block; overflow: hidden;
+    aspect-ratio: 16/9; background: #e5e5e5; margin-bottom: 0.65rem;
+  }
+  .rel-img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s; }
+  .rel-img-wrap:hover .rel-img { transform: scale(1.05); }
+
+  .rel-body { display: flex; flex-direction: column; }
+  .rel-badge {
+    display: inline-block; align-self: flex-start;
+    background: #C0392B; color: #fff;
+    font-family: var(--font-cuerpo); font-size: 0.58rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    padding: 0.2rem 0.5rem; margin-bottom: 0.5rem;
+  }
+  .rel-card-titulo {
+    font-family: var(--font-titular); font-size: 0.95rem; font-weight: 700;
+    line-height: 1.32; color: #1a1a1a; margin: 0 0 0.4rem;
+  }
+  .rel-card-lnk { color: inherit; text-decoration: none; transition: color 0.2s; }
+  .rel-card-lnk:hover { color: #C0392B; text-decoration: none; }
+  .rel-fecha {
+    font-family: var(--font-cuerpo); font-size: 0.7rem; color: #999; margin-top: auto;
+  }
 </style>

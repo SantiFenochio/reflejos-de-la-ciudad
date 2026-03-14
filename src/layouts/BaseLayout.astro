@@ -10,19 +10,22 @@ interface Props {
   description?: string;
   image?:       string;
   noIndex?:     boolean;
+  ogType?:      string;
 }
 
 const {
   title       = 'Reflejos de la Ciudad',
   description = 'Semanario digital del barrio San Martín, Villa Ballester y alrededores. Buenos Aires, Argentina.',
-  image       = '/og-default.jpg',
+  image       = '/Logo.png',
   noIndex     = false,
+  ogType      = 'website',
 } = Astro.props;
 
 const siteBase  = Astro.site ?? new URL('https://reflejosdelaciudad.com.ar');
 const canonical = new URL(Astro.url.pathname, siteBase);
 const ogImage   = new URL(image, siteBase);
-const fullTitle = title === 'Reflejos de la Ciudad'
+// Si el titulo ya arranca con "Reflejos" (portada con titulo completo) no se agrega el sufijo
+const fullTitle = title.startsWith('Reflejos de la Ciudad')
   ? title
   : `${title} — Reflejos de la Ciudad`;
 ---
@@ -44,7 +47,7 @@ const fullTitle = title === 'Reflejos de la Ciudad'
     {noIndex && <meta name="robots" content="noindex, nofollow" />}
 
     <!-- ══ OPEN GRAPH (Facebook / WhatsApp / LinkedIn) ══════ -->
-    <meta property="og:type"        content="website" />
+    <meta property="og:type"        content={ogType} />
     <meta property="og:url"         content={canonical} />
     <meta property="og:title"       content={fullTitle} />
     <meta property="og:description" content={description} />
