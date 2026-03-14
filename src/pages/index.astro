@@ -21,8 +21,8 @@ const pubsSidebar = publicidades.slice(0, 3);
 const pubsInline  = publicidades.slice(3);
 
 const hero     = notas[0] ?? null;
-const grilla   = notas.slice(1, 7);
-const carrusel = grilla; // las mismas 6 ultimas para el carrusel destacado
+const grilla   = notas.slice(1, 13);  // 12 notas iniciales
+const carrusel = grilla;
 
 function formatearFecha(iso: string): string {
   return new Date(iso).toLocaleDateString('es-AR', {
@@ -210,6 +210,14 @@ const masLeidas = [
       <p class="empty-msg">Proximamente mas noticias.</p>
     )}
   </section>
+
+  <!-- CARGAR MÁS — aparece debajo de la grilla, centrado -->
+  <div id="cargar-mas-wrap" style="grid-column:1/-1;text-align:center;margin-top:2rem;">
+    <button id="btn-cargar-mas" class="btn-cargar-mas" data-offset="13">
+      Cargar más noticias
+    </button>
+    <p id="cargar-mas-fin" class="cargar-mas-fin" hidden>No hay más noticias.</p>
+  </div>
 
   <!-- SIDEBAR: max 3 publicidades + Mas Leidas -->
   <aside class="sidebar">
@@ -619,4 +627,100 @@ const masLeidas = [
 
     items.forEach(function (el) { obs.observe(el); });
   })();
+</script>
+
+<style>
+  /* CARGAR MÁS */
+  .btn-cargar-mas {
+    background: #C0392B; color: #fff;
+    font-family: var(--font-cuerpo); font-size: 0.78rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.14em;
+    border: none; cursor: pointer;
+    padding: 0.75rem 2rem;
+    transition: background-color 0.15s, transform 0.1s;
+  }
+  .btn-cargar-mas:hover { background: #a93226; }
+  .btn-cargar-mas:active { transform: scale(0.98); }
+  .btn-cargar-mas:disabled { background: #ccc; cursor: not-allowed; }
+  .cargar-mas-fin { font-family: var(--font-cuerpo); font-size: 0.82rem; color: #aaa; margin-top: 1rem; }
+
+  /* Animación fade-in para cards nuevas */
+  @keyframes fadeInUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .card-nueva { animation: fadeInUp 0.35s ease both; }
+</style>
+
+<script>
+(function() {
+  var SANITY_PROJECT = 'k3agywgt';
+  var SANITY_DATASET = 'production';
+  var SANITY_VER     = '2024-01-01';
+  var LIMIT = 12;
+
+  var btnCargar = document.getElementById('btn-cargar-mas');
+  var finMsg    = document.getElementById('cargar-mas-fin');
+  var notasGrid = document.querySelector('.notas-grid');
+
+  if (!btnCargar || !notasGrid) return;
+
+  function formatFecha(iso) {
+    if (!iso) return '';
+    return new Date(iso).toLocaleDateString('es-AR', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+
+  function crearCard(nota) {
+    var imgUrl = nota.imgUrl
+      ? nota.imgUrl + '?w=800&h=450&fit=crop&auto=format'
+      : 'https://picsum.photos/seed/' + (nota.slug || 'default') + '/800/450';
+
+    var card = document.createElement('article');
+    card.className = 'card animar card-nueva';
+
+    card.innerHTML =
+      '<a href="/nota/' + nota.slug + '" class="card-img-wrap">'
+      + '<img src="' + imgUrl + '" alt="' + nota.titulo.replace(/"/g,'&quot;') + '" loading="lazy" class="card-img" />'
+      + '</a>'
+      + '<div class="card-body">'
+      + (nota.categoria ? '<span class="badge-rojo badge-sm">' + nota.categoria + '</span>' : '')
+      + '<h2 class="card-titulo"><a href="/nota/' + nota.slug + '" class="card-titulo-lnk">' + nota.titulo + '</a></h2>'
+      + (nota.bajada ? '<p class="card-bajada">' + nota.bajada + '</p>' : '')
+      + '<p class="card-meta">'
+      + (nota.autor ? 'Por ' + nota.autor + ' &middot; ' : '')
+      + formatFecha(nota.fechaPublicacion)
+      + '</p>'
+      + '</div>';
+
+    return card;
+  }
+
+  btnCargar.addEventListener('click', async function() {
+    var offset = parseInt(btnCargar.dataset.offset || '13', 10);
+    btnCargar.disabled = true;
+    btnCargar.textContent = 'Cargando...';
+
+    try {
+      var end   = offset + LIMIT - 1;
+      var query = '*[_type == "articulo"] | order(fechaPublicacion desc) [' + offset + '...' + (offset + LIMIT) + '] { titulo, "slug": slug.current, bajada, categoria, fechaPublicacion, autor, "imgUrl": imagenPrincipal.asset->url }';
+      var url   = 'https://' + SANITY_PROJECT + '.apicdn.sanity.io/v' + SANITY_VER + '/data/query/' + SANITY_DATASET + '?query=' + encodeURIComponent(query);
+      var res   = await fetch(url);
+      var data  = await res.json();
+      var notas = data.result || [];
+
+      notas.forEach(function(nota) {
+        notasGrid.appendChild(crearCard(nota));
+      });
+
+      if (notas.length < LIMIT) {
+        btnCargar.hidden = true;
+        if (finMsg) finMsg.hidden = false;
+      } else {
+        btnCargar.dataset.offset = String(offset + LIMIT);
+        btnCargar.disabled = false;
+        btnCargar.textContent = 'Cargar más noticias';
+      }
+    } catch (err) {
+      btnCargar.disabled = false;
+      btnCargar.textContent = 'Cargar más noticias';
+    }
+  });
+})();
 </script>

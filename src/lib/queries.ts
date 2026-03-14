@@ -1,7 +1,7 @@
 // src/lib/queries.ts
 
 // Últimas 7 noticias para la Home (hero + grilla de 6)
-export const HOME_QUERY = `*[_type == "articulo"] | order(fechaPublicacion desc) [0...7] {
+export const HOME_QUERY = `*[_type == "articulo"] | order(fechaPublicacion desc) [0...13] {
   _id,
   titulo,
   slug,

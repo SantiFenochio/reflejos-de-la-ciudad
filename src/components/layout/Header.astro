@@ -17,13 +17,12 @@ const secciones = [
   { label: 'Breves',    href: '/breves'     },
 ];
 
-// Fetch de las 5 ultimas noticias para el ticker
 const tickerNotas: { titulo: string; slug: { current: string } }[] = await sanityClient.fetch(
   `*[_type == "articulo"] | order(fechaPublicacion desc) [0...5] { titulo, slug }`
 );
 ---
 
-<!-- BARRA SUPERIOR: fecha + ubicacion -->
+<!-- BARRA SUPERIOR -->
 <div class="top-bar">
   <div class="top-inner">
     <span id="header-fecha" class="top-fecha">Cargando fecha...</span>
@@ -31,61 +30,81 @@ const tickerNotas: { titulo: string; slug: { current: string } }[] = await sanit
   </div>
 </div>
 
-<!-- AREA LOGO -->
+<!-- LOGO -->
 <div class="logo-area">
   <a href="/" aria-label="Inicio de Reflejos de la Ciudad" class="logo-link">
-    <img
-      src="/Logo.png"
-      alt="Reflejos de la Ciudad"
-      class="logo-img"
-      onerror="this.style.display='none';document.getElementById('logo-text').style.display='block';"
-    />
+    <img src="/Logo.png" alt="Reflejos de la Ciudad" class="logo-img"
+      onerror="this.style.display='none';document.getElementById('logo-text').style.display='block';" />
     <span id="logo-text" class="logo-text">Reflejos de la Ciudad</span>
   </a>
 </div>
 
-<!-- BARRA DE NAVEGACION ROJA (sticky) -->
+<!-- NAV ROJO -->
 <nav class="nav-bar" aria-label="Secciones del diario">
-
-  <!-- Desktop: links horizontales -->
+  <!-- Desktop -->
   <div class="nav-desktop">
     {secciones.map((s) => (
       <a href={s.href} class="nav-lnk">{s.label}</a>
     ))}
-  </div>
-
-  <!-- Mobile: nombre + boton hamburguesa -->
-  <div class="nav-mobile-head">
-    <span class="nav-brand">Reflejos de la Ciudad</span>
-    <button id="nav-toggle" class="nav-btn" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav-mobile-panel">
-      <svg id="icon-menu" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-        <line x1="3" y1="6" x2="21" y2="6"/>
-        <line x1="3" y1="12" x2="21" y2="12"/>
-        <line x1="3" y1="18" x2="21" y2="18"/>
-      </svg>
-      <svg id="icon-close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="display:none">
-        <line x1="18" y1="6" x2="6" y2="18"/>
-        <line x1="6" y1="6" x2="18" y2="18"/>
+    <!-- Lupa buscador desktop -->
+    <button id="search-toggle-desk" class="nav-search-btn" aria-label="Abrir buscador" aria-expanded="false">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
       </svg>
     </button>
   </div>
-
-  <!-- Mobile: panel desplegable -->
+  <!-- Mobile head -->
+  <div class="nav-mobile-head">
+    <span class="nav-brand">Reflejos de la Ciudad</span>
+    <div style="display:flex;align-items:center;gap:0.5rem;">
+      <!-- Lupa buscador mobile -->
+      <button id="search-toggle-mob" class="nav-search-btn" aria-label="Abrir buscador" aria-expanded="false">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+      </button>
+      <button id="nav-toggle" class="nav-btn" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav-mobile-panel">
+        <svg id="icon-menu" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+        <svg id="icon-close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="display:none">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+  <!-- Mobile panel -->
   <div id="nav-mobile-panel" class="nav-panel" hidden>
     {secciones.map((s) => (
       <a href={s.href} class="nav-panel-lnk">{s.label}</a>
     ))}
   </div>
-
 </nav>
 
-<!-- TICKER: barra negra de ultimas noticias bajo el nav -->
+<!-- BUSCADOR — panel deslizable debajo del nav -->
+<div id="buscador-panel" class="buscador-panel" hidden>
+  <div class="buscador-wrap">
+    <div class="buscador-input-row">
+      <svg class="buscador-ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input id="buscador-input" type="search" placeholder="Buscar noticias..." class="buscador-input" autocomplete="off" spellcheck="false" />
+      <button id="buscador-close" class="buscador-close" aria-label="Cerrar buscador">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div id="buscador-resultados" class="buscador-resultados" hidden></div>
+  </div>
+</div>
+
+<!-- TICKER -->
 {tickerNotas.length > 0 && (
   <div class="ticker-bar" role="region" aria-label="Ultimas noticias">
     <span class="ticker-label">ULTIMO</span>
     <div class="ticker-content">
       <div class="ticker-track">
-        <!-- Primer bloque -->
         <span class="ticker-bloque">
           {tickerNotas.map((n, i) => (
             <span class="ticker-item">
@@ -95,7 +114,6 @@ const tickerNotas: { titulo: string; slug: { current: string } }[] = await sanit
           ))}
           <span class="ticker-sep" aria-hidden="true">&emsp;&middot;&emsp;</span>
         </span>
-        <!-- Segundo bloque (identico, para el loop sin corte) -->
         <span class="ticker-bloque" aria-hidden="true">
           {tickerNotas.map((n, i) => (
             <span class="ticker-item">
@@ -113,116 +131,220 @@ const tickerNotas: { titulo: string; slug: { current: string } }[] = await sanit
 <style>
   /* TOP BAR */
   .top-bar { background: #1a1a1a; border-bottom: 2px solid #C0392B; }
-  .top-inner {
-    max-width: 1280px; margin: 0 auto; padding: 0.35rem 1rem;
-    display: flex; justify-content: space-between; align-items: center;
-  }
+  .top-inner { max-width: 1280px; margin: 0 auto; padding: 0.35rem 1rem; display: flex; justify-content: space-between; align-items: center; }
   .top-fecha, .top-loc { font-family: var(--font-cuerpo); font-size: 0.7rem; color: #F5F5F0; letter-spacing: 0.04em; }
   .top-fecha { opacity: 0.8; }
   .top-loc   { opacity: 0.55; text-transform: uppercase; letter-spacing: 0.12em; }
 
   /* LOGO */
-  .logo-area {
-    background: #ffffff; padding: 1.25rem 1rem;
-    display: flex; justify-content: center; align-items: center;
-    border-bottom: 1px solid #e5e5e5;
-  }
+  .logo-area { background: #fff; padding: 1.25rem 1rem; display: flex; justify-content: center; align-items: center; border-bottom: 1px solid #e5e5e5; }
   .logo-link { display: inline-block; }
   .logo-img  { max-height: 110px; width: auto; display: block; }
   .logo-text { display: none; font-family: var(--font-titular); font-weight: 900; font-size: 2.25rem; color: #1a1a1a; letter-spacing: -0.02em; }
 
-  /* NAV ROJO */
+  /* NAV */
   .nav-bar { background: #C0392B; position: sticky; top: 0; z-index: 50; box-shadow: 0 2px 8px rgba(0,0,0,0.28); }
-
   .nav-desktop { display: none; max-width: 1280px; margin: 0 auto; padding: 0 0.5rem; justify-content: center; flex-wrap: wrap; align-items: stretch; }
   @media (min-width: 768px) { .nav-desktop { display: flex; } }
-
-  .nav-lnk {
-    font-family: var(--font-cuerpo); font-size: 0.68rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.1em; color: #ffffff;
-    padding: 0.65rem 0.6rem; display: inline-block; white-space: nowrap;
-    text-decoration: none; transition: background-color 0.15s;
-  }
+  .nav-lnk { font-family: var(--font-cuerpo); font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #fff; padding: 0.65rem 0.6rem; display: inline-block; white-space: nowrap; text-decoration: none; transition: background-color 0.15s; }
   .nav-lnk:hover { background-color: rgba(0,0,0,0.2); text-decoration: none; }
-
+  /* Lupa */
+  .nav-search-btn { background: none; border: none; cursor: pointer; color: #fff; padding: 0.65rem 0.6rem; display: flex; align-items: center; transition: background-color 0.15s; margin-left: auto; }
+  .nav-search-btn:hover { background-color: rgba(0,0,0,0.2); }
   .nav-mobile-head { display: flex; justify-content: space-between; align-items: center; padding: 0 1rem; min-height: 44px; }
   @media (min-width: 768px) { .nav-mobile-head { display: none; } }
   .nav-brand { font-family: var(--font-titular); font-size: 1rem; font-weight: 700; color: #fff; }
   .nav-btn { background: none; border: none; cursor: pointer; color: #fff; padding: 0.25rem; display: flex; align-items: center; }
-
   .nav-panel { background: #a93226; border-top: 1px solid rgba(255,255,255,0.15); }
-  .nav-panel-lnk {
-    display: block; padding: 0.75rem 1.25rem;
-    font-family: var(--font-cuerpo); font-size: 0.8rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.1em; color: #fff;
-    border-bottom: 1px solid rgba(255,255,255,0.1); text-decoration: none; transition: background-color 0.15s;
-  }
+  .nav-panel-lnk { display: block; padding: 0.75rem 1.25rem; font-family: var(--font-cuerpo); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #fff; border-bottom: 1px solid rgba(255,255,255,0.1); text-decoration: none; transition: background-color 0.15s; }
   .nav-panel-lnk:hover { background-color: rgba(0,0,0,0.2); text-decoration: none; }
 
+  /* BUSCADOR PANEL */
+  .buscador-panel {
+    background: #fff;
+    border-bottom: 2px solid #D0D0D0;
+    position: sticky; top: 44px; z-index: 49;
+    animation: slideDown 0.2s ease;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  }
+  @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+  .buscador-wrap { max-width: 720px; margin: 0 auto; padding: 0.75rem 1rem; }
+  .buscador-input-row { display: flex; align-items: center; gap: 0.5rem; border: 1.5px solid #D0D0D0; background: #F9F9F7; padding: 0.5rem 0.75rem; }
+  .buscador-ico { flex-shrink: 0; }
+  .buscador-input {
+    flex: 1; border: none; background: transparent; outline: none;
+    font-family: var(--font-cuerpo); font-size: 1rem; color: #1a1a1a;
+    min-width: 0;
+  }
+  .buscador-input::placeholder { color: #aaa; }
+  .buscador-close { background: none; border: none; cursor: pointer; color: #888; padding: 0.2rem; display: flex; align-items: center; transition: color 0.15s; }
+  .buscador-close:hover { color: #C0392B; }
+
+  /* RESULTADOS */
+  .buscador-resultados { margin-top: 0.5rem; border: 1px solid #E8E8E8; background: #fff; max-height: 320px; overflow-y: auto; }
+  .buscador-resultado {
+    display: flex; gap: 0.75rem; align-items: flex-start;
+    padding: 0.65rem 0.75rem; border-bottom: 1px solid #F0F0EC;
+    text-decoration: none; color: inherit;
+    transition: background-color 0.15s;
+  }
+  .buscador-resultado:hover { background: #F5F5F0; text-decoration: none; }
+  .buscador-resultado:last-child { border-bottom: none; }
+  .buscador-res-img { width: 56px; height: 38px; object-fit: cover; flex-shrink: 0; background: #e0e0e0; display: block; }
+  .buscador-res-body { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
+  .buscador-res-cat { font-family: var(--font-cuerpo); font-size: 0.58rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #C0392B; }
+  .buscador-res-titulo { font-family: var(--font-titular); font-size: 0.9rem; font-weight: 600; color: #1a1a1a; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .buscador-empty { font-family: var(--font-cuerpo); font-size: 0.85rem; color: #888; padding: 1rem; text-align: center; }
+  .buscador-loading { font-family: var(--font-cuerpo); font-size: 0.85rem; color: #aaa; padding: 1rem; text-align: center; }
+
   /* TICKER */
-  .ticker-bar {
-    background: #111111; height: 30px;
-    display: flex; align-items: stretch; overflow: hidden;
-  }
-  .ticker-label {
-    background: #C0392B; color: #fff;
-    font-family: var(--font-cuerpo); font-size: 0.58rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.12em;
-    padding: 0 0.85rem; display: flex; align-items: center;
-    white-space: nowrap; flex-shrink: 0;
-  }
+  .ticker-bar { background: #111; height: 30px; display: flex; align-items: stretch; overflow: hidden; }
+  .ticker-label { background: #C0392B; color: #fff; font-family: var(--font-cuerpo); font-size: 0.58rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; padding: 0 0.85rem; display: flex; align-items: center; white-space: nowrap; flex-shrink: 0; }
   .ticker-content { flex: 1; overflow: hidden; display: flex; align-items: center; }
-  .ticker-track {
-    display: flex; white-space: nowrap;
-    animation: ticker-scroll 28s linear infinite;
-  }
+  .ticker-track { display: flex; white-space: nowrap; animation: ticker-scroll 28s linear infinite; }
   .ticker-bar:hover .ticker-track { animation-play-state: paused; }
   .ticker-bloque { display: inline-flex; align-items: center; }
   .ticker-item { display: inline-flex; align-items: center; }
-  .ticker-lnk {
-    font-family: var(--font-cuerpo); font-size: 0.68rem; color: rgba(245,245,240,0.78);
-    text-decoration: none; transition: color 0.15s;
-  }
+  .ticker-lnk { font-family: var(--font-cuerpo); font-size: 0.68rem; color: rgba(245,245,240,0.78); text-decoration: none; transition: color 0.15s; }
   .ticker-lnk:hover { color: #fff; text-decoration: none; }
   .ticker-sep { color: #C0392B; font-size: 0.75rem; }
-
-  @keyframes ticker-scroll {
-    from { transform: translateX(0); }
-    to   { transform: translateX(-50%); }
-  }
+  @keyframes ticker-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 </style>
 
 <script>
-  (function() {
-    // Fecha dinamica
-    const el = document.getElementById('header-fecha');
-    if (el) {
-      const f = new Date().toLocaleDateString('es-AR', {
-        weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+(function() {
+  // ── Fecha dinamica ──────────────────────────────────────────────
+  const el = document.getElementById('header-fecha');
+  if (el) {
+    const f = new Date().toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    el.textContent = f.charAt(0).toUpperCase() + f.slice(1);
+  }
+
+  // ── Toggle mobile menu ──────────────────────────────────────────
+  const btn   = document.getElementById('nav-toggle');
+  const panel = document.getElementById('nav-mobile-panel');
+  const iM    = document.getElementById('icon-menu');
+  const iC    = document.getElementById('icon-close');
+  if (btn && panel) {
+    btn.addEventListener('click', function() {
+      const open = !panel.hidden;
+      panel.hidden = open;
+      btn.setAttribute('aria-expanded', String(!open));
+      if (iM) iM.style.display = open ? 'block' : 'none';
+      if (iC) iC.style.display = open ? 'none'  : 'block';
+    });
+    panel.querySelectorAll('a').forEach(function(a) {
+      a.addEventListener('click', function() {
+        panel.hidden = true;
+        btn.setAttribute('aria-expanded', 'false');
+        if (iM) iM.style.display = 'block';
+        if (iC) iC.style.display = 'none';
       });
-      el.textContent = f.charAt(0).toUpperCase() + f.slice(1);
+    });
+  }
+
+  // ── Buscador ────────────────────────────────────────────────────
+  var SANITY_PROJECT = 'k3agywgt';
+  var SANITY_DATASET = 'production';
+  var SANITY_VER     = '2024-01-01';
+
+  var buscadorPanel = document.getElementById('buscador-panel');
+  var buscadorInput = document.getElementById('buscador-input');
+  var buscadorClose = document.getElementById('buscador-close');
+  var buscadorRes   = document.getElementById('buscador-resultados');
+  var toggleDesk    = document.getElementById('search-toggle-desk');
+  var toggleMob     = document.getElementById('search-toggle-mob');
+  var debounceTimer = null;
+
+  function abrirBuscador() {
+    if (!buscadorPanel) return;
+    buscadorPanel.hidden = false;
+    if (buscadorInput) buscadorInput.focus();
+    if (toggleDesk) toggleDesk.setAttribute('aria-expanded', 'true');
+    if (toggleMob)  toggleMob.setAttribute('aria-expanded', 'true');
+  }
+
+  function cerrarBuscador() {
+    if (!buscadorPanel) return;
+    buscadorPanel.hidden = true;
+    if (buscadorInput) buscadorInput.value = '';
+    if (buscadorRes)   { buscadorRes.hidden = true; buscadorRes.innerHTML = ''; }
+    if (toggleDesk) toggleDesk.setAttribute('aria-expanded', 'false');
+    if (toggleMob)  toggleMob.setAttribute('aria-expanded', 'false');
+  }
+
+  if (toggleDesk) toggleDesk.addEventListener('click', function() {
+    buscadorPanel.hidden ? abrirBuscador() : cerrarBuscador();
+  });
+  if (toggleMob) toggleMob.addEventListener('click', function() {
+    buscadorPanel.hidden ? abrirBuscador() : cerrarBuscador();
+  });
+  if (buscadorClose) buscadorClose.addEventListener('click', cerrarBuscador);
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') cerrarBuscador();
+  });
+  document.addEventListener('click', function(e) {
+    if (buscadorPanel && !buscadorPanel.hidden) {
+      var t = e.target;
+      if (!buscadorPanel.contains(t) && t !== toggleDesk && t !== toggleMob &&
+          !toggleDesk?.contains(t) && !toggleMob?.contains(t)) {
+        cerrarBuscador();
+      }
     }
-    // Toggle mobile menu
-    const btn   = document.getElementById('nav-toggle');
-    const panel = document.getElementById('nav-mobile-panel');
-    const iM    = document.getElementById('icon-menu');
-    const iC    = document.getElementById('icon-close');
-    if (btn && panel) {
-      btn.addEventListener('click', function() {
-        const open = !panel.hidden;
-        panel.hidden = open;
-        btn.setAttribute('aria-expanded', String(!open));
-        if (iM) iM.style.display = open ? 'block' : 'none';
-        if (iC) iC.style.display = open ? 'none'  : 'block';
-      });
-      panel.querySelectorAll('a').forEach(function(a) {
-        a.addEventListener('click', function() {
-          panel.hidden = true;
-          btn.setAttribute('aria-expanded', 'false');
-          if (iM) iM.style.display = 'block';
-          if (iC) iC.style.display = 'none';
-        });
-      });
+  });
+
+  function mostrarResultados(notas) {
+    if (!buscadorRes) return;
+    if (!notas || notas.length === 0) {
+      buscadorRes.innerHTML = '<p class="buscador-empty">No se encontraron resultados.</p>';
+      buscadorRes.hidden = false;
+      return;
     }
-  })();
+    buscadorRes.innerHTML = notas.map(function(n) {
+      var img = n.imgUrl
+        ? '<img class="buscador-res-img" src="' + n.imgUrl + '?w=112&h=76&fit=crop&auto=format" alt="" loading="lazy">'
+        : '<div class="buscador-res-img" style="background:#e0e0e0;"></div>';
+      return '<a href="/nota/' + n.slug + '" class="buscador-resultado">'
+        + img
+        + '<div class="buscador-res-body">'
+        + (n.categoria ? '<span class="buscador-res-cat">' + n.categoria + '</span>' : '')
+        + '<span class="buscador-res-titulo">' + n.titulo + '</span>'
+        + '</div></a>';
+    }).join('');
+    buscadorRes.hidden = false;
+    buscadorRes.querySelectorAll('a').forEach(function(a) {
+      a.addEventListener('click', cerrarBuscador);
+    });
+  }
+
+  async function buscar(q) {
+    if (!buscadorRes) return;
+    buscadorRes.innerHTML = '<p class="buscador-loading">Buscando...</p>';
+    buscadorRes.hidden = false;
+    try {
+      var query = '*[_type == "articulo" && titulo match $q + "*"] | order(fechaPublicacion desc)[0...6] { titulo, "slug": slug.current, categoria, "imgUrl": imagenPrincipal.asset->url }';
+      var url = 'https://' + SANITY_PROJECT + '.apicdn.sanity.io/v' + SANITY_VER + '/data/query/' + SANITY_DATASET
+        + '?query=' + encodeURIComponent(query)
+        + '&$q=' + encodeURIComponent(JSON.stringify(q));
+      var res  = await fetch(url);
+      var data = await res.json();
+      mostrarResultados(data.result || []);
+    } catch(err) {
+      buscadorRes.innerHTML = '<p class="buscador-empty">Error al buscar. Intenta de nuevo.</p>';
+    }
+  }
+
+  if (buscadorInput) {
+    buscadorInput.addEventListener('input', function() {
+      clearTimeout(debounceTimer);
+      var val = this.value.trim();
+      if (!val) {
+        if (buscadorRes) { buscadorRes.hidden = true; buscadorRes.innerHTML = ''; }
+        return;
+      }
+      debounceTimer = setTimeout(function() { buscar(val); }, 300);
+    });
+  }
+})();
 </script>
