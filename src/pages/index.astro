@@ -2,12 +2,23 @@
 // src/pages/index.astro
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { sanityClient, urlFor } from '../lib/sanity';
-import { HOME_QUERY, PUBLICIDADES_QUERY } from '../lib/queries';
+import { HOME_QUERY } from '../lib/queries';
 import type { Articulo } from '../types/article';
 import Publicidad from '../components/ui/Publicidad.astro';
 
+// Noticias: hero + hasta 9 cards en grilla (para dar lugar a intercalados)
 const notas: Articulo[] = await sanityClient.fetch(HOME_QUERY);
-const pubsSidebar = await sanityClient.fetch(PUBLICIDADES_QUERY, { posicion: 'sidebar' });
+
+// Publicidades: todas activas, ordenadas por campo "orden" asc
+// Se separan en: las 3 primeras van al sidebar, el resto se intercala en la grilla
+const publicidades: any[] = await sanityClient.fetch(
+  `*[_type == "publicidad" && activa == true] | order(orden asc) {
+    _id, nombre, linkDestino, posicion,
+    "imagenUrl": imagen.asset->url
+  }`
+);
+const pubsSidebar = publicidades.slice(0, 3);
+const pubsInline  = publicidades.slice(3);
 
 const hero   = notas[0] ?? null;
 const grilla = notas.slice(1, 7);
@@ -36,16 +47,16 @@ const masLeidas = [
   description="Semanario digital del barrio San Martin, Villa Ballester y alrededores."
 >
 
-<!-- HERO -->
+<!-- ============================================================
+     HERO — nota destacada
+     ============================================================ -->
 <section class="hero-section">
   {hero ? (
     <div class="hero-wrap">
       <img src={heroImg} alt={hero.titulo} class="hero-img" loading="eager" />
       <div class="hero-overlay"></div>
       <div class="hero-content">
-        {hero.categoria && (
-          <span class="badge-rojo">{hero.categoria}</span>
-        )}
+        {hero.categoria && <span class="badge-rojo">{hero.categoria}</span>}
         <a href={`/nota/${hero.slug.current}`} class="hero-link">
           <h1 class="hero-titulo">{hero.titulo}</h1>
           {hero.bajada && <p class="hero-bajada">{hero.bajada}</p>}
@@ -73,10 +84,12 @@ const masLeidas = [
   <div class="sep-linea"></div>
 </div>
 
-<!-- CUERPO: GRILLA + SIDEBAR -->
+<!-- ============================================================
+     CUERPO: GRILLA DE NOTICIAS + SIDEBAR
+     ============================================================ -->
 <div class="cuerpo-grid">
 
-  <!-- COLUMNA PRINCIPAL -->
+  <!-- COLUMNA PRINCIPAL DE NOTICIAS -->
   <section>
     <div class="sec-header">
       <span class="sec-barra-roja"></span>
@@ -86,32 +99,47 @@ const masLeidas = [
 
     {grilla.length > 0 ? (
       <div class="notas-grid">
-        {grilla.map((nota) => {
+        {grilla.map((nota, i) => {
           const imgUrl = nota.imagen
             ? urlFor(nota.imagen).width(800).height(450).url()
             : `https://picsum.photos/seed/${nota.slug.current}/800/450`;
+
+          // Despues de la card 3 (i=2), 6 (i=5), etc.
+          // se inserta una publicidad inline que ocupa el ancho completo de la grilla.
+          // pubsInline[0] va despues de las primeras 3 cards, pubsInline[1] despues de las 6, etc.
+          const pubIndex = Math.floor(i / 3);
+          const esTercera = (i % 3 === 2);
+          const pubParaInsertar = esTercera ? pubsInline[pubIndex] : null;
+
           return (
-            <article class="card">
-              <a href={`/nota/${nota.slug.current}`} class="card-img-wrap">
-                <img src={imgUrl} alt={nota.titulo} loading="lazy" class="card-img" />
-              </a>
-              <div class="card-body">
-                {nota.categoria && (
-                  <span class="badge-rojo badge-sm">{nota.categoria}</span>
-                )}
-                <h2 class="card-titulo">
-                  <a href={`/nota/${nota.slug.current}`} class="card-titulo-lnk">{nota.titulo}</a>
-                </h2>
-                {nota.bajada && (
-                  <p class="card-bajada">{nota.bajada}</p>
-                )}
-                <p class="card-meta">
-                  {nota.autor && <span>Por {nota.autor}</span>}
-                  {nota.autor && <span aria-hidden="true"> &middot; </span>}
-                  <span>{formatearFecha(nota.fechaPublicacion)}</span>
-                </p>
-              </div>
-            </article>
+            <Fragment>
+              {/* Card de noticia */}
+              <article class="card">
+                <a href={`/nota/${nota.slug.current}`} class="card-img-wrap">
+                  <img src={imgUrl} alt={nota.titulo} loading="lazy" class="card-img" />
+                </a>
+                <div class="card-body">
+                  {nota.categoria && <span class="badge-rojo badge-sm">{nota.categoria}</span>}
+                  <h2 class="card-titulo">
+                    <a href={`/nota/${nota.slug.current}`} class="card-titulo-lnk">{nota.titulo}</a>
+                  </h2>
+                  {nota.bajada && <p class="card-bajada">{nota.bajada}</p>}
+                  <p class="card-meta">
+                    {nota.autor && <span>Por {nota.autor}</span>}
+                    {nota.autor && <span aria-hidden="true"> &middot; </span>}
+                    <span>{formatearFecha(nota.fechaPublicacion)}</span>
+                  </p>
+                </div>
+              </article>
+
+              {/* Publicidad inline: se inserta despues de cada 3 cards si existe */}
+              {pubParaInsertar && (
+                <div class="pub-inline-wrap">
+                  <p class="pub-inline-label">Publicidad</p>
+                  <Publicidad pub={pubParaInsertar} />
+                </div>
+              )}
+            </Fragment>
           );
         })}
       </div>
@@ -120,8 +148,10 @@ const masLeidas = [
     )}
   </section>
 
-  <!-- SIDEBAR -->
+  <!-- SIDEBAR: max 3 publicidades + Mas Leidas -->
   <aside class="sidebar">
+
+    <!-- Mas Leidas -->
     <div class="sidebar-block">
       <div class="sec-header">
         <span class="sec-barra-roja"></span>
@@ -142,6 +172,7 @@ const masLeidas = [
       </ol>
     </div>
 
+    <!-- Publicidades sidebar: solo las primeras 3 -->
     {pubsSidebar.length > 0 ? (
       <div class="pubs-wrap">
         {pubsSidebar.map((pub: any) => (
@@ -156,9 +187,10 @@ const masLeidas = [
         <a href="mailto:redaccion@reflejosdelaciudad.com.ar" class="pub-btn">Consultanos</a>
       </div>
     )}
+
   </aside>
 
-</div>
+</div>{/* fin cuerpo-grid */}
 
 </BaseLayout>
 
@@ -172,8 +204,7 @@ const masLeidas = [
   @media (min-width: 640px)  { .hero-wrap { height: 420px; } }
   @media (min-width: 1024px) { .hero-wrap { height: 560px; } }
   .hero-img {
-    position: absolute; inset: 0;
-    width: 100%; height: 100%;
+    position: absolute; inset: 0; width: 100%; height: 100%;
     object-fit: cover; object-position: center top;
     transition: transform 0.7s ease;
   }
@@ -191,16 +222,13 @@ const masLeidas = [
   .hero-link:hover .hero-titulo { text-decoration: underline; text-underline-offset: 4px; }
   .hero-titulo {
     font-family: var(--font-titular);
-    font-size: clamp(1.4rem, 4vw, 3rem);
-    font-weight: 700; line-height: 1.12;
-    color: #fff; margin: 0.5rem 0 0.65rem;
-    max-width: 56rem;
+    font-size: clamp(1.4rem, 4vw, 3rem); font-weight: 700; line-height: 1.12;
+    color: #fff; margin: 0.5rem 0 0.65rem; max-width: 56rem;
     text-shadow: 0 1px 4px rgba(0,0,0,0.35);
   }
   .hero-bajada {
     font-family: var(--font-cuerpo);
-    font-size: clamp(0.875rem, 1.4vw, 1.05rem);
-    color: rgba(255,255,255,0.85);
+    font-size: clamp(0.875rem, 1.4vw, 1.05rem); color: rgba(255,255,255,0.85);
     max-width: 46rem; line-height: 1.55; margin: 0 0 0.75rem;
   }
   .hero-meta {
@@ -210,7 +238,9 @@ const masLeidas = [
   }
   .hero-sep { margin: 0 0.3rem; }
   .hero-vacio { height: 300px; background: #ddd; display: flex; align-items: center; justify-content: center; }
+</style>
 
+<style>
   /* BADGES */
   .badge-rojo {
     display: inline-block; background: #C0392B; color: #fff;
@@ -225,7 +255,7 @@ const masLeidas = [
   .sep-linea { border-top: 1px solid #1a1a1a; }
   .sep-linea.gruesa { border-top-width: 3px; }
 
-  /* SECCION HEADER */
+  /* ENCABEZADO DE SECCION */
   .sec-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; }
   .sec-barra-roja { display: inline-block; width: 4px; height: 1.3rem; background: #C0392B; flex-shrink: 0; }
   .sec-titulo {
@@ -234,21 +264,39 @@ const masLeidas = [
   }
   .sec-linea { flex: 1; height: 1px; background: #D0D0D0; margin-left: 0.25rem; }
 
-  /* LAYOUT */
+  /* LAYOUT PRINCIPAL */
   .cuerpo-grid { display: grid; grid-template-columns: 1fr; gap: 2.5rem; }
-  @media (min-width: 1024px) { .cuerpo-grid { grid-template-columns: 2fr 1fr; gap: 3rem; align-items: start; } }
+  @media (min-width: 1024px) {
+    .cuerpo-grid { grid-template-columns: 2fr 1fr; gap: 3rem; align-items: start; }
+  }
+
+  /* GRILLA DE NOTICIAS
+     Las publicidades inline ocupan grid-column: 1 / -1 (span completo).
+     En mobile la grilla es 1 col, en tablet 2 y en desktop 3. */
   .notas-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
   @media (min-width: 640px)  { .notas-grid { grid-template-columns: repeat(2, 1fr); } }
   @media (min-width: 1024px) { .notas-grid { grid-template-columns: repeat(3, 1fr); } }
-  .empty-msg { font-family: var(--font-cuerpo); color: #888; font-size: 0.95rem; padding: 2rem 0; text-align: center; }
 
+  .empty-msg { font-family: var(--font-cuerpo); color: #888; font-size: 0.95rem; padding: 2rem 0; text-align: center; }
+</style>
+
+<style>
   /* CARDS */
   .card { display: flex; flex-direction: column; }
-  .card-img-wrap { display: block; overflow: hidden; aspect-ratio: 16/9; background: #e5e5e5; margin-bottom: 0.75rem; }
-  .card-img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
+  .card-img-wrap {
+    display: block; overflow: hidden;
+    aspect-ratio: 16/9; background: #e5e5e5; margin-bottom: 0.75rem;
+  }
+  .card-img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    transition: transform 0.4s ease;
+  }
   .card-img-wrap:hover .card-img { transform: scale(1.06); }
   .card-body { display: flex; flex-direction: column; flex: 1; }
-  .card-titulo { font-family: var(--font-titular); font-size: 1rem; font-weight: 700; line-height: 1.32; color: #1a1a1a; margin: 0 0 0.4rem; }
+  .card-titulo {
+    font-family: var(--font-titular); font-size: 1rem;
+    font-weight: 700; line-height: 1.32; color: #1a1a1a; margin: 0 0 0.4rem;
+  }
   .card-titulo-lnk { color: inherit; text-decoration: none; }
   .card-titulo-lnk:hover { text-decoration: underline; text-underline-offset: 3px; }
   .card-bajada {
@@ -258,24 +306,70 @@ const masLeidas = [
   }
   .card-meta { font-family: var(--font-cuerpo); font-size: 0.7rem; color: #999; margin: auto 0 0; padding-top: 0.5rem; }
 
+  /* PUBLICIDAD INLINE — span completo de la grilla */
+  .pub-inline-wrap {
+    grid-column: 1 / -1;          /* abarca todas las columnas disponibles */
+    border-top: 1px solid #D0D0D0;
+    border-bottom: 1px solid #D0D0D0;
+    padding: 0.75rem 0;
+    margin-block: 0.5rem;
+    background: #F9F9F7;
+  }
+  .pub-inline-label {
+    font-family: var(--font-cuerpo);
+    font-size: 0.58rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.15em;
+    color: #bbb; margin: 0 0 0.4rem; text-align: center;
+  }
+</style>
+
+<style>
   /* SIDEBAR */
   .sidebar { border-top: 3px solid #1a1a1a; padding-top: 1.25rem; }
-  @media (min-width: 1024px) { .sidebar { border-top: none; border-left: 1px solid #D0D0D0; padding-top: 0; padding-left: 1.5rem; } }
+  @media (min-width: 1024px) {
+    .sidebar {
+      border-top: none;
+      border-left: 1px solid #D0D0D0;
+      padding-top: 0; padding-left: 1.5rem;
+      /* align-self: start en el padre ya evita que el sidebar se estire */
+    }
+  }
   .sidebar-block { margin-bottom: 2.5rem; }
+
+  /* MAS LEIDAS */
   .masleidas-list { list-style: none; padding: 0; margin: 0; }
   .masleida-item { border-bottom: 1px solid #E8E8E8; }
-  .masleida-lnk { display: flex; gap: 0.75rem; align-items: flex-start; padding: 0.85rem 0; text-decoration: none; color: inherit; }
+  .masleida-lnk {
+    display: flex; gap: 0.75rem; align-items: flex-start;
+    padding: 0.85rem 0; text-decoration: none; color: inherit;
+  }
   .masleida-lnk:hover .masleida-titulo { text-decoration: underline; text-underline-offset: 3px; }
-  .masleida-num { font-family: var(--font-titular); font-size: 1.6rem; font-weight: 900; color: #C0392B; line-height: 1; flex-shrink: 0; width: 1.75rem; text-align: center; margin-top: 0.05rem; }
-  .masleida-titulo { font-family: var(--font-titular); font-size: 0.9rem; font-weight: 600; line-height: 1.3; color: #1a1a1a; margin: 0 0 0.25rem; }
-  .masleida-cat { font-family: var(--font-cuerpo); font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #C0392B; }
+  .masleida-num {
+    font-family: var(--font-titular); font-size: 1.6rem; font-weight: 900;
+    color: #C0392B; line-height: 1; flex-shrink: 0; width: 1.75rem; text-align: center; margin-top: 0.05rem;
+  }
+  .masleida-titulo {
+    font-family: var(--font-titular); font-size: 0.9rem;
+    font-weight: 600; line-height: 1.3; color: #1a1a1a; margin: 0 0 0.25rem;
+  }
+  .masleida-cat {
+    font-family: var(--font-cuerpo); font-size: 0.6rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.1em; color: #C0392B;
+  }
 
-  /* PUBLICIDAD PLACEHOLDER */
+  /* PUBLICIDAD SIDEBAR */
   .pubs-wrap { display: flex; flex-direction: column; gap: 1rem; }
+
+  /* PLACEHOLDER cuando no hay publicidades */
   .pub-box { border: 1px dashed #D0D0D0; background: #F9F9F7; padding: 1.5rem; text-align: center; }
   .pub-label { font-family: var(--font-cuerpo); font-size: 0.58rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; color: #aaa; margin: 0 0 0.5rem; }
   .pub-nombre { font-family: var(--font-titular); font-size: 1.2rem; font-weight: 700; color: #1a1a1a; margin: 0 0 0.4rem; line-height: 1.2; }
   .pub-desc { font-family: var(--font-cuerpo); font-size: 0.8rem; color: #666; margin: 0 0 1.25rem; line-height: 1.45; }
-  .pub-btn { display: block; background: #C0392B; color: #fff; font-family: var(--font-cuerpo); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; padding: 0.65rem 1rem; text-decoration: none; transition: background-color 0.15s; }
+  .pub-btn {
+    display: block; background: #C0392B; color: #fff;
+    font-family: var(--font-cuerpo); font-size: 0.7rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.12em;
+    padding: 0.65rem 1rem; text-decoration: none; transition: background-color 0.15s;
+  }
   .pub-btn:hover { background: #a93226; text-decoration: none; }
 </style>
