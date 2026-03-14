@@ -1,4 +1,4 @@
-@import "tailwindcss";
+﻿@import "tailwindcss";
 
 /* ════════════════════════════════════════════════════════════════
    TEMA: Reflejos de la Ciudad
@@ -27,7 +27,7 @@
   --color-acento:      #111111;  /* Badges de sección, hover, destacados  */
   --color-footer-bg:   #1C1C1C;  /* Footer fondo oscuro                   */
   --color-footer-fg:   #F5F5F0;  /* Footer texto claro                    */
-  --color-rojo:        #C0392B;  /* Rojo identidad del diario             */
+  --color-primario:        #1A56DB;  /* Rojo identidad del diario             */
 
   /* ── TIPOGRAFÍA ─────────────────────────────────────────────── */
   --font-titular: "Playfair Display", Georgia, "Times New Roman", serif;

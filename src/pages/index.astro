@@ -1,4 +1,4 @@
----
+﻿---
 // src/pages/index.astro
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { sanityClient, urlFor } from '../lib/sanity';
@@ -17,8 +17,6 @@ const publicidades: any[] = await sanityClient.fetch(
     "imagenUrl": imagen.asset->url
   }`
 );
-const pubsSidebar = publicidades.slice(0, 3);
-const pubsInline  = publicidades.slice(3);
 
 const hero     = notas[0] ?? null;
 const grilla   = notas.slice(1, 13);  // 12 notas iniciales
@@ -162,47 +160,28 @@ const masLeidas = [
 
     {grilla.length > 0 ? (
       <div class="notas-grid">
-        {grilla.map((nota, i) => {
+        {grilla.map((nota) => {
           const imgUrl = nota.imagen
             ? urlFor(nota.imagen).width(800).height(450).url()
             : `https://picsum.photos/seed/${nota.slug.current}/800/450`;
-
-          // Despues de la card 3 (i=2), 6 (i=5), etc.
-          // se inserta una publicidad inline que ocupa el ancho completo de la grilla.
-          // pubsInline[0] va despues de las primeras 3 cards, pubsInline[1] despues de las 6, etc.
-          const pubIndex = Math.floor(i / 3);
-          const esTercera = (i % 3 === 2);
-          const pubParaInsertar = esTercera ? pubsInline[pubIndex] : null;
-
           return (
-            <Fragment>
-              {/* Card de noticia */}
-              <article class="card animar">
-                <a href={`/nota/${nota.slug.current}`} class="card-img-wrap">
-                  <img src={imgUrl} alt={nota.titulo} loading="lazy" class="card-img" />
-                </a>
-                <div class="card-body">
-                  {nota.categoria && <span class="badge-rojo badge-sm">{nota.categoria}</span>}
-                  <h2 class="card-titulo">
-                    <a href={`/nota/${nota.slug.current}`} class="card-titulo-lnk">{nota.titulo}</a>
-                  </h2>
-                  {nota.bajada && <p class="card-bajada">{nota.bajada}</p>}
-                  <p class="card-meta">
-                    {nota.autor && <span>Por {nota.autor}</span>}
-                    {nota.autor && <span aria-hidden="true"> &middot; </span>}
-                    <span>{formatearFecha(nota.fechaPublicacion)}</span>
-                  </p>
-                </div>
-              </article>
-
-              {/* Publicidad inline: se inserta despues de cada 3 cards si existe */}
-              {pubParaInsertar && (
-                <div class="pub-inline-wrap animar">
-                  <p class="pub-inline-label">Publicidad</p>
-                  <Publicidad pub={pubParaInsertar} />
-                </div>
-              )}
-            </Fragment>
+            <article class="card animar">
+              <a href={`/nota/${nota.slug.current}`} class="card-img-wrap">
+                <img src={imgUrl} alt={nota.titulo} loading="lazy" class="card-img" />
+              </a>
+              <div class="card-body">
+                {nota.categoria && <span class="badge-rojo badge-sm">{nota.categoria}</span>}
+                <h2 class="card-titulo">
+                  <a href={`/nota/${nota.slug.current}`} class="card-titulo-lnk">{nota.titulo}</a>
+                </h2>
+                {nota.bajada && <p class="card-bajada">{nota.bajada}</p>}
+                <p class="card-meta">
+                  {nota.autor && <span>Por {nota.autor}</span>}
+                  {nota.autor && <span aria-hidden="true"> &middot; </span>}
+                  <span>{formatearFecha(nota.fechaPublicacion)}</span>
+                </p>
+              </div>
+            </article>
           );
         })}
       </div>
@@ -219,7 +198,7 @@ const masLeidas = [
     <p id="cargar-mas-fin" class="cargar-mas-fin" hidden>No hay más noticias.</p>
   </div>
 
-  <!-- SIDEBAR: max 3 publicidades + Mas Leidas -->
+  <!-- SIDEBAR: Mas Leidas + TODAS las publicidades activas -->
   <aside class="sidebar">
 
     <!-- Mas Leidas -->
@@ -243,10 +222,10 @@ const masLeidas = [
       </ol>
     </div>
 
-    <!-- Publicidades sidebar: solo las primeras 3 -->
-    {pubsSidebar.length > 0 ? (
+    <!-- Publicidades sidebar: TODAS las activas ordenadas por campo "orden" -->
+    {publicidades.length > 0 ? (
       <div class="pubs-wrap">
-        {pubsSidebar.map((pub: any) => (
+        {publicidades.map((pub: any) => (
           <Publicidad pub={pub} />
         ))}
       </div>
@@ -314,7 +293,7 @@ const masLeidas = [
 <style>
   /* BADGES */
   .badge-rojo {
-    display: inline-block; background: #C0392B; color: #fff;
+    display: inline-block; background: #1A56DB; color: #fff;
     font-family: var(--font-cuerpo); font-size: 0.63rem; font-weight: 700;
     text-transform: uppercase; letter-spacing: 0.12em;
     padding: 0.25rem 0.65rem; margin-bottom: 0.5rem;
@@ -328,7 +307,7 @@ const masLeidas = [
 
   /* ENCABEZADO DE SECCION */
   .sec-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; }
-  .sec-barra-roja { display: inline-block; width: 4px; height: 1.3rem; background: #C0392B; flex-shrink: 0; }
+  .sec-barra-roja { display: inline-block; width: 4px; height: 1.3rem; background: #1A56DB; flex-shrink: 0; }
   .sec-titulo {
     font-family: var(--font-cuerpo); font-size: 0.68rem; font-weight: 700;
     text-transform: uppercase; letter-spacing: 0.2em; color: #1a1a1a; margin: 0;
@@ -341,9 +320,7 @@ const masLeidas = [
     .cuerpo-grid { grid-template-columns: 2fr 1fr; gap: 3rem; align-items: start; }
   }
 
-  /* GRILLA DE NOTICIAS
-     Las publicidades inline ocupan grid-column: 1 / -1 (span completo).
-     En mobile la grilla es 1 col, en tablet 2 y en desktop 3. */
+  /* GRILLA DE NOTICIAS */
   .notas-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
   @media (min-width: 640px)  { .notas-grid { grid-template-columns: repeat(2, 1fr); } }
   @media (min-width: 1024px) { .notas-grid { grid-template-columns: repeat(3, 1fr); } }
@@ -374,29 +351,13 @@ const masLeidas = [
     font-weight: 700; line-height: 1.32; color: #1a1a1a; margin: 0 0 0.4rem;
   }
   .card-titulo-lnk { color: inherit; text-decoration: none; transition: color 0.2s ease; }
-  .card-titulo-lnk:hover { color: #C0392B; text-decoration: none; }
+  .card-titulo-lnk:hover { color: #1A56DB; text-decoration: none; }
   .card-bajada {
     font-family: var(--font-cuerpo); font-size: 0.84rem; color: #555;
     line-height: 1.5; margin: 0 0 0.5rem;
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
   }
   .card-meta { font-family: var(--font-cuerpo); font-size: 0.7rem; color: #999; margin: auto 0 0; padding-top: 0.5rem; }
-
-  /* PUBLICIDAD INLINE — span completo de la grilla */
-  .pub-inline-wrap {
-    grid-column: 1 / -1;          /* abarca todas las columnas disponibles */
-    border-top: 1px solid #D0D0D0;
-    border-bottom: 1px solid #D0D0D0;
-    padding: 0.75rem 0;
-    margin-block: 0.5rem;
-    background: #F9F9F7;
-  }
-  .pub-inline-label {
-    font-family: var(--font-cuerpo);
-    font-size: 0.58rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.15em;
-    color: #bbb; margin: 0 0 0.4rem; text-align: center;
-  }
 </style>
 
 <style>
@@ -422,7 +383,7 @@ const masLeidas = [
   .masleida-lnk:hover .masleida-titulo { text-decoration: underline; text-underline-offset: 3px; }
   .masleida-num {
     font-family: var(--font-titular); font-size: 1.6rem; font-weight: 900;
-    color: #C0392B; line-height: 1; flex-shrink: 0; width: 1.75rem; text-align: center; margin-top: 0.05rem;
+    color: #1A56DB; line-height: 1; flex-shrink: 0; width: 1.75rem; text-align: center; margin-top: 0.05rem;
   }
   .masleida-titulo {
     font-family: var(--font-titular); font-size: 0.9rem;
@@ -430,7 +391,7 @@ const masLeidas = [
   }
   .masleida-cat {
     font-family: var(--font-cuerpo); font-size: 0.6rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.1em; color: #C0392B;
+    text-transform: uppercase; letter-spacing: 0.1em; color: #1A56DB;
   }
 
   /* PUBLICIDAD SIDEBAR */
@@ -442,12 +403,12 @@ const masLeidas = [
   .pub-nombre { font-family: var(--font-titular); font-size: 1.2rem; font-weight: 700; color: #1a1a1a; margin: 0 0 0.4rem; line-height: 1.2; }
   .pub-desc { font-family: var(--font-cuerpo); font-size: 0.8rem; color: #666; margin: 0 0 1.25rem; line-height: 1.45; }
   .pub-btn {
-    display: block; background: #C0392B; color: #fff;
+    display: block; background: #1A56DB; color: #fff;
     font-family: var(--font-cuerpo); font-size: 0.7rem; font-weight: 700;
     text-transform: uppercase; letter-spacing: 0.12em;
     padding: 0.65rem 1rem; text-decoration: none; transition: background-color 0.15s;
   }
-  .pub-btn:hover { background: #a93226; text-decoration: none; }
+  .pub-btn:hover { background: #1447b2; text-decoration: none; }
 </style>
 
 <style>
@@ -500,7 +461,7 @@ const masLeidas = [
     font-weight: 700; line-height: 1.3; color: #1a1a1a; margin: 0 0 0.35rem;
   }
   .car-titulo-lnk { color: inherit; text-decoration: none; transition: color 0.2s ease; }
-  .car-titulo-lnk:hover { color: #C0392B; text-decoration: none; }
+  .car-titulo-lnk:hover { color: #1A56DB; text-decoration: none; }
   .car-meta { font-family: var(--font-cuerpo); font-size: 0.68rem; color: #999; margin: 0; }
 
   /* Flechas */
@@ -511,7 +472,7 @@ const masLeidas = [
     transition: background-color 0.15s;
     border-radius: 2px;
   }
-  .car-btn:hover { background: #C0392B; }
+  .car-btn:hover { background: #1A56DB; }
   /* Ocultar flechas en mobile para no molestar el scroll tactil */
   @media (max-width: 639px) { .car-btn { display: none; } }
 
@@ -526,7 +487,7 @@ const masLeidas = [
     background: #D0D0D0; padding: 0;
     transition: background-color 0.2s, transform 0.2s;
   }
-  .car-dot.active { background: #C0392B; transform: scale(1.3); }
+  .car-dot.active { background: #1A56DB; transform: scale(1.3); }
 </style>
 
 <style>
@@ -632,14 +593,14 @@ const masLeidas = [
 <style>
   /* CARGAR MÁS */
   .btn-cargar-mas {
-    background: #C0392B; color: #fff;
+    background: #1A56DB; color: #fff;
     font-family: var(--font-cuerpo); font-size: 0.78rem; font-weight: 700;
     text-transform: uppercase; letter-spacing: 0.14em;
     border: none; cursor: pointer;
     padding: 0.75rem 2rem;
     transition: background-color 0.15s, transform 0.1s;
   }
-  .btn-cargar-mas:hover { background: #a93226; }
+  .btn-cargar-mas:hover { background: #1447b2; }
   .btn-cargar-mas:active { transform: scale(0.98); }
   .btn-cargar-mas:disabled { background: #ccc; cursor: not-allowed; }
   .cargar-mas-fin { font-family: var(--font-cuerpo); font-size: 0.82rem; color: #aaa; margin-top: 1rem; }

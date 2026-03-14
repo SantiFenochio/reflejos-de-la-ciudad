@@ -1,4 +1,4 @@
----
+﻿---
 // src/components/layout/Header.astro
 import { sanityClient } from '../../lib/sanity';
 
@@ -130,7 +130,7 @@ const tickerNotas: { titulo: string; slug: { current: string } }[] = await sanit
 
 <style>
   /* TOP BAR */
-  .top-bar { background: #1a1a1a; border-bottom: 2px solid #C0392B; }
+  .top-bar { background: #1a1a1a; border-bottom: 2px solid #1A56DB; }
   .top-inner { max-width: 1280px; margin: 0 auto; padding: 0.35rem 1rem; display: flex; justify-content: space-between; align-items: center; }
   .top-fecha, .top-loc { font-family: var(--font-cuerpo); font-size: 0.7rem; color: #F5F5F0; letter-spacing: 0.04em; }
   .top-fecha { opacity: 0.8; }
@@ -143,7 +143,7 @@ const tickerNotas: { titulo: string; slug: { current: string } }[] = await sanit
   .logo-text { display: none; font-family: var(--font-titular); font-weight: 900; font-size: 2.25rem; color: #1a1a1a; letter-spacing: -0.02em; }
 
   /* NAV */
-  .nav-bar { background: #C0392B; position: sticky; top: 0; z-index: 50; box-shadow: 0 2px 8px rgba(0,0,0,0.28); }
+  .nav-bar { background: #1A56DB; position: sticky; top: 0; z-index: 50; box-shadow: 0 2px 8px rgba(0,0,0,0.28); }
   .nav-desktop { display: none; max-width: 1280px; margin: 0 auto; padding: 0 0.5rem; justify-content: center; flex-wrap: wrap; align-items: stretch; }
   @media (min-width: 768px) { .nav-desktop { display: flex; } }
   .nav-lnk { font-family: var(--font-cuerpo); font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #fff; padding: 0.65rem 0.6rem; display: inline-block; white-space: nowrap; text-decoration: none; transition: background-color 0.15s; }
@@ -155,7 +155,7 @@ const tickerNotas: { titulo: string; slug: { current: string } }[] = await sanit
   @media (min-width: 768px) { .nav-mobile-head { display: none; } }
   .nav-brand { font-family: var(--font-titular); font-size: 1rem; font-weight: 700; color: #fff; }
   .nav-btn { background: none; border: none; cursor: pointer; color: #fff; padding: 0.25rem; display: flex; align-items: center; }
-  .nav-panel { background: #a93226; border-top: 1px solid rgba(255,255,255,0.15); }
+  .nav-panel { background: #1447b2; border-top: 1px solid rgba(255,255,255,0.15); }
   .nav-panel-lnk { display: block; padding: 0.75rem 1.25rem; font-family: var(--font-cuerpo); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #fff; border-bottom: 1px solid rgba(255,255,255,0.1); text-decoration: none; transition: background-color 0.15s; }
   .nav-panel-lnk:hover { background-color: rgba(0,0,0,0.2); text-decoration: none; }
 
@@ -178,7 +178,7 @@ const tickerNotas: { titulo: string; slug: { current: string } }[] = await sanit
   }
   .buscador-input::placeholder { color: #aaa; }
   .buscador-close { background: none; border: none; cursor: pointer; color: #888; padding: 0.2rem; display: flex; align-items: center; transition: color 0.15s; }
-  .buscador-close:hover { color: #C0392B; }
+  .buscador-close:hover { color: #1A56DB; }
 
   /* RESULTADOS */
   .buscador-resultados { margin-top: 0.5rem; border: 1px solid #E8E8E8; background: #fff; max-height: 320px; overflow-y: auto; }
@@ -192,14 +192,14 @@ const tickerNotas: { titulo: string; slug: { current: string } }[] = await sanit
   .buscador-resultado:last-child { border-bottom: none; }
   .buscador-res-img { width: 56px; height: 38px; object-fit: cover; flex-shrink: 0; background: #e0e0e0; display: block; }
   .buscador-res-body { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
-  .buscador-res-cat { font-family: var(--font-cuerpo); font-size: 0.58rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #C0392B; }
+  .buscador-res-cat { font-family: var(--font-cuerpo); font-size: 0.58rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #1A56DB; }
   .buscador-res-titulo { font-family: var(--font-titular); font-size: 0.9rem; font-weight: 600; color: #1a1a1a; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .buscador-empty { font-family: var(--font-cuerpo); font-size: 0.85rem; color: #888; padding: 1rem; text-align: center; }
   .buscador-loading { font-family: var(--font-cuerpo); font-size: 0.85rem; color: #aaa; padding: 1rem; text-align: center; }
 
   /* TICKER */
   .ticker-bar { background: #111; height: 30px; display: flex; align-items: stretch; overflow: hidden; }
-  .ticker-label { background: #C0392B; color: #fff; font-family: var(--font-cuerpo); font-size: 0.58rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; padding: 0 0.85rem; display: flex; align-items: center; white-space: nowrap; flex-shrink: 0; }
+  .ticker-label { background: #1A56DB; color: #fff; font-family: var(--font-cuerpo); font-size: 0.58rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; padding: 0 0.85rem; display: flex; align-items: center; white-space: nowrap; flex-shrink: 0; }
   .ticker-content { flex: 1; overflow: hidden; display: flex; align-items: center; }
   .ticker-track { display: flex; white-space: nowrap; animation: ticker-scroll 28s linear infinite; }
   .ticker-bar:hover .ticker-track { animation-play-state: paused; }
@@ -207,7 +207,7 @@ const tickerNotas: { titulo: string; slug: { current: string } }[] = await sanit
   .ticker-item { display: inline-flex; align-items: center; }
   .ticker-lnk { font-family: var(--font-cuerpo); font-size: 0.68rem; color: rgba(245,245,240,0.78); text-decoration: none; transition: color 0.15s; }
   .ticker-lnk:hover { color: #fff; text-decoration: none; }
-  .ticker-sep { color: #C0392B; font-size: 0.75rem; }
+  .ticker-sep { color: #1A56DB; font-size: 0.75rem; }
   @keyframes ticker-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 </style>
 
