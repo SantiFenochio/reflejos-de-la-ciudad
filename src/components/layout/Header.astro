@@ -1,5 +1,7 @@
-﻿---
+---
 // src/components/layout/Header.astro
+import { sanityClient } from '../../lib/sanity';
+
 const secciones = [
   { label: 'Inicio',    href: '/'           },
   { label: 'Sociedad',  href: '/sociedad'   },
@@ -14,6 +16,11 @@ const secciones = [
   { label: 'Opiniones', href: '/opiniones'  },
   { label: 'Breves',    href: '/breves'     },
 ];
+
+// Fetch de las 5 ultimas noticias para el ticker
+const tickerNotas: { titulo: string; slug: { current: string } }[] = await sanityClient.fetch(
+  `*[_type == "articulo"] | order(fechaPublicacion desc) [0...5] { titulo, slug }`
+);
 ---
 
 <!-- BARRA SUPERIOR: fecha + ubicacion -->
@@ -26,7 +33,7 @@ const secciones = [
 
 <!-- AREA LOGO -->
 <div class="logo-area">
-  <a href="/" aria-label="Inicio — Reflejos de la Ciudad" class="logo-link">
+  <a href="/" aria-label="Inicio de Reflejos de la Ciudad" class="logo-link">
     <img
       src="/Logo.png"
       alt="Reflejos de la Ciudad"
@@ -37,7 +44,7 @@ const secciones = [
   </a>
 </div>
 
-<!-- BARRA DE NAVEGACION ROJA -->
+<!-- BARRA DE NAVEGACION ROJA (sticky) -->
 <nav class="nav-bar" aria-label="Secciones del diario">
 
   <!-- Desktop: links horizontales -->
@@ -72,94 +79,117 @@ const secciones = [
 
 </nav>
 
+<!-- TICKER: barra negra de ultimas noticias bajo el nav -->
+{tickerNotas.length > 0 && (
+  <div class="ticker-bar" role="region" aria-label="Ultimas noticias">
+    <span class="ticker-label">ULTIMO</span>
+    <div class="ticker-content">
+      <div class="ticker-track">
+        <!-- Primer bloque -->
+        <span class="ticker-bloque">
+          {tickerNotas.map((n, i) => (
+            <span class="ticker-item">
+              <a href={`/nota/${n.slug.current}`} class="ticker-lnk">{n.titulo}</a>
+              {i < tickerNotas.length - 1 && <span class="ticker-sep" aria-hidden="true">&nbsp;&middot;&nbsp;</span>}
+            </span>
+          ))}
+          <span class="ticker-sep" aria-hidden="true">&emsp;&middot;&emsp;</span>
+        </span>
+        <!-- Segundo bloque (identico, para el loop sin corte) -->
+        <span class="ticker-bloque" aria-hidden="true">
+          {tickerNotas.map((n, i) => (
+            <span class="ticker-item">
+              <a href={`/nota/${n.slug.current}`} class="ticker-lnk">{n.titulo}</a>
+              {i < tickerNotas.length - 1 && <span class="ticker-sep">&nbsp;&middot;&nbsp;</span>}
+            </span>
+          ))}
+          <span class="ticker-sep">&emsp;&middot;&emsp;</span>
+        </span>
+      </div>
+    </div>
+  </div>
+)}
+
 <style>
   /* TOP BAR */
   .top-bar { background: #1a1a1a; border-bottom: 2px solid #C0392B; }
   .top-inner {
-    max-width: 1280px; margin: 0 auto;
-    padding: 0.35rem 1rem;
+    max-width: 1280px; margin: 0 auto; padding: 0.35rem 1rem;
     display: flex; justify-content: space-between; align-items: center;
   }
-  .top-fecha, .top-loc {
-    font-family: var(--font-cuerpo);
-    font-size: 0.7rem;
-    color: #F5F5F0;
-    letter-spacing: 0.04em;
-  }
+  .top-fecha, .top-loc { font-family: var(--font-cuerpo); font-size: 0.7rem; color: #F5F5F0; letter-spacing: 0.04em; }
   .top-fecha { opacity: 0.8; }
   .top-loc   { opacity: 0.55; text-transform: uppercase; letter-spacing: 0.12em; }
 
   /* LOGO */
   .logo-area {
-    background: #ffffff;
-    padding: 1.25rem 1rem;
+    background: #ffffff; padding: 1.25rem 1rem;
     display: flex; justify-content: center; align-items: center;
     border-bottom: 1px solid #e5e5e5;
   }
   .logo-link { display: inline-block; }
   .logo-img  { max-height: 110px; width: auto; display: block; }
-  .logo-text {
-    display: none;
-    font-family: var(--font-titular);
-    font-weight: 900;
-    font-size: 2.25rem;
-    color: #1a1a1a;
-    letter-spacing: -0.02em;
-  }
+  .logo-text { display: none; font-family: var(--font-titular); font-weight: 900; font-size: 2.25rem; color: #1a1a1a; letter-spacing: -0.02em; }
 
   /* NAV ROJO */
-  .nav-bar {
-    background: #C0392B;
-    position: sticky;
-    top: 0; z-index: 50;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.28);
-  }
+  .nav-bar { background: #C0392B; position: sticky; top: 0; z-index: 50; box-shadow: 0 2px 8px rgba(0,0,0,0.28); }
 
-  /* Desktop */
-  .nav-desktop {
-    display: none;
-    max-width: 1280px; margin: 0 auto;
-    padding: 0 0.5rem;
-    justify-content: center; flex-wrap: wrap; align-items: stretch;
-  }
+  .nav-desktop { display: none; max-width: 1280px; margin: 0 auto; padding: 0 0.5rem; justify-content: center; flex-wrap: wrap; align-items: stretch; }
   @media (min-width: 768px) { .nav-desktop { display: flex; } }
 
   .nav-lnk {
-    font-family: var(--font-cuerpo);
-    font-size: 0.68rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.1em;
-    color: #ffffff;
-    padding: 0.65rem 0.6rem;
-    display: inline-block;
-    white-space: nowrap;
-    text-decoration: none;
-    transition: background-color 0.15s;
+    font-family: var(--font-cuerpo); font-size: 0.68rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.1em; color: #ffffff;
+    padding: 0.65rem 0.6rem; display: inline-block; white-space: nowrap;
+    text-decoration: none; transition: background-color 0.15s;
   }
   .nav-lnk:hover { background-color: rgba(0,0,0,0.2); text-decoration: none; }
 
-  /* Mobile head */
-  .nav-mobile-head {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 0 1rem; min-height: 44px;
-  }
+  .nav-mobile-head { display: flex; justify-content: space-between; align-items: center; padding: 0 1rem; min-height: 44px; }
   @media (min-width: 768px) { .nav-mobile-head { display: none; } }
   .nav-brand { font-family: var(--font-titular); font-size: 1rem; font-weight: 700; color: #fff; }
   .nav-btn { background: none; border: none; cursor: pointer; color: #fff; padding: 0.25rem; display: flex; align-items: center; }
 
-  /* Mobile panel */
   .nav-panel { background: #a93226; border-top: 1px solid rgba(255,255,255,0.15); }
   .nav-panel-lnk {
-    display: block;
-    padding: 0.75rem 1.25rem;
-    font-family: var(--font-cuerpo);
-    font-size: 0.8rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.1em;
-    color: #fff;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    text-decoration: none;
-    transition: background-color 0.15s;
+    display: block; padding: 0.75rem 1.25rem;
+    font-family: var(--font-cuerpo); font-size: 0.8rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.1em; color: #fff;
+    border-bottom: 1px solid rgba(255,255,255,0.1); text-decoration: none; transition: background-color 0.15s;
   }
   .nav-panel-lnk:hover { background-color: rgba(0,0,0,0.2); text-decoration: none; }
+
+  /* TICKER */
+  .ticker-bar {
+    background: #111111; height: 30px;
+    display: flex; align-items: stretch; overflow: hidden;
+  }
+  .ticker-label {
+    background: #C0392B; color: #fff;
+    font-family: var(--font-cuerpo); font-size: 0.58rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.12em;
+    padding: 0 0.85rem; display: flex; align-items: center;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  .ticker-content { flex: 1; overflow: hidden; display: flex; align-items: center; }
+  .ticker-track {
+    display: flex; white-space: nowrap;
+    animation: ticker-scroll 28s linear infinite;
+  }
+  .ticker-bar:hover .ticker-track { animation-play-state: paused; }
+  .ticker-bloque { display: inline-flex; align-items: center; }
+  .ticker-item { display: inline-flex; align-items: center; }
+  .ticker-lnk {
+    font-family: var(--font-cuerpo); font-size: 0.68rem; color: rgba(245,245,240,0.78);
+    text-decoration: none; transition: color 0.15s;
+  }
+  .ticker-lnk:hover { color: #fff; text-decoration: none; }
+  .ticker-sep { color: #C0392B; font-size: 0.75rem; }
+
+  @keyframes ticker-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
 </style>
 
 <script>
@@ -172,7 +202,7 @@ const secciones = [
       });
       el.textContent = f.charAt(0).toUpperCase() + f.slice(1);
     }
-    // Toggle mobile
+    // Toggle mobile menu
     const btn   = document.getElementById('nav-toggle');
     const panel = document.getElementById('nav-mobile-panel');
     const iM    = document.getElementById('icon-menu');

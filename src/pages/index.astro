@@ -20,8 +20,9 @@ const publicidades: any[] = await sanityClient.fetch(
 const pubsSidebar = publicidades.slice(0, 3);
 const pubsInline  = publicidades.slice(3);
 
-const hero   = notas[0] ?? null;
-const grilla = notas.slice(1, 7);
+const hero     = notas[0] ?? null;
+const grilla   = notas.slice(1, 7);
+const carrusel = grilla; // las mismas 6 ultimas para el carrusel destacado
 
 function formatearFecha(iso: string): string {
   return new Date(iso).toLocaleDateString('es-AR', {
@@ -85,6 +86,67 @@ const masLeidas = [
 </div>
 
 <!-- ============================================================
+     CARRUSEL DE DESTACADAS
+     CSS scroll-snap + flechas + dots + autoscroll JS vanilla
+     ============================================================ -->
+{carrusel.length > 0 && (
+  <section class="car-section">
+    <div class="sec-header">
+      <span class="sec-barra-roja"></span>
+      <h2 class="sec-titulo">Destacadas</h2>
+      <div class="sec-linea"></div>
+    </div>
+
+    <div class="car-outer">
+      <!-- Flecha izquierda -->
+      <button class="car-btn car-prev" id="car-prev" aria-label="Nota anterior">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+
+      <!-- Track con scroll-snap -->
+      <div class="car-track" id="car-track">
+        {carrusel.map((nota, i) => {
+          const imgUrl = nota.imagen
+            ? urlFor(nota.imagen).width(600).height(340).url()
+            : `https://picsum.photos/seed/car-${nota.slug.current}/600/340`;
+          return (
+            <div class="car-slide" data-index={i}>
+              <a href={`/nota/${nota.slug.current}`} class="car-img-wrap">
+                <img src={imgUrl} alt={nota.titulo} loading="lazy" class="car-img" />
+              </a>
+              <div class="car-body">
+                {nota.categoria && <span class="badge-rojo badge-sm">{nota.categoria}</span>}
+                <h3 class="car-titulo">
+                  <a href={`/nota/${nota.slug.current}`} class="car-titulo-lnk">{nota.titulo}</a>
+                </h3>
+                <p class="car-meta">{formatearFecha(nota.fechaPublicacion)}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <!-- Flecha derecha -->
+      <button class="car-btn car-next" id="car-next" aria-label="Nota siguiente">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+
+    <!-- Dots de navegacion -->
+    <div class="car-dots" id="car-dots" role="tablist">
+      {carrusel.map((_, i) => (
+        <button
+          class={`car-dot${i === 0 ? ' active' : ''}`}
+          data-index={i}
+          aria-label={`Ir a nota ${i + 1}`}
+          role="tab"
+        ></button>
+      ))}
+    </div>
+  </section>
+)}
+
+<!-- ============================================================
      CUERPO: GRILLA DE NOTICIAS + SIDEBAR
      ============================================================ -->
 <div class="cuerpo-grid">
@@ -114,7 +176,7 @@ const masLeidas = [
           return (
             <Fragment>
               {/* Card de noticia */}
-              <article class="card">
+              <article class="card animar">
                 <a href={`/nota/${nota.slug.current}`} class="card-img-wrap">
                   <img src={imgUrl} alt={nota.titulo} loading="lazy" class="card-img" />
                 </a>
@@ -134,7 +196,7 @@ const masLeidas = [
 
               {/* Publicidad inline: se inserta despues de cada 3 cards si existe */}
               {pubParaInsertar && (
-                <div class="pub-inline-wrap">
+                <div class="pub-inline-wrap animar">
                   <p class="pub-inline-label">Publicidad</p>
                   <Publicidad pub={pubParaInsertar} />
                 </div>
@@ -159,7 +221,7 @@ const masLeidas = [
       </div>
       <ol class="masleidas-list">
         {masLeidas.map((nota, i) => (
-          <li class="masleida-item">
+          <li class="masleida-item animar">
             <a href={`/nota/${nota.slug}`} class="masleida-lnk">
               <span class="masleida-num">{i + 1}</span>
               <div>
@@ -282,7 +344,12 @@ const masLeidas = [
 
 <style>
   /* CARDS */
-  .card { display: flex; flex-direction: column; }
+  .card {
+    display: flex; flex-direction: column;
+    transition: box-shadow 0.2s ease;
+    border-radius: 2px;
+  }
+  .card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.12); }
   .card-img-wrap {
     display: block; overflow: hidden;
     aspect-ratio: 16/9; background: #e5e5e5; margin-bottom: 0.75rem;
@@ -297,8 +364,8 @@ const masLeidas = [
     font-family: var(--font-titular); font-size: 1rem;
     font-weight: 700; line-height: 1.32; color: #1a1a1a; margin: 0 0 0.4rem;
   }
-  .card-titulo-lnk { color: inherit; text-decoration: none; }
-  .card-titulo-lnk:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .card-titulo-lnk { color: inherit; text-decoration: none; transition: color 0.2s ease; }
+  .card-titulo-lnk:hover { color: #C0392B; text-decoration: none; }
   .card-bajada {
     font-family: var(--font-cuerpo); font-size: 0.84rem; color: #555;
     line-height: 1.5; margin: 0 0 0.5rem;
@@ -373,3 +440,182 @@ const masLeidas = [
   }
   .pub-btn:hover { background: #a93226; text-decoration: none; }
 </style>
+
+<style>
+  /* ============================================================
+     CARRUSEL
+     ============================================================ */
+  .car-section { margin-bottom: 2.5rem; }
+
+  .car-outer {
+    position: relative;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+
+  /* Track con scroll-snap horizontal */
+  .car-track {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    gap: 1.25rem;
+    flex: 1;
+    padding-bottom: 0.25rem; /* espacio para el shadow de hover */
+  }
+  .car-track::-webkit-scrollbar { display: none; }
+  .car-track { scrollbar-width: none; }
+
+  /* Slides: 1 en mobile, 2 en tablet, 3 en desktop */
+  .car-slide {
+    scroll-snap-align: start;
+    flex: 0 0 82%;
+    min-width: 0;
+    display: flex; flex-direction: column;
+  }
+  @media (min-width: 640px)  { .car-slide { flex: 0 0 calc(50% - 0.625rem); } }
+  @media (min-width: 1024px) { .car-slide { flex: 0 0 calc(33.333% - 0.834rem); } }
+
+  /* Imagen del slide */
+  .car-img-wrap {
+    display: block; overflow: hidden;
+    aspect-ratio: 16/9; background: #e5e5e5; margin-bottom: 0.65rem;
+  }
+  .car-img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
+  .car-img-wrap:hover .car-img { transform: scale(1.06); }
+
+  /* Body del slide */
+  .car-body { display: flex; flex-direction: column; }
+  .car-titulo {
+    font-family: var(--font-titular); font-size: 0.95rem;
+    font-weight: 700; line-height: 1.3; color: #1a1a1a; margin: 0 0 0.35rem;
+  }
+  .car-titulo-lnk { color: inherit; text-decoration: none; transition: color 0.2s ease; }
+  .car-titulo-lnk:hover { color: #C0392B; text-decoration: none; }
+  .car-meta { font-family: var(--font-cuerpo); font-size: 0.68rem; color: #999; margin: 0; }
+
+  /* Flechas */
+  .car-btn {
+    flex-shrink: 0; width: 34px; height: 34px;
+    background: #1a1a1a; color: #fff; border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background-color 0.15s;
+    border-radius: 2px;
+  }
+  .car-btn:hover { background: #C0392B; }
+  /* Ocultar flechas en mobile para no molestar el scroll tactil */
+  @media (max-width: 639px) { .car-btn { display: none; } }
+
+  /* Dots */
+  .car-dots {
+    display: flex; justify-content: center; gap: 0.5rem;
+    margin-top: 1rem;
+  }
+  .car-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%; border: none; cursor: pointer;
+    background: #D0D0D0; padding: 0;
+    transition: background-color 0.2s, transform 0.2s;
+  }
+  .car-dot.active { background: #C0392B; transform: scale(1.3); }
+</style>
+
+<style>
+  /* ============================================================
+     ANIMACIONES DE ENTRADA (Intersection Observer)
+     ============================================================ */
+  .animar {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .animar.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  /* Stagger: cada item se retrasa levemente segun su posicion */
+  .animar:nth-child(2) { transition-delay: 0.06s; }
+  .animar:nth-child(3) { transition-delay: 0.12s; }
+  .animar:nth-child(4) { transition-delay: 0.06s; }
+  .animar:nth-child(5) { transition-delay: 0.12s; }
+  .animar:nth-child(6) { transition-delay: 0.18s; }
+</style>
+
+<script>
+  /* ============================================================
+     CARRUSEL — scroll-snap + flechas + dots + autoplay 4s
+     ============================================================ */
+  (function () {
+    var track  = document.getElementById('car-track');
+    var dotsEl = document.getElementById('car-dots');
+    if (!track) return;
+
+    var slides = Array.from(track.querySelectorAll('.car-slide'));
+    var dots   = dotsEl ? Array.from(dotsEl.querySelectorAll('.car-dot')) : [];
+    var current = 0;
+    var timer;
+
+    function setActive(idx) {
+      current = ((idx % slides.length) + slides.length) % slides.length;
+      // Scroll al slide target usando offsetLeft para maximo soporte
+      track.scrollTo({ left: slides[current].offsetLeft, behavior: 'smooth' });
+      dots.forEach(function(d, i) { d.classList.toggle('active', i === current); });
+    }
+
+    // Sincronizar dots con scroll tactil (mobile)
+    var scrollTimer;
+    track.addEventListener('scroll', function () {
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(function () {
+        var best = 0; var bestDist = Infinity;
+        slides.forEach(function (s, i) {
+          var d = Math.abs(s.offsetLeft - track.scrollLeft);
+          if (d < bestDist) { bestDist = d; best = i; }
+        });
+        if (best !== current) {
+          current = best;
+          dots.forEach(function(d, i) { d.classList.toggle('active', i === current); });
+        }
+      }, 80);
+    }, { passive: true });
+
+    // Flechas
+    var btnPrev = document.getElementById('car-prev');
+    var btnNext = document.getElementById('car-next');
+    if (btnPrev) btnPrev.addEventListener('click', function () { clearInterval(timer); setActive(current - 1); startAuto(); });
+    if (btnNext) btnNext.addEventListener('click', function () { clearInterval(timer); setActive(current + 1); startAuto(); });
+
+    // Dots
+    dots.forEach(function (d, i) {
+      d.addEventListener('click', function () { clearInterval(timer); setActive(i); startAuto(); });
+    });
+
+    // Autoplay cada 4 segundos
+    function startAuto() { timer = setInterval(function () { setActive(current + 1); }, 4000); }
+
+    // Pausar autoplay cuando el usuario interactua con el track
+    track.addEventListener('pointerdown', function () { clearInterval(timer); }, { passive: true });
+    track.addEventListener('pointerup',   function () { startAuto(); }, { passive: true });
+
+    startAuto();
+  })();
+
+  /* ============================================================
+     ANIMACIONES DE ENTRADA — Intersection Observer
+     ============================================================ */
+  (function () {
+    var items = document.querySelectorAll('.animar');
+    if (!items.length) return;
+
+    var obs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    items.forEach(function (el) { obs.observe(el); });
+  })();
+</script>
