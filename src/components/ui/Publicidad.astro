@@ -2,47 +2,82 @@
 // src/components/ui/Publicidad.astro
 interface Props {
   pub: {
-    _id:        string
-    nombre:     string
-    imagenUrl?: string
+    _id:          string
+    nombre:       string
+    imagenUrl?:   string
     linkDestino?: string
-    posicion:   string
+    posicion:     string
   }
 }
 
 const { pub } = Astro.props
-if (!pub?.imagenUrl) return
+const tieneImagen = !!pub?.imagenUrl
 ---
 
-<div style="margin-bottom: 1.25rem;">
-  {pub.linkDestino ? (
-    <a
-      href={pub.linkDestino}
-      target="_blank"
-      rel="noopener noreferrer sponsored"
-      aria-label={`Publicidad: ${pub.nombre}`}
-      style="display: block;"
-    >
+{tieneImagen && (
+  <div class="pub-wrapper">
+
+    <!-- Etiqueta "Publicidad" arriba -->
+    <p class="pub-label">Publicidad</p>
+
+    <!-- Imagen con o sin link -->
+    {pub.linkDestino ? (
+      <a
+        href={pub.linkDestino}
+        target="_blank"
+        rel="noopener noreferrer sponsored"
+        aria-label={`Publicidad: ${pub.nombre}`}
+        class="pub-link"
+      >
+        <img
+          src={pub.imagenUrl}
+          alt={pub.nombre}
+          loading="lazy"
+          class="pub-img"
+        />
+      </a>
+    ) : (
       <img
         src={pub.imagenUrl}
         alt={pub.nombre}
         loading="lazy"
-        style="width: 100%; display: block; border: 1px solid var(--color-borde);"
+        class="pub-img"
       />
-    </a>
-  ) : (
-    <img
-      src={pub.imagenUrl}
-      alt={pub.nombre}
-      loading="lazy"
-      style="width: 100%; display: block; border: 1px solid var(--color-borde);"
-    />
-  )}
-  <p style="
+    )}
+
+  </div>
+)}
+
+<style>
+  .pub-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .pub-label {
     font-family: var(--font-cuerpo);
-    font-size: 0.6rem; font-weight: 600;
-    text-transform: uppercase; letter-spacing: 0.12em;
-    color: var(--color-secundario); opacity: 0.5;
-    text-align: right; margin-top: 0.2rem;
-  ">Publicidad</p>
-</div>
+    font-size: 0.58rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--color-secundario);
+    opacity: 0.45;
+    margin: 0;
+    text-align: left;
+  }
+
+  .pub-link {
+    display: block;
+    width: 100%;
+  }
+
+  .pub-img {
+    width: 100%;
+    display: block;
+    object-fit: contain;
+    border: 1px solid var(--color-borde);
+    background-color: #fff;
+  }
+</style>
