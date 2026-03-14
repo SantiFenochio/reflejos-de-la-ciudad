@@ -150,53 +150,55 @@ const masLeidas = [
      ============================================================ -->
 <div class="cuerpo-grid">
 
-  <!-- COLUMNA PRINCIPAL DE NOTICIAS -->
-  <section>
-    <div class="sec-header">
-      <span class="sec-barra-roja"></span>
-      <h2 class="sec-titulo">Ultimas Noticias</h2>
-      <div class="sec-linea"></div>
-    </div>
-
-    {grilla.length > 0 ? (
-      <div class="notas-grid">
-        {grilla.map((nota) => {
-          const imgUrl = nota.imagen
-            ? urlFor(nota.imagen).width(800).height(450).url()
-            : `https://picsum.photos/seed/${nota.slug.current}/800/450`;
-          return (
-            <article class="card animar">
-              <a href={`/nota/${nota.slug.current}`} class="card-img-wrap">
-                <img src={imgUrl} alt={nota.titulo} loading="lazy" class="card-img" />
-              </a>
-              <div class="card-body">
-                {nota.categoria && <span class="badge-rojo badge-sm">{nota.categoria}</span>}
-                <h2 class="card-titulo">
-                  <a href={`/nota/${nota.slug.current}`} class="card-titulo-lnk">{nota.titulo}</a>
-                </h2>
-                {nota.bajada && <p class="card-bajada">{nota.bajada}</p>}
-                <p class="card-meta">
-                  {nota.autor && <span>Por {nota.autor}</span>}
-                  {nota.autor && <span aria-hidden="true"> &middot; </span>}
-                  <span>{formatearFecha(nota.fechaPublicacion)}</span>
-                </p>
-              </div>
-            </article>
-          );
-        })}
+  <!-- COLUMNA PRINCIPAL: noticias + cargar más -->
+  <div class="col-principal">
+    <section>
+      <div class="sec-header">
+        <span class="sec-barra-roja"></span>
+        <h2 class="sec-titulo">Ultimas Noticias</h2>
+        <div class="sec-linea"></div>
       </div>
-    ) : (
-      <p class="empty-msg">Proximamente mas noticias.</p>
-    )}
-  </section>
 
-  <!-- CARGAR MÁS — aparece debajo de la grilla, centrado -->
-  <div id="cargar-mas-wrap" style="grid-column:1/-1;text-align:center;margin-top:2rem;">
-    <button id="btn-cargar-mas" class="btn-cargar-mas" data-offset="13">
-      Cargar más noticias
-    </button>
-    <p id="cargar-mas-fin" class="cargar-mas-fin" hidden>No hay más noticias.</p>
-  </div>
+      {grilla.length > 0 ? (
+        <div class="notas-grid">
+          {grilla.map((nota) => {
+            const imgUrl = nota.imagen
+              ? urlFor(nota.imagen).width(800).height(450).url()
+              : `https://picsum.photos/seed/${nota.slug.current}/800/450`;
+            return (
+              <article class="card animar">
+                <a href={`/nota/${nota.slug.current}`} class="card-img-wrap">
+                  <img src={imgUrl} alt={nota.titulo} loading="lazy" class="card-img" />
+                </a>
+                <div class="card-body">
+                  {nota.categoria && <span class="badge-rojo badge-sm">{nota.categoria}</span>}
+                  <h2 class="card-titulo">
+                    <a href={`/nota/${nota.slug.current}`} class="card-titulo-lnk">{nota.titulo}</a>
+                  </h2>
+                  {nota.bajada && <p class="card-bajada">{nota.bajada}</p>}
+                  <p class="card-meta">
+                    {nota.autor && <span>Por {nota.autor}</span>}
+                    {nota.autor && <span aria-hidden="true"> &middot; </span>}
+                    <span>{formatearFecha(nota.fechaPublicacion)}</span>
+                  </p>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      ) : (
+        <p class="empty-msg">Proximamente mas noticias.</p>
+      )}
+    </section>
+
+    <!-- CARGAR MÁS — dentro de la columna principal -->
+    <div id="cargar-mas-wrap" style="text-align:center;margin-top:2rem;">
+      <button id="btn-cargar-mas" class="btn-cargar-mas" data-offset="13">
+        Cargar más noticias
+      </button>
+      <p id="cargar-mas-fin" class="cargar-mas-fin" hidden>No hay más noticias.</p>
+    </div>
+  </div>{/* fin col-principal */}
 
   <!-- SIDEBAR: Mas Leidas + TODAS las publicidades activas -->
   <aside class="sidebar">
@@ -314,10 +316,20 @@ const masLeidas = [
   }
   .sec-linea { flex: 1; height: 1px; background: #D0D0D0; margin-left: 0.25rem; }
 
-  /* LAYOUT PRINCIPAL */
-  .cuerpo-grid { display: grid; grid-template-columns: 1fr; gap: 2.5rem; }
-  @media (min-width: 1024px) {
-    .cuerpo-grid { grid-template-columns: 2fr 1fr; gap: 3rem; align-items: start; }
+  /* LAYOUT PRINCIPAL: dos columnas fijas */
+  .cuerpo-grid {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 2rem;
+    align-items: start;
+  }
+  /* Columna izquierda: noticias + cargar más apilados */
+  .col-principal { display: flex; flex-direction: column; min-width: 0; }
+
+  /* Mobile: una sola columna */
+  @media (max-width: 768px) {
+    .cuerpo-grid { grid-template-columns: 1fr; }
+    .sidebar { position: static !important; }
   }
 
   /* GRILLA DE NOTICIAS */
@@ -362,13 +374,19 @@ const masLeidas = [
 
 <style>
   /* SIDEBAR */
-  .sidebar { border-top: 3px solid #1a1a1a; padding-top: 1.25rem; }
-  @media (min-width: 1024px) {
+  .sidebar {
+    position: sticky;
+    top: 80px;
+    align-self: start;
+    border-left: 1px solid #D0D0D0;
+    padding-left: 1.5rem;
+  }
+  @media (max-width: 768px) {
     .sidebar {
-      border-top: none;
-      border-left: 1px solid #D0D0D0;
-      padding-top: 0; padding-left: 1.5rem;
-      /* align-self: start en el padre ya evita que el sidebar se estire */
+      border-left: none;
+      border-top: 3px solid #1a1a1a;
+      padding-left: 0;
+      padding-top: 1.25rem;
     }
   }
   .sidebar-block { margin-bottom: 2.5rem; }
