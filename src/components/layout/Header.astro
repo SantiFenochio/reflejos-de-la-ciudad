@@ -1,224 +1,198 @@
----
+﻿---
 // src/components/layout/Header.astro
-// Header completo: franja superior + logo + separador doble + navbar
-
 const secciones = [
   { label: 'Inicio',    href: '/'           },
   { label: 'Sociedad',  href: '/sociedad'   },
   { label: 'Deportes',  href: '/deportes'   },
   { label: 'Salud',     href: '/salud'      },
-  { label: 'Educación', href: '/educacion'  },
+  { label: 'Educacion', href: '/educacion'  },
   { label: 'Seguridad', href: '/seguridad'  },
   { label: 'Cultura',   href: '/cultura'    },
-  { label: 'Economía',  href: '/economia'   },
+  { label: 'Economia',  href: '/economia'   },
   { label: 'Vecinos',   href: '/vecinos'    },
-  { label: 'Política',  href: '/politica'   },
+  { label: 'Politica',  href: '/politica'   },
   { label: 'Opiniones', href: '/opiniones'  },
   { label: 'Breves',    href: '/breves'     },
 ];
 ---
 
-<!-- ════════════════════════════════════════════════════
-     1. FRANJA SUPERIOR: fecha + ubicación
-     ════════════════════════════════════════════════════ -->
-<div style="background-color: #1C1C1C; color: #F5F5F0;">
-  <div class="max-w-screen-xl mx-auto px-4 py-1.5 flex items-center justify-between">
-
-    <!-- Fecha dinámica en español — se hidrata con JS del lado cliente -->
-    <span
-      id="header-fecha"
-      class="text-xs tracking-wide"
-      style="font-family: var(--font-cuerpo); opacity: 0.85;"
-    >
-      <!-- Fallback SSR: se reemplaza en cliente -->
-      Cargando fecha...
-    </span>
-
-    <span
-      class="text-xs tracking-widest uppercase"
-      style="font-family: var(--font-cuerpo); opacity: 0.65;"
-    >
-      San Martín &middot; Buenos Aires
-    </span>
-
+<!-- BARRA SUPERIOR: fecha + ubicacion -->
+<div class="top-bar">
+  <div class="top-inner">
+    <span id="header-fecha" class="top-fecha">Cargando fecha...</span>
+    <span class="top-loc">San Martin &middot; Buenos Aires</span>
   </div>
 </div>
 
-<!-- ════════════════════════════════════════════════════
-     2. BLOQUE DEL LOGO
-     ════════════════════════════════════════════════════ -->
-<div style="background-color: #ffffff;" class="py-6 flex items-center justify-center">
-  <a href="/" aria-label="Inicio — Reflejos de la Ciudad">
+<!-- AREA LOGO -->
+<div class="logo-area">
+  <a href="/" aria-label="Inicio — Reflejos de la Ciudad" class="logo-link">
     <img
-      src="/logo.png"
+      src="/Logo.png"
       alt="Reflejos de la Ciudad"
-      style="max-height: 80px; width: auto; object-fit: contain;"
-      onerror="this.style.display='none'; document.getElementById('logo-fallback').style.display='block';"
+      class="logo-img"
+      onerror="this.style.display='none';document.getElementById('logo-text').style.display='block';"
     />
-    <!-- Fallback tipográfico si el PNG no carga -->
-    <span
-      id="logo-fallback"
-      style="
-        display: none;
-        font-family: var(--font-titular);
-        font-weight: 700;
-        font-size: 2rem;
-        color: var(--color-periodico);
-        letter-spacing: -0.02em;
-      "
-    >
-      Reflejos de la Ciudad
-    </span>
+    <span id="logo-text" class="logo-text">Reflejos de la Ciudad</span>
   </a>
 </div>
 
-<!-- ════════════════════════════════════════════════════
-     3. SEPARADOR DOBLE — estilo diario impreso
-     ════════════════════════════════════════════════════ -->
-<div style="
-  border-top: 3px double #1C1C1C;
-  margin: 0;
-"></div>
+<!-- BARRA DE NAVEGACION ROJA -->
+<nav class="nav-bar" aria-label="Secciones del diario">
 
-
-<!-- ════════════════════════════════════════════════════
-     4. BARRA DE NAVEGACIÓN
-     Desktop: fila horizontal con separadores "|"
-     Mobile:  hamburguesa que despliega columna
-     ════════════════════════════════════════════════════ -->
-<nav
-  style="background-color: #ffffff; border-bottom: 1px solid #D0D0D0;"
-  aria-label="Secciones del diario"
->
-
-  <!-- ── Desktop nav ─────────────────────────────────── -->
-  <div class="hidden md:flex items-center justify-center max-w-screen-xl mx-auto px-4 py-2 flex-wrap gap-y-1">
-    {secciones.map((s, i) => (
-      <>
-        <a
-          href={s.href}
-          style="
-            font-family: var(--font-cuerpo);
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-            color: #4A4A4A;
-            transition: color 0.15s ease;
-            padding-inline: 0.5rem;
-            white-space: nowrap;
-          "
-          onmouseover="this.style.color='#1C1C1C'"
-          onmouseout="this.style.color='#4A4A4A'"
-        >
-          {s.label}
-        </a>
-        {i < secciones.length - 1 && (
-          <span style="color: #D0D0D0; font-size: 0.75rem; select: none;" aria-hidden="true">|</span>
-        )}
-      </>
+  <!-- Desktop: links horizontales -->
+  <div class="nav-desktop">
+    {secciones.map((s) => (
+      <a href={s.href} class="nav-lnk">{s.label}</a>
     ))}
   </div>
 
-
-  <!-- ── Mobile nav ──────────────────────────────────── -->
-  <div class="flex md:hidden items-center justify-end px-4 py-2">
-    <button
-      id="nav-toggle"
-      aria-label="Abrir menú de secciones"
-      aria-expanded="false"
-      aria-controls="nav-mobile"
-      style="
-        font-size: 1.5rem;
-        color: #1C1C1C;
-        background: none;
-        border: none;
-        cursor: pointer;
-        padding: 0.25rem 0.5rem;
-        line-height: 1;
-      "
-    >
-      ☰
+  <!-- Mobile: nombre + boton hamburguesa -->
+  <div class="nav-mobile-head">
+    <span class="nav-brand">Reflejos de la Ciudad</span>
+    <button id="nav-toggle" class="nav-btn" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav-mobile-panel">
+      <svg id="icon-menu" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+      <svg id="icon-close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="display:none">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
     </button>
   </div>
 
-  <!-- Panel desplegable mobile -->
-  <div
-    id="nav-mobile"
-    hidden
-    style="border-top: 1px solid #D0D0D0; background-color: #ffffff;"
-  >
+  <!-- Mobile: panel desplegable -->
+  <div id="nav-mobile-panel" class="nav-panel" hidden>
     {secciones.map((s) => (
-      <a
-        href={s.href}
-        style="
-          display: block;
-          padding: 0.625rem 1.25rem;
-          font-family: var(--font-cuerpo);
-          font-size: 0.8rem;
-          font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: 0.1em;
-          color: #4A4A4A;
-          border-bottom: 1px solid #F0F0EC;
-          transition: color 0.15s ease, background-color 0.15s ease;
-        "
-        onmouseover="this.style.color='#1C1C1C'; this.style.backgroundColor='#F5F5F0';"
-        onmouseout="this.style.color='#4A4A4A'; this.style.backgroundColor='transparent';"
-      >
-        {s.label}
-      </a>
+      <a href={s.href} class="nav-panel-lnk">{s.label}</a>
     ))}
   </div>
 
 </nav>
 
+<style>
+  /* TOP BAR */
+  .top-bar { background: #1a1a1a; border-bottom: 2px solid #C0392B; }
+  .top-inner {
+    max-width: 1280px; margin: 0 auto;
+    padding: 0.35rem 1rem;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .top-fecha, .top-loc {
+    font-family: var(--font-cuerpo);
+    font-size: 0.7rem;
+    color: #F5F5F0;
+    letter-spacing: 0.04em;
+  }
+  .top-fecha { opacity: 0.8; }
+  .top-loc   { opacity: 0.55; text-transform: uppercase; letter-spacing: 0.12em; }
 
-<!-- ════════════════════════════════════════════════════
-     SCRIPTS
-     - Fecha dinámica en español (cliente)
-     - Toggle menú hamburguesa mobile
-     ════════════════════════════════════════════════════ -->
+  /* LOGO */
+  .logo-area {
+    background: #ffffff;
+    padding: 1.25rem 1rem;
+    display: flex; justify-content: center; align-items: center;
+    border-bottom: 1px solid #e5e5e5;
+  }
+  .logo-link { display: inline-block; }
+  .logo-img  { max-height: 110px; width: auto; display: block; }
+  .logo-text {
+    display: none;
+    font-family: var(--font-titular);
+    font-weight: 900;
+    font-size: 2.25rem;
+    color: #1a1a1a;
+    letter-spacing: -0.02em;
+  }
+
+  /* NAV ROJO */
+  .nav-bar {
+    background: #C0392B;
+    position: sticky;
+    top: 0; z-index: 50;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.28);
+  }
+
+  /* Desktop */
+  .nav-desktop {
+    display: none;
+    max-width: 1280px; margin: 0 auto;
+    padding: 0 0.5rem;
+    justify-content: center; flex-wrap: wrap; align-items: stretch;
+  }
+  @media (min-width: 768px) { .nav-desktop { display: flex; } }
+
+  .nav-lnk {
+    font-family: var(--font-cuerpo);
+    font-size: 0.68rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: #ffffff;
+    padding: 0.65rem 0.6rem;
+    display: inline-block;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: background-color 0.15s;
+  }
+  .nav-lnk:hover { background-color: rgba(0,0,0,0.2); text-decoration: none; }
+
+  /* Mobile head */
+  .nav-mobile-head {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 1rem; min-height: 44px;
+  }
+  @media (min-width: 768px) { .nav-mobile-head { display: none; } }
+  .nav-brand { font-family: var(--font-titular); font-size: 1rem; font-weight: 700; color: #fff; }
+  .nav-btn { background: none; border: none; cursor: pointer; color: #fff; padding: 0.25rem; display: flex; align-items: center; }
+
+  /* Mobile panel */
+  .nav-panel { background: #a93226; border-top: 1px solid rgba(255,255,255,0.15); }
+  .nav-panel-lnk {
+    display: block;
+    padding: 0.75rem 1.25rem;
+    font-family: var(--font-cuerpo);
+    font-size: 0.8rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: #fff;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    text-decoration: none;
+    transition: background-color 0.15s;
+  }
+  .nav-panel-lnk:hover { background-color: rgba(0,0,0,0.2); text-decoration: none; }
+</style>
+
 <script>
-  // ── Fecha dinámica en español argentino ──────────────
-  (function () {
+  (function() {
+    // Fecha dinamica
     const el = document.getElementById('header-fecha');
-    if (!el) return;
-
-    const ahora = new Date();
-    const fecha = ahora.toLocaleDateString('es-AR', {
-      weekday: 'long',
-      day:     'numeric',
-      month:   'long',
-      year:    'numeric',
-    });
-
-    // Capitaliza la primera letra: "viernes 13..." → "Viernes 13..."
-    el.textContent = fecha.charAt(0).toUpperCase() + fecha.slice(1);
-  })();
-
-  // ── Toggle menú hamburguesa ───────────────────────────
-  (function () {
-    const btn   = document.getElementById('nav-toggle');
-    const panel = document.getElementById('nav-mobile');
-    if (!btn || !panel) return;
-
-    btn.addEventListener('click', function () {
-      const isOpen = !panel.hidden;
-      panel.hidden = isOpen;
-      btn.setAttribute('aria-expanded', String(!isOpen));
-      btn.textContent = isOpen ? '☰' : '✕';
-      btn.setAttribute('aria-label', isOpen ? 'Abrir menú de secciones' : 'Cerrar menú de secciones');
-    });
-
-    // Cerrar panel al hacer click en cualquier link mobile
-    panel.querySelectorAll('a').forEach(function (link) {
-      link.addEventListener('click', function () {
-        panel.hidden = true;
-        btn.setAttribute('aria-expanded', 'false');
-        btn.textContent = '☰';
-        btn.setAttribute('aria-label', 'Abrir menú de secciones');
+    if (el) {
+      const f = new Date().toLocaleDateString('es-AR', {
+        weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
       });
-    });
+      el.textContent = f.charAt(0).toUpperCase() + f.slice(1);
+    }
+    // Toggle mobile
+    const btn   = document.getElementById('nav-toggle');
+    const panel = document.getElementById('nav-mobile-panel');
+    const iM    = document.getElementById('icon-menu');
+    const iC    = document.getElementById('icon-close');
+    if (btn && panel) {
+      btn.addEventListener('click', function() {
+        const open = !panel.hidden;
+        panel.hidden = open;
+        btn.setAttribute('aria-expanded', String(!open));
+        if (iM) iM.style.display = open ? 'block' : 'none';
+        if (iC) iC.style.display = open ? 'none'  : 'block';
+      });
+      panel.querySelectorAll('a').forEach(function(a) {
+        a.addEventListener('click', function() {
+          panel.hidden = true;
+          btn.setAttribute('aria-expanded', 'false');
+          if (iM) iM.style.display = 'block';
+          if (iC) iC.style.display = 'none';
+        });
+      });
+    }
   })();
 </script>
