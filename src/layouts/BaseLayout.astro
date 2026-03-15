@@ -78,6 +78,13 @@ const fullTitle = title.startsWith('Reflejos de la Ciudad')
     <!-- ══ SLOT HEAD: meta o scripts extra por página ═══════ -->
     <slot name="head" />
 
+    <!-- ══ NPROGRESS — barra de carga en navegación ════════ -->
+    <style is:global>
+      #nprogress .bar { background: #0085CA !important; height: 3px !important; }
+      #nprogress .peg { box-shadow: 0 0 10px #0085CA, 0 0 5px #0085CA !important; }
+      #nprogress .spinner { display: none !important; }
+    </style>
+
   </head>
 
 
@@ -129,6 +136,16 @@ const fullTitle = title.startsWith('Reflejos de la Ciudad')
         btn.addEventListener('mouseenter', function() { btn.style.transform = 'scale(1.1)'; });
         btn.addEventListener('mouseleave', function() { btn.style.transform = 'scale(1)'; });
       })();
+    </script>
+
+    <!-- NProgress: barra de progreso de navegación -->
+    <script>
+      import NProgress from 'nprogress';
+      import 'nprogress/nprogress.css';
+      NProgress.configure({ showSpinner: false, minimum: 0.2, speed: 400 });
+      // Navegación clásica (sin ViewTransitions)
+      window.addEventListener('beforeunload', function() { NProgress.start(); });
+      window.addEventListener('load', function() { NProgress.done(); });
     </script>
 
   </body>

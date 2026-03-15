@@ -21,10 +21,12 @@
     "cheerio": "^1.2.0",
     "dotenv": "^17.3.1",
     "node-fetch": "^3.3.2",
+    "nprogress": "^0.2.0",
     "styled-components": "^6.3.11",
     "tailwindcss": "^4.2.1"
   },
   "devDependencies": {
+    "@types/nprogress": "^0.2.3",
     "sanity": "^5.15.0"
   }
 }
