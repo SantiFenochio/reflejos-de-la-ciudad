@@ -15,7 +15,6 @@
     "@portabletext/to-html": "^5.0.2",
     "@sanity/client": "^7.17.0",
     "@sanity/image-url": "^2.0.3",
-    "@sanity/vision": "^5.15.0",
     "@tailwindcss/vite": "^4.2.1",
     "astro": "^6.0.4",
     "cheerio": "^1.2.0",
@@ -26,7 +25,9 @@
     "tailwindcss": "^4.2.1"
   },
   "devDependencies": {
+    "@sanity/cli": "^6.1.5",
+    "@sanity/vision": "^5.16.0",
     "@types/nprogress": "^0.2.3",
-    "sanity": "^5.15.0"
+    "sanity": "^5.16.0"
   }
 }
