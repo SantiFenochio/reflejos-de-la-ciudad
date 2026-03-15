@@ -22,16 +22,20 @@ function formatearFecha(iso: string): string {
   });
 }
 
-// Imagen hero y OG: raw CDN URL + params exactos 1200x630
-const imagenRawUrl = articulo.imagen
-  ? urlFor(articulo.imagen).url()
+// Hero — 1400×620, auto-format (WebP en navegadores modernos, JPEG fallback)
+const imagenHero = articulo.imagen
+  ? urlFor(articulo.imagen).width(1400).height(620).fit('crop').auto('format').url()
   : null;
-const imagenHero = imagenRawUrl
-  ? imagenRawUrl + '?w=1400&h=620&fit=crop&auto=format'
-  : null;
-const imagenOg = imagenRawUrl
-  ? imagenRawUrl + '?w=1200&h=630&fit=crop&auto=format'
+
+// OG image — exactamente 1200×630 WebP: tamaño ideal para WhatsApp, Facebook y Twitter
+const imagenOg = articulo.imagen
+  ? urlFor(articulo.imagen).width(1200).height(630).fit('crop').format('webp').url()
   : '/Logo.png';
+
+// Descripción SEO: bajada truncada a 155 chars (óptimo para snippets en redes)
+const descSeo = articulo.bajada
+  ? (articulo.bajada.length > 155 ? articulo.bajada.slice(0, 155) + '…' : articulo.bajada)
+  : articulo.titulo;
 
 const tituloCorto = articulo.titulo.length > 55
   ? articulo.titulo.slice(0, 55) + '…'
@@ -54,7 +58,7 @@ const cuerpoHtml = portableTextToHtml(articulo.cuerpo ?? []);
 
 <BaseLayout
   title={articulo.titulo}
-  description={articulo.bajada || articulo.titulo}
+  description={descSeo}
   image={imagenOg}
   ogType="article"
 >
@@ -63,6 +67,10 @@ const cuerpoHtml = portableTextToHtml(articulo.cuerpo ?? []);
   <meta slot="head" property="article:published_time" content={articulo.fechaPublicacion} />
   {articulo.categoria && <meta slot="head" property="article:section" content={articulo.categoria} />}
   <meta slot="head" property="og:site_name" content="Reflejos de la Ciudad" />
+  <!-- Dimensiones explícitas de imagen OG para WhatsApp/Facebook -->
+  <meta slot="head" property="og:image:width"  content="1200" />
+  <meta slot="head" property="og:image:height" content="630"  />
+  {articulo.imagen && <meta slot="head" property="og:image:type" content="image/webp" />}
 
 <!-- ============================================================
      HERO FULL-BLEED: imagen + overlay + categoria + titulo
@@ -169,7 +177,7 @@ const cuerpoHtml = portableTextToHtml(articulo.cuerpo ?? []);
     <div class="rel-grid">
       {articulo.relacionadas.map((nota) => {
         const relImg = nota.imagen
-          ? urlFor(nota.imagen).width(600).height(338).url()
+          ? urlFor(nota.imagen).width(600).height(338).fit('crop').auto('format').url()
           : `https://picsum.photos/seed/${nota.slug?.current}/600/338`;
         return (
           <article class="rel-card">

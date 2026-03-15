@@ -29,7 +29,7 @@ function formatearFecha(iso: string): string {
 }
 
 const heroImg = hero?.imagen
-  ? urlFor(hero.imagen).width(1400).height(620).url()
+  ? urlFor(hero.imagen).width(1400).height(620).fit('crop').auto('format').url()
   : 'https://picsum.photos/seed/hero-rdlc/1400/620';
 
 const masLeidas = [
@@ -106,7 +106,7 @@ const masLeidas = [
       <div class="car-track" id="car-track">
         {carrusel.map((nota, i) => {
           const imgUrl = nota.imagen
-            ? urlFor(nota.imagen).width(600).height(340).url()
+            ? urlFor(nota.imagen).width(600).height(340).fit('crop').auto('format').url()
             : `https://picsum.photos/seed/car-${nota.slug.current}/600/340`;
           return (
             <div class="car-slide" data-index={i}>
@@ -163,7 +163,7 @@ const masLeidas = [
         <div class="notas-grid">
           {grilla.map((nota, i) => {
             const imgUrl = nota.imagen
-              ? urlFor(nota.imagen).width(800).height(450).url()
+              ? urlFor(nota.imagen).width(800).height(450).fit('crop').auto('format').url()
               : `https://picsum.photos/seed/${nota.slug.current}/800/450`;
             const mostrarPubMobile = i === 2 && publicidades.length > 0;
             return (
