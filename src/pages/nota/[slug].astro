@@ -334,6 +334,39 @@ const cuerpoHtml = portableTextToHtml(articulo.cuerpo ?? []);
     line-height: 0.85; float: left; margin-right: 0.08em; margin-top: 0.1em;
     color: #1a1a1a;
   }
+
+  /* ── IMAGEN INTERCALADA ────────────────────────── */
+  .nota-cuerpo .nota-img-inline {
+    margin: 2rem 0;
+    display: block;
+  }
+  .nota-cuerpo .nota-img-inline img {
+    width: 100%; height: auto; display: block;
+    border: 1px solid #E8E8E8;
+  }
+  .nota-cuerpo .nota-img-inline figcaption {
+    font-family: var(--font-cuerpo);
+    font-size: 0.78rem; color: #777; font-style: italic;
+    margin-top: 0.4rem; padding-left: 0.25rem;
+    border-left: 2px solid #D0D0D0;
+  }
+
+  /* ── VIDEO YOUTUBE RESPONSIVE ──────────────────── */
+  .nota-cuerpo .yt-embed-wrap {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 */
+    height: 0;
+    overflow: hidden;
+    margin: 2rem 0;
+    background: #000;
+  }
+  .nota-cuerpo .yt-embed-wrap iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
 </style>
 
 <style>

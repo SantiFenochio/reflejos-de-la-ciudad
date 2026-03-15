@@ -30,6 +30,43 @@ export function portableTextToHtml(blocks: any[]): string {
         strong: ({ children }: any) => `<strong>${children}</strong>`,
         em:     ({ children }: any) => `<em>${children}</em>`,
       },
+      types: {
+        // Imagen intercalada dentro del cuerpo
+        image: ({ value }: any) => {
+          if (!value?.asset) return ''
+          const imgUrl = urlFor(value).width(900).fit('max').auto('format').url()
+          const alt     = value.alt     ? String(value.alt).replace(/"/g, '&quot;') : ''
+          const caption = value.caption ? String(value.caption) : ''
+          return [
+            '<figure class="nota-img-inline">',
+            `  <img src="${imgUrl}" alt="${alt}" loading="lazy" />`,
+            caption ? `  <figcaption>${caption}</figcaption>` : '',
+            '</figure>',
+          ].filter(Boolean).join('\n')
+        },
+        // Video de YouTube embebido
+        youtube: ({ value }: any) => {
+          const url = value?.url ?? ''
+          // Soporta: watch?v=ID, youtu.be/ID, /embed/ID, /shorts/ID
+          const match = url.match(
+            /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/
+          )
+          const videoId = match?.[1]
+          if (!videoId) return ''
+          return [
+            '<div class="yt-embed-wrap">',
+            `  <iframe`,
+            `    src="https://www.youtube.com/embed/${videoId}"`,
+            `    title="Video de YouTube"`,
+            `    frameborder="0"`,
+            `    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"`,
+            `    allowfullscreen`,
+            `    loading="lazy"`,
+            `  ></iframe>`,
+            '</div>',
+          ].join('\n')
+        },
+      },
     },
   })
 }

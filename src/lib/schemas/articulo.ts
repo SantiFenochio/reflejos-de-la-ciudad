@@ -103,7 +103,13 @@ export default defineType({
             ],
           },
         },
-        { type: 'image', options: { hotspot: true } },
+        { type: 'image', options: { hotspot: true },
+          fields: [
+            defineField({ name: 'alt',     title: 'Texto alternativo', type: 'string' }),
+            defineField({ name: 'caption', title: 'Epígrafe (pie de foto)', type: 'string' }),
+          ],
+        },
+        { type: 'youtube' },
       ],
     }),
 
