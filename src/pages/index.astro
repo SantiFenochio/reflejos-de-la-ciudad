@@ -161,28 +161,37 @@ const masLeidas = [
 
       {grilla.length > 0 ? (
         <div class="notas-grid">
-          {grilla.map((nota) => {
+          {grilla.map((nota, i) => {
             const imgUrl = nota.imagen
               ? urlFor(nota.imagen).width(800).height(450).url()
               : `https://picsum.photos/seed/${nota.slug.current}/800/450`;
+            const mostrarPubMobile = i === 2 && publicidades.length > 0;
             return (
-              <article class="card animar">
-                <a href={`/nota/${nota.slug.current}`} class="card-img-wrap">
-                  <img src={imgUrl} alt={nota.titulo} loading="lazy" class="card-img" />
-                </a>
-                <div class="card-body">
-                  {nota.categoria && <span class="badge-rojo badge-sm">{nota.categoria}</span>}
-                  <h2 class="card-titulo">
-                    <a href={`/nota/${nota.slug.current}`} class="card-titulo-lnk">{nota.titulo}</a>
-                  </h2>
-                  {nota.bajada && <p class="card-bajada">{nota.bajada}</p>}
-                  <p class="card-meta">
-                    {nota.autor && <span>Por {nota.autor}</span>}
-                    {nota.autor && <span aria-hidden="true"> &middot; </span>}
-                    <span>{formatearFecha(nota.fechaPublicacion)}</span>
-                  </p>
-                </div>
-              </article>
+              <Fragment>
+                <article class="card animar">
+                  <a href={`/nota/${nota.slug.current}`} class="card-img-wrap">
+                    <img src={imgUrl} alt={nota.titulo} loading="lazy" class="card-img" />
+                  </a>
+                  <div class="card-body">
+                    {nota.categoria && <span class="badge-rojo badge-sm">{nota.categoria}</span>}
+                    <h2 class="card-titulo">
+                      <a href={`/nota/${nota.slug.current}`} class="card-titulo-lnk">{nota.titulo}</a>
+                    </h2>
+                    {nota.bajada && <p class="card-bajada">{nota.bajada}</p>}
+                    <p class="card-meta">
+                      {nota.autor && <span>Por {nota.autor}</span>}
+                      {nota.autor && <span aria-hidden="true"> &middot; </span>}
+                      <span>{formatearFecha(nota.fechaPublicacion)}</span>
+                    </p>
+                  </div>
+                </article>
+                {mostrarPubMobile && (
+                  <div class="pub-mobile-solo">
+                    <p class="pub-mobile-label">Publicidad</p>
+                    <Publicidad pub={publicidades[0]} />
+                  </div>
+                )}
+              </Fragment>
             );
           })}
         </div>
@@ -414,6 +423,24 @@ const masLeidas = [
 
   /* PUBLICIDAD SIDEBAR */
   .pubs-wrap { display: flex; flex-direction: column; gap: 1rem; }
+
+  /* PUBLICIDAD MOBILE INLINE — solo visible en mobile, dentro de la grilla */
+  .pub-mobile-solo {
+    display: none;          /* oculta en desktop: el sidebar ya la muestra */
+    grid-column: 1 / -1;   /* ocupa el ancho completo de la grilla */
+    border-top: 1px solid #D0D0D0;
+    border-bottom: 1px solid #D0D0D0;
+    padding: 0.75rem 0;
+    background: #F9F9F7;
+  }
+  .pub-mobile-label {
+    font-family: var(--font-cuerpo); font-size: 0.58rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.15em;
+    color: #bbb; margin: 0 0 0.5rem; text-align: center;
+  }
+  @media (max-width: 768px) {
+    .pub-mobile-solo { display: block; }
+  }
 
   /* PLACEHOLDER cuando no hay publicidades */
   .pub-box { border: 1px dashed #D0D0D0; background: #F9F9F7; padding: 1.5rem; text-align: center; }

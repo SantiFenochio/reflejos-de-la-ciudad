@@ -1,0 +1,202 @@
+---
+// src/pages/404.astro
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { sanityClient, urlFor } from '../lib/sanity';
+
+// Últimas 3 notas para mostrar en la 404
+const recientes: any[] = await sanityClient.fetch(
+  `*[_type == "articulo"] | order(fechaPublicacion desc) [0...3] {
+    titulo, slug, categoria, fechaPublicacion,
+    "imagen": imagenPrincipal
+  }`
+);
+
+function formatearFecha(iso: string): string {
+  return new Date(iso).toLocaleDateString('es-AR', {
+    day: 'numeric', month: 'long', year: 'numeric'
+  });
+}
+---
+
+<BaseLayout
+  title="Página no encontrada — Reflejos de la Ciudad"
+  description="La página que buscás no existe o fue movida. Volvé a la portada de Reflejos de la Ciudad."
+  noIndex={true}
+>
+
+<!-- SECCIÓN PRINCIPAL 404 -->
+<section class="p404-hero">
+  <div class="p404-inner">
+
+    <!-- Número grande decorativo -->
+    <p class="p404-num" aria-hidden="true">404</p>
+
+    <!-- Icono periódico roto -->
+    <div class="p404-icon" aria-hidden="true">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#0085CA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <line x1="9" y1="15" x2="15" y2="15"/>
+        <line x1="9" y1="11" x2="15" y2="11"/>
+        <line x1="9" y1="7" x2="11" y2="7"/>
+        <line x1="16" y1="16" x2="22" y2="22"/>
+        <line x1="22" y1="16" x2="16" y2="22"/>
+      </svg>
+    </div>
+
+    <h1 class="p404-titulo">Página no encontrada</h1>
+    <p class="p404-subtitulo">La página que buscás no existe o fue movida a otra dirección.</p>
+
+    <a href="/" class="p404-btn">← Volver a la portada</a>
+
+  </div>
+</section>
+
+<!-- NOTAS RECIENTES -->
+{recientes.length > 0 && (
+  <section class="p404-recientes">
+    <div class="p404-sec-header">
+      <span class="p404-barra"></span>
+      <h2 class="p404-sec-titulo">Quizás te interesen estas noticias recientes</h2>
+    </div>
+
+    <div class="p404-grid">
+      {recientes.map((nota) => {
+        const imgUrl = nota.imagen
+          ? urlFor(nota.imagen).width(600).height(338).url()
+          : `https://picsum.photos/seed/${nota.slug?.current}/600/338`;
+        return (
+          <article class="p404-card">
+            <a href={`/nota/${nota.slug?.current}`} class="p404-card-img-wrap">
+              <img src={imgUrl} alt={nota.titulo} loading="lazy" class="p404-card-img" />
+            </a>
+            <div class="p404-card-body">
+              {nota.categoria && (
+                <span class="p404-badge">{nota.categoria}</span>
+              )}
+              <h3 class="p404-card-titulo">
+                <a href={`/nota/${nota.slug?.current}`} class="p404-card-lnk">{nota.titulo}</a>
+              </h3>
+              {nota.fechaPublicacion && (
+                <time class="p404-card-fecha" datetime={nota.fechaPublicacion}>
+                  {formatearFecha(nota.fechaPublicacion)}
+                </time>
+              )}
+            </div>
+          </article>
+        );
+      })}
+    </div>
+  </section>
+)}
+
+</BaseLayout>
+
+<style>
+  /* ── SECCIÓN HERO 404 ─────────────────────────────── */
+  .p404-hero {
+    display: flex; justify-content: center; align-items: center;
+    padding: 4rem 1rem 3rem; text-align: center;
+  }
+  .p404-inner {
+    display: flex; flex-direction: column; align-items: center;
+    max-width: 520px;
+  }
+
+  /* Número grande */
+  .p404-num {
+    font-family: var(--font-titular);
+    font-size: clamp(5rem, 18vw, 9rem);
+    font-weight: 900;
+    color: #0085CA;
+    line-height: 1;
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.04em;
+    opacity: 0.15;
+    /* Superpuesto con el ícono */
+    position: relative; z-index: 0;
+  }
+
+  /* Ícono SVG */
+  .p404-icon {
+    margin: -3rem 0 1.5rem;
+    position: relative; z-index: 1;
+  }
+
+  /* Título y subtítulo */
+  .p404-titulo {
+    font-family: var(--font-titular);
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    font-weight: 700; color: #1a1a1a;
+    margin: 0 0 0.75rem; line-height: 1.2;
+  }
+  .p404-subtitulo {
+    font-family: var(--font-cuerpo);
+    font-size: 1rem; color: #666;
+    line-height: 1.6; margin: 0 0 2rem;
+  }
+
+  /* Botón volver */
+  .p404-btn {
+    display: inline-block;
+    background: #0085CA; color: #fff;
+    font-family: var(--font-cuerpo); font-size: 0.85rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.12em;
+    padding: 0.85rem 2rem; text-decoration: none;
+    transition: background-color 0.15s, transform 0.1s;
+  }
+  .p404-btn:hover { background: #006da3; text-decoration: none; transform: translateY(-1px); }
+
+  /* ── NOTAS RECIENTES ──────────────────────────────── */
+  .p404-recientes {
+    border-top: 3px solid #1a1a1a;
+    padding-top: 2rem;
+    margin-top: 1rem;
+  }
+  .p404-sec-header {
+    display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.75rem;
+  }
+  .p404-barra {
+    display: inline-block; width: 4px; height: 1.3rem;
+    background: #0085CA; flex-shrink: 0;
+  }
+  .p404-sec-titulo {
+    font-family: var(--font-cuerpo); font-size: 0.68rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.2em; color: #1a1a1a; margin: 0;
+  }
+
+  /* Grid de 3 tarjetas */
+  .p404-grid {
+    display: grid; grid-template-columns: 1fr;
+    gap: 1.75rem; margin-bottom: 3rem;
+  }
+  @media (min-width: 640px) { .p404-grid { grid-template-columns: repeat(3, 1fr); } }
+
+  /* Card */
+  .p404-card { display: flex; flex-direction: column; transition: box-shadow 0.2s; }
+  .p404-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+  .p404-card-img-wrap {
+    display: block; overflow: hidden;
+    aspect-ratio: 16/9; background: #e5e5e5; margin-bottom: 0.65rem;
+  }
+  .p404-card-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+  .p404-card-img-wrap:hover .p404-card-img { transform: scale(1.05); }
+
+  .p404-card-body { display: flex; flex-direction: column; }
+  .p404-badge {
+    display: inline-block; align-self: flex-start;
+    background: #0085CA; color: #fff;
+    font-family: var(--font-cuerpo); font-size: 0.58rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    padding: 0.2rem 0.5rem; margin-bottom: 0.5rem;
+  }
+  .p404-card-titulo {
+    font-family: var(--font-titular); font-size: 0.95rem; font-weight: 700;
+    line-height: 1.32; color: #1a1a1a; margin: 0 0 0.4rem;
+  }
+  .p404-card-lnk { color: inherit; text-decoration: none; transition: color 0.2s; }
+  .p404-card-lnk:hover { color: #0085CA; text-decoration: none; }
+  .p404-card-fecha {
+    font-family: var(--font-cuerpo); font-size: 0.7rem; color: #999; margin-top: auto;
+  }
+</style>
