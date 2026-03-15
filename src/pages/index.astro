@@ -187,7 +187,6 @@ const masLeidas = [
                 </article>
                 {mostrarPubMobile && (
                   <div class="pub-mobile-solo">
-                    <p class="pub-mobile-label">Publicidad</p>
                     <Publicidad pub={publicidades[0]} />
                   </div>
                 )}
@@ -426,17 +425,12 @@ const masLeidas = [
 
   /* PUBLICIDAD MOBILE INLINE — solo visible en mobile, dentro de la grilla */
   .pub-mobile-solo {
-    display: none;          /* oculta en desktop: el sidebar ya la muestra */
-    grid-column: 1 / -1;   /* ocupa el ancho completo de la grilla */
+    display: none;
+    grid-column: 1 / -1;
     border-top: 1px solid #D0D0D0;
     border-bottom: 1px solid #D0D0D0;
     padding: 0.75rem 0;
     background: #F9F9F7;
-  }
-  .pub-mobile-label {
-    font-family: var(--font-cuerpo); font-size: 0.58rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.15em;
-    color: #bbb; margin: 0 0 0.5rem; text-align: center;
   }
   @media (max-width: 768px) {
     .pub-mobile-solo { display: block; }

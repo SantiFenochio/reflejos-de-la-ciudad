@@ -17,9 +17,6 @@ const tieneImagen = !!pub?.imagenUrl
 {tieneImagen && (
   <div class="pub-wrapper">
 
-    <!-- Etiqueta "Publicidad" arriba -->
-    <p class="pub-label">Publicidad</p>
-
     <!-- Imagen con o sin link -->
     {pub.linkDestino ? (
       <a
@@ -51,21 +48,7 @@ const tieneImagen = !!pub?.imagenUrl
 <style>
   .pub-wrapper {
     width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-  }
-
-  .pub-label {
-    font-family: var(--font-cuerpo);
-    font-size: 0.58rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    color: var(--color-secundario);
-    opacity: 0.45;
-    margin: 0;
-    text-align: left;
+    display: block;
   }
 
   .pub-link {
