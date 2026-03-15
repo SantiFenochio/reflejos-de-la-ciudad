@@ -303,6 +303,13 @@ const masLeidas = [
     font-size: clamp(1.4rem, 4vw, 3rem); font-weight: 700; line-height: 1.12;
     color: #fff; margin: 0.5rem 0 0.65rem; max-width: 56rem;
     text-shadow: 0 1px 4px rgba(0,0,0,0.35);
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+  @media (max-width: 480px) {
+    .hero-titulo { font-size: 1.4rem; }
+    .hero-content { padding: 1rem 1rem; }
+    .hero-bajada { font-size: 0.875rem; }
   }
   .hero-bajada {
     font-family: var(--font-cuerpo);

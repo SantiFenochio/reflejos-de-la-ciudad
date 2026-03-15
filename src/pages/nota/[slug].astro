@@ -255,6 +255,12 @@ const cuerpoHtml = portableTextToHtml(articulo.cuerpo ?? []);
     font-weight: 700; line-height: 1.15; color: #fff;
     max-width: 52rem; margin: 0;
     text-shadow: 0 1px 5px rgba(0,0,0,0.4);
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+  @media (max-width: 480px) {
+    .nh-titulo { font-size: 1.35rem; }
+    .nh-content { padding: 1rem 1rem; }
   }
 </style>
 

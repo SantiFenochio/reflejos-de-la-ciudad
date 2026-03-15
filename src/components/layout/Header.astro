@@ -164,7 +164,13 @@ const tickerNotas: { titulo: string; slug: { current: string } }[] = await sanit
   .nav-mobile-head { display: flex; justify-content: space-between; align-items: center; padding: 0 1rem; min-height: 44px; }
   @media (min-width: 768px) { .nav-mobile-head { display: none; } }
   .nav-brand { font-family: var(--font-titular); font-size: 1rem; font-weight: 700; color: #fff; }
-  .nav-btn { background: none; border: none; cursor: pointer; color: #fff; padding: 0.25rem; display: flex; align-items: center; }
+  .nav-btn {
+    background: none; border: none; cursor: pointer; color: #fff;
+    /* Área táctil mínima recomendada: 44x44px */
+    min-width: 44px; min-height: 44px;
+    padding: 0.6rem;
+    display: flex; align-items: center; justify-content: center;
+  }
   .nav-panel { background: #006da3; border-top: 1px solid rgba(255,255,255,0.15); }
   .nav-panel-lnk { display: block; padding: 0.75rem 1.25rem; font-family: var(--font-cuerpo); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #fff; border-bottom: 1px solid rgba(255,255,255,0.1); text-decoration: none; transition: background-color 0.15s; }
   .nav-panel-lnk:hover { background-color: rgba(0,0,0,0.2); text-decoration: none; }
@@ -267,6 +273,8 @@ const tickerNotas: { titulo: string; slug: { current: string } }[] = await sanit
       btn.setAttribute('aria-expanded', String(!open));
       if (iM) iM.style.display = open ? 'block' : 'none';
       if (iC) iC.style.display = open ? 'none'  : 'block';
+      // Scroll-lock: bloquear scroll del fondo cuando el menú está abierto
+      document.body.style.overflow = open ? '' : 'hidden';
     });
     panel.querySelectorAll('a').forEach(function(a) {
       a.addEventListener('click', function() {
@@ -274,6 +282,8 @@ const tickerNotas: { titulo: string; slug: { current: string } }[] = await sanit
         btn.setAttribute('aria-expanded', 'false');
         if (iM) iM.style.display = 'block';
         if (iC) iC.style.display = 'none';
+        // Liberar scroll al navegar
+        document.body.style.overflow = '';
       });
     });
   }
