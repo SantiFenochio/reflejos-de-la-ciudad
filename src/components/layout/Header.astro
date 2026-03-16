@@ -44,15 +44,9 @@ const linkEdicionActual: string = ultimaEdicion?.pdfUrl ?? '/edicion-actual.pdf'
 
   <!-- Columna izquierda: ediciones anteriores -->
   <div class="logo-side logo-side--left">
-    <a
-      href="https://reflejosdelaciudad.com.ar/edicionesanteriores/"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="edition-btn"
-      aria-label="Ver ediciones anteriores del diario"
-    >
-      <img src="/ediciones-anteriores.png" alt="Ediciones Anteriores" style="height:24px;width:auto;object-fit:contain;margin-right:4px;opacity:0.8;flex-shrink:0;" />
-      <span class="edition-btn__label">Ver ediciones<br>anteriores</span>
+    <a href="https://reflejosdelaciudad.com.ar/edicionesanteriores/" target="_blank" rel="noopener noreferrer" aria-label="Ver ediciones anteriores del diario" style="display:flex;align-items:center;text-decoration:none;color:inherit;gap:8px;">
+      <img src="/ediciones-anteriores.png" alt="Ediciones Anteriores" style="display:block;width:28px;height:28px;object-fit:contain;" />
+      <span style="font-size:0.85rem;font-weight:600;text-transform:uppercase;line-height:1.3;">VER EDICIONES<br/>ANTERIORES</span>
     </a>
   </div>
 
@@ -71,15 +65,9 @@ const linkEdicionActual: string = ultimaEdicion?.pdfUrl ?? '/edicion-actual.pdf'
 
   <!-- Columna derecha: edición actual PDF -->
   <div class="logo-side logo-side--right">
-    <a
-      href={linkEdicionActual}
-      target="_blank"
-      rel="noopener noreferrer"
-      class="edition-btn edition-btn--pdf"
-      aria-label="Ver edición actual en PDF"
-    >
-      <img src="/ultima-edicion.png" alt="Última Edición" style="height:24px;width:auto;object-fit:contain;margin-right:4px;opacity:0.8;flex-shrink:0;" />
-      <span class="edition-btn__label">Ver edición<br>actual</span>
+    <a href={linkEdicionActual} target="_blank" rel="noopener noreferrer" aria-label="Ver edición actual en PDF" style="display:flex;align-items:center;text-decoration:none;color:inherit;gap:8px;">
+      <img src="/ultima-edicion.png" alt="Última Edición" style="display:block;width:28px;height:28px;object-fit:contain;" />
+      <span style="font-size:0.85rem;font-weight:600;text-transform:uppercase;line-height:1.3;">VER EDICIÓN<br/>ACTUAL</span>
     </a>
   </div>
 
