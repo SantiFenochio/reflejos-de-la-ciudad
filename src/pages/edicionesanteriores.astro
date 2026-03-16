@@ -1,0 +1,107 @@
+---
+// src/pages/edicionesanteriores.astro
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { sanityClient } from '../lib/sanity';
+
+interface Edicion {
+  _id:    string;
+  titulo: string;
+  fecha:  string;
+  pdfUrl: string | null;
+}
+
+const query = `*[_type == "edicionImpresa"] | order(fecha desc) {
+  _id,
+  titulo,
+  fecha,
+  "pdfUrl": archivoPdf.asset->url
+}`;
+
+const ediciones: Edicion[] = await sanityClient.fetch(query);
+
+function formatearFecha(iso: string): string {
+  if (!iso) return '';
+  // Sanity devuelve "YYYY-MM-DD"; parseamos sin conversión de zona horaria
+  const [anio, mes, dia] = iso.split('-');
+  return `${dia}/${mes}/${anio}`;
+}
+---
+
+<BaseLayout
+  title="Ediciones Anteriores — Reflejos de la Ciudad"
+  description="Archivo histórico de todas las ediciones impresas semanales del diario Reflejos de la Ciudad, San Martín, Buenos Aires."
+>
+
+  <!-- Encabezado de sección al estilo diario clásico -->
+  <div class="border-b-2 border-periodico mb-8 pb-3">
+    <h1 style="font-family:var(--font-titular);font-size:2rem;font-weight:700;color:var(--color-periodico);letter-spacing:-0.01em;">
+      Archivo de Ediciones Impresas
+    </h1>
+    <p style="font-family:var(--font-cuerpo);font-size:0.85rem;color:#4A4A4A;margin-top:0.25rem;">
+      Todas las ediciones semanales disponibles para descargar o consultar en línea.
+    </p>
+  </div>
+
+  {ediciones.length === 0 ? (
+    <!-- Estado vacío: todavía no se subió ninguna edición -->
+    <div style="text-align:center;padding:4rem 1rem;color:#888;">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" style="margin:0 auto 1rem;" aria-hidden="true">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <line x1="9" y1="13" x2="15" y2="13"/>
+        <line x1="9" y1="17" x2="12" y2="17"/>
+      </svg>
+      <p style="font-family:var(--font-titular);font-size:1.15rem;color:#555;">
+        Próximamente se publicarán las ediciones aquí.
+      </p>
+    </div>
+  ) : (
+    <ul style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.5rem;list-style:none;padding:0;margin:0;">
+      {ediciones.map((ed) => (
+        <li style="background:#fff;border:1px solid #D0D0D0;padding:1.25rem 1.25rem 1rem;display:flex;flex-direction:column;gap:0.75rem;transition:box-shadow 0.15s;">
+          <!-- Ícono + fecha -->
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0085CA" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            <span style="font-family:var(--font-cuerpo);font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#0085CA;">
+              {formatearFecha(ed.fecha)}
+            </span>
+          </div>
+
+          <!-- Título de la edición -->
+          <p style="font-family:var(--font-titular);font-size:1rem;font-weight:600;color:#1C1C1C;line-height:1.4;margin:0;flex:1;">
+            {ed.titulo}
+          </p>
+
+          <!-- Botón -->
+          {ed.pdfUrl ? (
+            <a
+              href={ed.pdfUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.45rem 0.85rem;background:#111;color:#fff;font-family:var(--font-cuerpo);font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;text-decoration:none;align-self:flex-start;transition:background 0.15s;"
+              onmouseover="this.style.background='#0085CA'"
+              onmouseout="this.style.background='#111'"
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              Ver / Descargar PDF
+            </a>
+          ) : (
+            <span style="font-family:var(--font-cuerpo);font-size:0.7rem;color:#aaa;font-style:italic;">
+              PDF no disponible
+            </span>
+          )}
+        </li>
+      ))}
+    </ul>
+  )}
+
+</BaseLayout>
