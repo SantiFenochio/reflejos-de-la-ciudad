@@ -16,6 +16,23 @@ export default defineConfig({
       // @astrojs/tailwind es para v3 — no usarlo con v4
       tailwindcss(),
     ],
+
+    build: {
+      rollupOptions: {
+        // Suprime warning de Astro interno: funciones importadas de
+        // @astrojs/internal-helpers/remote no usadas en assets/utils.
+        // Bug rastreado en https://github.com/withastro/astro — pendiente de fix upstream.
+        onwarn(warning, defaultHandler) {
+          if (
+            warning.code === 'UNUSED_EXTERNAL_IMPORT' &&
+            warning.exporter === '@astrojs/internal-helpers/remote'
+          ) {
+            return;
+          }
+          defaultHandler(warning);
+        },
+      },
+    },
   },
 
 });
