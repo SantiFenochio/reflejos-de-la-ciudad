@@ -33,13 +33,7 @@ const heroImg = hero?.imagen
   ? urlFor(hero.imagen).width(1400).height(620).fit('crop').auto('format').url()
   : 'https://picsum.photos/seed/hero-rdlc/1400/620';
 
-const masLeidas = [
-  { categoria: 'VECINOS',   titulo: 'No te vuelvas loco llega al Espacio Cultural Ballester', slug: 'no-te-vuelvas-loco-ballester'      },
-  { categoria: 'EDUCACION', titulo: 'Cursos y capacitaciones en la CESAM de San Martin',       slug: 'cursos-cesam-san-martin'           },
-  { categoria: 'SOCIEDAD',  titulo: '1er. Congreso de Educacion del Partido de San Martin',    slug: 'congreso-educacion-san-martin'     },
-  { categoria: 'ECONOMIA',  titulo: 'Vuelve Expo Ciudad PyME a Villa Ballester',               slug: 'expo-ciudad-pyme-ballester'        },
-  { categoria: 'CULTURA',   titulo: 'Muestra fotografica en el Centro Cultural San Martin',    slug: 'muestra-fotografica-cc-san-martin' },
-];
+
 ---
 
 <BaseLayout
@@ -241,29 +235,24 @@ const masLeidas = [
     </div>
   </div>{/* fin col-principal */}
 
-  <!-- SIDEBAR: Mas Leidas + TODAS las publicidades activas -->
+  <!-- SIDEBAR: Publicidades primero, luego redes -->
   <aside class="sidebar">
 
-    <!-- Mas Leidas -->
-    <div class="sidebar-block">
-      <div class="sec-header">
-        <span class="sec-barra-roja"></span>
-        <h2 class="sec-titulo">Mas Leidas</h2>
-      </div>
-      <ol class="masleidas-list">
-        {masLeidas.map((nota, i) => (
-          <li class="masleida-item animar">
-            <a href={`/nota/${nota.slug}`} class="masleida-lnk">
-              <span class="masleida-num">{i + 1}</span>
-              <div>
-                <p class="masleida-titulo">{nota.titulo}</p>
-                <span class="masleida-cat">{nota.categoria}</span>
-              </div>
-            </a>
-          </li>
+    <!-- Publicidades: TODAS las activas ordenadas por campo "orden" — al tope para máxima visibilidad -->
+    {publicidades.length > 0 ? (
+      <div class="pubs-wrap">
+        {publicidades.map((pub: any) => (
+          <Publicidad pub={pub} />
         ))}
-      </ol>
-    </div>
+      </div>
+    ) : (
+      <div class="pub-box">
+        <p class="pub-label">Espacio Publicitario</p>
+        <p class="pub-nombre">Anuncia en Reflejos</p>
+        <p class="pub-desc">Llega a toda la comunidad de San Martin y sus alrededores</p>
+        <a href="mailto:redaccion@reflejosdelaciudad.com.ar" class="pub-btn">Consultanos</a>
+      </div>
+    )}
 
     <!-- Widget redes sociales -->
     <div class="redes-widget">
@@ -282,22 +271,6 @@ const masLeidas = [
         </a>
       </div>
     </div>
-
-    <!-- Publicidades sidebar: TODAS las activas ordenadas por campo "orden" -->
-    {publicidades.length > 0 ? (
-      <div class="pubs-wrap">
-        {publicidades.map((pub: any) => (
-          <Publicidad pub={pub} />
-        ))}
-      </div>
-    ) : (
-      <div class="pub-box">
-        <p class="pub-label">Espacio Publicitario</p>
-        <p class="pub-nombre">Anuncia en Reflejos</p>
-        <p class="pub-desc">Llega a toda la comunidad de San Martin y sus alrededores</p>
-        <a href="mailto:redaccion@reflejosdelaciudad.com.ar" class="pub-btn">Consultanos</a>
-      </div>
-    )}
 
   </aside>
 
@@ -505,29 +478,6 @@ const masLeidas = [
       padding-top: 1.25rem;
     }
   }
-  .sidebar-block { margin-bottom: 2.5rem; }
-
-  /* MAS LEIDAS */
-  .masleidas-list { list-style: none; padding: 0; margin: 0; }
-  .masleida-item { border-bottom: 1px solid #E8E8E8; }
-  .masleida-lnk {
-    display: flex; gap: 0.75rem; align-items: flex-start;
-    padding: 0.85rem 0; text-decoration: none; color: inherit;
-  }
-  .masleida-lnk:hover .masleida-titulo { text-decoration: underline; text-underline-offset: 3px; }
-  .masleida-num {
-    font-family: var(--font-titular); font-size: 1.6rem; font-weight: 900;
-    color: #0085CA; line-height: 1; flex-shrink: 0; width: 1.75rem; text-align: center; margin-top: 0.05rem;
-  }
-  .masleida-titulo {
-    font-family: var(--font-titular); font-size: 0.9rem;
-    font-weight: 600; line-height: 1.3; color: #1a1a1a; margin: 0 0 0.25rem;
-  }
-  .masleida-cat {
-    font-family: var(--font-cuerpo); font-size: 0.6rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.1em; color: #0085CA;
-  }
-
   /* WIDGET REDES SOCIALES */
   .redes-widget {
     background: #F9F9F7;
