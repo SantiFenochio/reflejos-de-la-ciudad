@@ -13,6 +13,7 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/sitemap": "^3.7.1",
     "@portabletext/to-html": "^5.0.2",
     "@sanity/client": "^7.17.0",
     "@sanity/image-url": "^2.0.3",

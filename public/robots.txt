@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+
+# No indexar el Sanity Studio
+Disallow: /studio/
+
+# No indexar borradores ni previews
+Disallow: /draft/
+Disallow: /preview/
+
+# Evitar duplicados por paginación via query params
+Disallow: /*?page=
+
+# Sitemap generado automáticamente por @astrojs/sitemap
+Sitemap: https://reflejos-de-la-ciudad.vercel.app/sitemap-index.xml

@@ -32,3 +32,5 @@ pnpm-debug.log*
 # Scripts de migración y scraping (locales, no van al repo)
 migrate.mjs
 scrape.mjs
+
+.vercel

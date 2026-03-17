@@ -1,0 +1,66 @@
+---
+// src/layouts/ArticleLayout.astro
+// Layout especializado para notas con NewsArticle Schema.org.
+// Uso: <ArticleLayout article={nota}> ... </ArticleLayout>
+import BaseLayout from './BaseLayout.astro';
+import JsonLd from '../components/JsonLd.astro';
+import type { SeoProps } from '../lib/seo';
+import { buildArticleSeo, SITE_URL } from '../lib/seo';
+
+interface Props {
+  article: {
+    title:         string;
+    excerpt:       string;
+    slug:          string;
+    mainImageUrl?: string;
+    publishedAt:   string;
+    updatedAt?:    string;
+    author?:       string;
+    section?:      string;
+    tags?:         string[];
+    seoOverride?:  Partial<SeoProps>;
+  };
+}
+
+const { article } = Astro.props;
+const seo = buildArticleSeo(article);
+
+// Breadcrumbs: Inicio > Sección (opcional) > Título de la nota
+const breadcrumbs = [
+  { name: 'Inicio', url: SITE_URL },
+  ...(article.section ? [{ name: article.section, url: `${SITE_URL}/${article.section.toLowerCase()}` }] : []),
+  { name: article.title, url: seo.canonicalURL! },
+];
+---
+
+<BaseLayout
+  title={seo.title}
+  description={seo.description}
+  image={seo.image}
+  type="article"
+  canonicalURL={seo.canonicalURL}
+  author={seo.author}
+  section={seo.section}
+  tags={seo.tags}
+  publishedTime={seo.publishedTime}
+  modifiedTime={seo.modifiedTime}
+  noindex={seo.noindex}
+  breadcrumbs={breadcrumbs}
+>
+  <!-- NewsArticle JSON-LD específico de esta nota -->
+  <JsonLd
+    slot="head"
+    type="NewsArticle"
+    headline={article.title}
+    description={seo.description}
+    url={seo.canonicalURL!}
+    image={seo.image}
+    datePublished={article.publishedAt}
+    dateModified={article.updatedAt}
+    author={seo.author!}
+    section={article.section}
+    keywords={article.tags}
+  />
+
+  <slot />
+</BaseLayout>

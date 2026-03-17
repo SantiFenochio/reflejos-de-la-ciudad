@@ -2,12 +2,12 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 
+import sitemap from '@astrojs/sitemap';
+
 export default defineConfig({
+  // Dominio actual: Vercel preview → cambiar a .com.ar cuando esté listo el DNS.
+  site: 'https://reflejos-de-la-ciudad.vercel.app',
 
-  // Dominio final: lo usan canonical URLs y OG images en BaseLayout
-  site: 'https://reflejosdelaciudad.com.ar',
-
-  // Salida estática: genera HTML puro → ideal para Vercel sin funciones
   output: 'static',
 
   vite: {
@@ -35,4 +35,24 @@ export default defineConfig({
     },
   },
 
+  integrations: [
+    sitemap({
+      changefreq: 'daily',
+      priority: 0.7,
+      lastmod: new Date(),
+      filter: (page) =>
+        !page.includes('/studio') &&
+        !page.includes('/draft') &&
+        !page.includes('/preview'),
+      serialize(item) {
+        if (item.url === 'https://reflejos-de-la-ciudad.vercel.app/') {
+          return { ...item, changefreq: 'hourly', priority: 1.0 };
+        }
+        if (item.url.includes('/nota/')) {
+          return { ...item, changefreq: 'weekly', priority: 0.7 };
+        }
+        return { ...item, changefreq: 'daily', priority: 0.8 };
+      },
+    }),
+  ],
 });

@@ -1,0 +1,99 @@
+---
+// src/components/SEO.astro
+// Componente central de SEO. Va dentro del <head> de BaseLayout.
+// NO incluir charset/viewport aquí — BaseLayout ya los tiene.
+import type { SeoProps } from '../lib/seo';
+import { SITE_NAME, SITE_URL, DEFAULT_OG_IMAGE } from '../lib/seo';
+
+type Props = SeoProps;
+
+const {
+  title,
+  description,
+  canonicalURL  = Astro.url.href,
+  image         = DEFAULT_OG_IMAGE,
+  imageAlt      = `${SITE_NAME} — Semanario del barrio San Martín`,
+  type          = 'website',
+  publishedTime,
+  modifiedTime,
+  author,
+  section,
+  tags          = [],
+  noindex       = false,
+} = Astro.props;
+
+// "Nota | Reflejos de la Ciudad" o sólo "Reflejos de la Ciudad" en la home
+const fullTitle = title === SITE_NAME ? SITE_NAME : `${title} | ${SITE_NAME}`;
+
+// Imagen siempre como URL absoluta
+const absoluteImage = image.startsWith('http') ? image : `${SITE_URL}${image}`;
+
+// Canonical sin trailing slash, excepto la raíz
+const canonical =
+  canonicalURL === `${SITE_URL}/`
+    ? canonicalURL
+    : canonicalURL.replace(/\/$/, '');
+---
+
+<!-- ══ TÍTULO Y DESCRIPCIÓN ══════════════════════════════════════ -->
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+<!-- ══ ROBOTS ═════════════════════════════════════════════════════ -->
+{
+  noindex ? (
+    <meta name="robots" content="noindex, nofollow" />
+  ) : (
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  )
+}
+
+<!-- ══ OPEN GRAPH ════════════════════════════════════════════════ -->
+<meta property="og:type"        content={type} />
+<meta property="og:url"         content={canonical} />
+<meta property="og:title"       content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:image"       content={absoluteImage} />
+<meta property="og:image:alt"   content={imageAlt} />
+<meta property="og:image:width"  content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:site_name"   content={SITE_NAME} />
+<meta property="og:locale"      content="es_AR" />
+
+{type === 'article' && (
+  <>
+    {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+    {modifiedTime  && <meta property="article:modified_time"  content={modifiedTime} />}
+    {author        && <meta property="article:author"         content={author} />}
+    {section       && <meta property="article:section"        content={section} />}
+    {tags.map((tag) => <meta property="article:tag" content={tag} />)}
+  </>
+)}
+
+<!-- ══ TWITTER / X ═══════════════════════════════════════════════ -->
+<meta name="twitter:card"        content="summary_large_image" />
+<meta name="twitter:title"       content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image"       content={absoluteImage} />
+<meta name="twitter:image:alt"   content={imageAlt} />
+
+<!-- ══ GEO LOCAL (SEO local barrio San Martín) ═══════════════════ -->
+<meta name="geo.region"    content="AR-B" />
+<meta name="geo.placename" content="General San Martín, Buenos Aires, Argentina" />
+<meta name="geo.position"  content="-34.5755;-58.5363" />
+<meta name="ICBM"          content="-34.5755, -58.5363" />
+
+<!-- ══ PUBLICACIÓN Y AUTORÍA ════════════════════════════════════ -->
+<meta name="author"           content={author ?? SITE_NAME} />
+<meta name="publisher"        content={SITE_NAME} />
+<meta name="language"         content="es" />
+<meta name="content-language" content="es-AR" />
+{section && (
+  <meta name="news_keywords" content={[section, ...(tags ?? [])].join(', ')} />
+)}
+
+<!-- ══ FAVICON ══════════════════════════════════════════════════ -->
+<link rel="icon"             type="image/png" sizes="96x96"   href="/favicon-96x96.png" />
+<link rel="apple-touch-icon" sizes="180x180"                   href="/apple-touch-icon.png" />
+<link rel="manifest"         href="/site.webmanifest" />
+<meta name="theme-color" content="#F5F5F0" />

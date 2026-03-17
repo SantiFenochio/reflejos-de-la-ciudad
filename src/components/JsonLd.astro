@@ -1,0 +1,92 @@
+---
+// src/components/JsonLd.astro
+import { SITE_NAME, SITE_URL } from '../lib/seo';
+
+interface WebSiteSchema     { type: 'WebSite' }
+interface NewsArticleSchema {
+  type: 'NewsArticle'; headline: string; description: string;
+  url: string; image?: string; datePublished: string;
+  dateModified?: string; author: string; section?: string; keywords?: string[];
+}
+interface BreadcrumbSchema  { type: 'BreadcrumbList'; items: { name: string; url: string }[] }
+type Props = WebSiteSchema | NewsArticleSchema | BreadcrumbSchema;
+
+const props = Astro.props as Props;
+
+const ORG = {
+  '@type': 'NewsMediaOrganization',
+  name: SITE_NAME,
+  url: SITE_URL,
+  logo: { '@type': 'ImageObject', url: `${SITE_URL}/Logo.png`, width: 400, height: 100 },
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Villa Ballester',
+    addressLocality: 'General San Martín',
+    addressRegion: 'Buenos Aires',
+    addressCountry: 'AR',
+    postalCode: 'B1653',
+  },
+  description: 'Semanario digital del barrio San Martín, Buenos Aires, Argentina.',
+  foundingDate: '2024',
+  inLanguage: 'es-AR',
+};
+
+function buildSchema(data: Props): object {
+  switch (data.type) {
+    case 'WebSite':
+      return {
+        '@context': 'https://schema.org',
+        '@graph': [
+          {
+            '@type': 'WebSite',
+            '@id': `${SITE_URL}/#website`,
+            url: SITE_URL,
+            name: SITE_NAME,
+            description: 'Semanario digital del barrio San Martín, Buenos Aires.',
+            inLanguage: 'es-AR',
+            potentialAction: {
+              '@type': 'SearchAction',
+              target: { '@type': 'EntryPoint', urlTemplate: `${SITE_URL}/buscar?q={search_term_string}` },
+              'query-input': 'required name=search_term_string',
+            },
+          },
+          ORG,
+        ],
+      };
+    case 'NewsArticle':
+      return {
+        '@context': 'https://schema.org',
+        '@type': 'NewsArticle',
+        headline: data.headline,
+        description: data.description,
+        url: data.url,
+        mainEntityOfPage: { '@type': 'WebPage', '@id': data.url },
+        image: data.image ? [{ '@type': 'ImageObject', url: data.image }] : [`${SITE_URL}/og-default.jpg`],
+        datePublished: data.datePublished,
+        dateModified: data.dateModified ?? data.datePublished,
+        author: { '@type': 'Person', name: data.author },
+        publisher: ORG,
+        articleSection: data.section,
+        keywords: data.keywords?.join(', '),
+        inLanguage: 'es-AR',
+        isAccessibleForFree: true,
+      };
+    case 'BreadcrumbList':
+      return {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: data.items.map((item, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: item.name,
+          item: item.url,
+        })),
+      };
+    default:
+      return {};
+  }
+}
+
+const schema = buildSchema(props);
+---
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />
