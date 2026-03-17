@@ -62,5 +62,10 @@ const tieneImagen = !!pub?.imagenUrl
     object-fit: contain;
     border: 1px solid var(--color-borde);
     background-color: #fff;
+    transition: opacity 0.2s ease;
+  }
+
+  .pub-link:hover .pub-img {
+    opacity: 0.85;
   }
 </style>

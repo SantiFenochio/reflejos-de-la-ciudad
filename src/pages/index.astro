@@ -223,6 +223,7 @@ const heroImg = hero?.imagen
                 </article>
                 {mostrarPubMobile && (
                   <div class="pub-mobile-solo">
+                    <p class="pub-mobile-label">Publicidad</p>
                     <Publicidad pub={publicidades[0]} />
                   </div>
                 )}
@@ -250,6 +251,7 @@ const heroImg = hero?.imagen
     <!-- Publicidades: TODAS las activas ordenadas por campo "orden" — al tope para máxima visibilidad -->
     {publicidades.length > 0 ? (
       <div class="pubs-wrap">
+        <p class="pubs-label">Publicidad</p>
         {publicidades.map((pub: any) => (
           <Publicidad pub={pub} />
         ))}
@@ -404,7 +406,7 @@ const heroImg = hero?.imagen
   /* Mobile: una sola columna */
   @media (max-width: 768px) {
     .cuerpo-grid { grid-template-columns: 1fr; }
-    .sidebar { position: static !important; }
+    .sidebar { display: none; } /* ads se muestran inline entre noticias en mobile */
   }
 
   /* GRILLA DE NOTICIAS */
@@ -474,6 +476,18 @@ const heroImg = hero?.imagen
   }
   /* PUBLICIDAD SIDEBAR */
   .pubs-wrap { display: flex; flex-direction: column; gap: 1.5rem; }
+  .pubs-label {
+    font-family: var(--font-cuerpo);
+    font-size: 0.58rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: #aaa;
+    text-align: center;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #D0D0D0;
+    margin: 0 0 0.25rem;
+  }
 
   /* PUBLICIDAD MOBILE INLINE — solo visible en mobile, dentro de la grilla */
   .pub-mobile-solo {
@@ -483,6 +497,16 @@ const heroImg = hero?.imagen
     border-bottom: 1px solid #D0D0D0;
     padding: 0.75rem 0;
     background: #F9F9F7;
+  }
+  .pub-mobile-label {
+    font-family: var(--font-cuerpo);
+    font-size: 0.58rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: #aaa;
+    text-align: center;
+    margin: 0 0 0.5rem;
   }
   @media (max-width: 768px) {
     .pub-mobile-solo { display: block; }
@@ -530,12 +554,12 @@ const heroImg = hero?.imagen
   /* Slides: 1 en mobile, 2 en tablet, 3 en desktop */
   .car-slide {
     scroll-snap-align: start;
-    flex: 0 0 82%;
-    min-width: 0;
+    flex-shrink: 0;            /* nunca encoge — evita el whitespace fantasma */
+    width: 80%;                /* mobile: 1 slide visible + peek del siguiente */
     display: flex; flex-direction: column;
   }
-  @media (min-width: 640px)  { .car-slide { flex: 0 0 calc(50% - 0.625rem); } }
-  @media (min-width: 1024px) { .car-slide { flex: 0 0 calc(33.333% - 0.834rem); } }
+  @media (min-width: 640px)  { .car-slide { width: calc(50% - 0.625rem); } }
+  @media (min-width: 1024px) { .car-slide { width: calc(33.333% - 0.834rem); } }
 
   /* Imagen del slide */
   .car-img-wrap {
