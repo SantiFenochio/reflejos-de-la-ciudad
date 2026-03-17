@@ -20,7 +20,7 @@
 @theme {
 
   /* ── PALETA DE COLORES ──────────────────────────────────────── */
-  --color-hueso:       #F5F5F0;  /* Fondo: blanco hueso, papel de diario  */
+  --color-hueso:       #D3D3D3;  /* Fondo: gris claro                     */
   --color-periodico:   #1C1C1C;  /* Texto principal: negro de imprenta    */
   --color-secundario:  #4A4A4A;  /* Texto secundario, epígrafes, fechas   */
   --color-borde:       #D0D0D0;  /* Bordes, filetes, separadores          */
