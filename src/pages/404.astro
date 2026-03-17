@@ -1,4 +1,4 @@
----
+﻿---
 // src/pages/404.astro
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { sanityClient, urlFor } from '../lib/sanity';
@@ -33,7 +33,7 @@ function formatearFecha(iso: string): string {
 
     <!-- Icono periódico roto -->
     <div class="p404-icon" aria-hidden="true">
-      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#0085CA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#4c6a92" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
         <polyline points="14 2 14 8 20 8"/>
         <line x1="9" y1="15" x2="15" y2="15"/>
@@ -108,7 +108,7 @@ function formatearFecha(iso: string): string {
     font-family: var(--font-titular);
     font-size: clamp(5rem, 18vw, 9rem);
     font-weight: 900;
-    color: #0085CA;
+    color: #4c6a92;
     line-height: 1;
     margin: 0 0 0.5rem;
     letter-spacing: -0.04em;
@@ -139,13 +139,13 @@ function formatearFecha(iso: string): string {
   /* Botón volver */
   .p404-btn {
     display: inline-block;
-    background: #0085CA; color: #fff;
+    background: #4c6a92; color: #fff;
     font-family: var(--font-cuerpo); font-size: 0.85rem; font-weight: 700;
     text-transform: uppercase; letter-spacing: 0.12em;
     padding: 0.85rem 2rem; text-decoration: none;
     transition: background-color 0.15s, transform 0.1s;
   }
-  .p404-btn:hover { background: #006da3; text-decoration: none; transform: translateY(-1px); }
+  .p404-btn:hover { background: #3b5475; text-decoration: none; transform: translateY(-1px); }
 
   /* ── NOTAS RECIENTES ──────────────────────────────── */
   .p404-recientes {
@@ -158,7 +158,7 @@ function formatearFecha(iso: string): string {
   }
   .p404-barra {
     display: inline-block; width: 4px; height: 1.3rem;
-    background: #0085CA; flex-shrink: 0;
+    background: #4c6a92; flex-shrink: 0;
   }
   .p404-sec-titulo {
     font-family: var(--font-cuerpo); font-size: 0.68rem; font-weight: 700;
@@ -185,7 +185,7 @@ function formatearFecha(iso: string): string {
   .p404-card-body { display: flex; flex-direction: column; }
   .p404-badge {
     display: inline-block; align-self: flex-start;
-    background: #0085CA; color: #fff;
+    background: #4c6a92; color: #fff;
     font-family: var(--font-cuerpo); font-size: 0.58rem; font-weight: 700;
     text-transform: uppercase; letter-spacing: 0.1em;
     padding: 0.2rem 0.5rem; margin-bottom: 0.5rem;
@@ -195,7 +195,7 @@ function formatearFecha(iso: string): string {
     line-height: 1.32; color: #1a1a1a; margin: 0 0 0.4rem;
   }
   .p404-card-lnk { color: inherit; text-decoration: none; transition: color 0.2s; }
-  .p404-card-lnk:hover { color: #0085CA; text-decoration: none; }
+  .p404-card-lnk:hover { color: #4c6a92; text-decoration: none; }
   .p404-card-fecha {
     font-family: var(--font-cuerpo); font-size: 0.7rem; color: #999; margin-top: auto;
   }
