@@ -18,9 +18,10 @@ const publicidades: any[] = await sanityClient.fetch(
   }`
 );
 
-const hero     = notas[0] ?? null;
-const grilla   = notas.slice(1, 13);  // 12 notas iniciales
-const carrusel = grilla;
+const hero             = notas[0] ?? null;
+const notasSecundarias = notas.slice(1, 3);   // Las 2 siguientes para el panel derecho del hero
+const grilla           = notas.slice(3, 13);  // Arranca en 3 para no repetir las del hero
+const carrusel         = grilla;
 
 function formatearFecha(iso: string): string {
   return new Date(iso).toLocaleDateString('es-AR', {
@@ -51,30 +52,62 @@ const masLeidas = [
      HERO — nota destacada
      ============================================================ -->
 <section class="hero-section">
-  {hero ? (
-    <div class="hero-wrap">
-      <img src={heroImg} alt={hero.titulo} class="hero-img" loading="eager" />
-      <div class="hero-overlay"></div>
-      <div class="hero-content">
-        {hero.categoria && <span class="badge-rojo">{hero.categoria}</span>}
-        <a href={`/nota/${hero.slug.current}`} class="hero-link">
-          <h1 class="hero-titulo">{hero.titulo}</h1>
-          {hero.bajada && <p class="hero-bajada">{hero.bajada}</p>}
-        </a>
-        <p class="hero-meta">
-          {hero.autor && <span>Por {hero.autor}</span>}
-          {hero.autor && <span class="hero-sep" aria-hidden="true">&middot;</span>}
-          <span>{formatearFecha(hero.fechaPublicacion)}</span>
-        </p>
+  <div class="hero-grid">
+
+    <!-- ── IZQUIERDA: nota principal (≈65%) ── -->
+    <div class="hero-izq">
+      {hero ? (
+        <div class="hero-wrap">
+          <img src={heroImg} alt={hero.titulo} class="hero-img" loading="eager" />
+          <div class="hero-overlay"></div>
+          <div class="hero-content">
+            {hero.categoria && <span class="badge-rojo">{hero.categoria}</span>}
+            <a href={`/nota/${hero.slug.current}`} class="hero-link">
+              <h1 class="hero-titulo">{hero.titulo}</h1>
+              {hero.bajada && <p class="hero-bajada">{hero.bajada}</p>}
+            </a>
+            <p class="hero-meta">
+              {hero.autor && <span>Por {hero.autor}</span>}
+              {hero.autor && <span class="hero-sep" aria-hidden="true">&middot;</span>}
+              <span>{formatearFecha(hero.fechaPublicacion)}</span>
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div class="hero-vacio">
+          <p style="font-family:var(--font-cuerpo);color:#666;font-size:1rem;text-align:center;">
+            Publica tu primera nota en Sanity para verla aqui
+          </p>
+        </div>
+      )}
+    </div>
+
+    <!-- ── DERECHA: 2 notas secundarias apiladas (≈35%) ── -->
+    {notasSecundarias.length > 0 && (
+      <div class="hero-der">
+        {notasSecundarias.map((nota) => {
+          const imgSec = nota.imagen
+            ? urlFor(nota.imagen).width(640).height(360).fit('crop').auto('format').url()
+            : `https://picsum.photos/seed/sec-${nota.slug.current}/640/360`;
+          return (
+            <article class="card-sec">
+              <a href={`/nota/${nota.slug.current}`} class="card-sec-img-wrap">
+                <img src={imgSec} alt={nota.titulo} loading="eager" class="card-sec-img" />
+                {nota.categoria && <span class="badge-rojo badge-sm badge-sobre-img">{nota.categoria}</span>}
+              </a>
+              <div class="card-sec-body">
+                <h2 class="card-sec-titulo">
+                  <a href={`/nota/${nota.slug.current}`} class="card-sec-titulo-lnk">{nota.titulo}</a>
+                </h2>
+                <p class="card-sec-meta">{formatearFecha(nota.fechaPublicacion)}</p>
+              </div>
+            </article>
+          );
+        })}
       </div>
-    </div>
-  ) : (
-    <div class="hero-vacio">
-      <p style="font-family:var(--font-cuerpo);color:#666;font-size:1rem;text-align:center;">
-        Publica tu primera nota en Sanity para verla aqui
-      </p>
-    </div>
-  )}
+    )}
+
+  </div>
 </section>
 
 <!-- Separador triple estilo diario -->
@@ -275,12 +308,55 @@ const masLeidas = [
 <style>
   /* HERO */
   .hero-section { margin: -1.5rem -1rem 0; }
+
+  /* Grid 2 columnas en desktop, 1 en mobile */
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    align-items: stretch;
+    min-height: 480px;
+  }
+  @media (min-width: 1024px) { .hero-grid { min-height: 560px; } }
+  @media (max-width: 767px)  { .hero-grid { grid-template-columns: 1fr; min-height: auto; } }
+
+  .hero-izq { position: relative; }
+
+  /* Panel derecho: dos tarjetas apiladas con separador */
+  .hero-der {
+    display: flex; flex-direction: column;
+    border-left: 1px solid #D0D0D0;
+    background: #fff;
+  }
+  @media (max-width: 767px) { .hero-der { border-left: none; border-top: 2px solid #1C1C1C; } }
+
+  /* Tarjetas secundarias */
+  .card-sec { display: flex; flex-direction: column; flex: 1; transition: background 0.15s; }
+  .card-sec:not(:last-child) { border-bottom: 1px solid #D0D0D0; }
+  .card-sec:hover { background: #F9F9F7; }
+  .card-sec-img-wrap {
+    display: block; overflow: hidden; position: relative;
+    aspect-ratio: 16/9; background: #e5e5e5; flex-shrink: 0;
+  }
+  .card-sec-img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
+  .card-sec-img-wrap:hover .card-sec-img { transform: scale(1.05); }
+  .card-sec-body { padding: 0.85rem 1rem; display: flex; flex-direction: column; flex: 1; }
+  .card-sec-titulo {
+    font-family: var(--font-titular);
+    font-size: clamp(0.9rem, 1.3vw, 1.1rem); font-weight: 700;
+    line-height: 1.3; color: #1C1C1C; margin: 0.2rem 0 0.4rem;
+  }
+  .card-sec-titulo-lnk { color: inherit; text-decoration: none; transition: color 0.15s; }
+  .card-sec-titulo-lnk:hover { color: #0085CA; }
+  .card-sec-meta { font-family: var(--font-cuerpo); font-size: 0.68rem; color: #999; margin: auto 0 0; }
+
+  /* Hero wrap: ocupa el 100% de la celda izquierda del grid */
   .hero-wrap {
-    position: relative; width: 100%; height: 300px;
+    position: relative; width: 100%; height: 100%;
+    min-height: 300px;
     overflow: hidden; background: #1a1a1a;
   }
-  @media (min-width: 640px)  { .hero-wrap { height: 420px; } }
-  @media (min-width: 1024px) { .hero-wrap { height: 560px; } }
+  @media (min-width: 640px)  { .hero-wrap { min-height: 420px; } }
+  @media (max-width: 767px)  { .hero-wrap { height: 300px; } }
   .hero-img {
     position: absolute; inset: 0; width: 100%; height: 100%;
     object-fit: cover; object-position: center top;
@@ -300,11 +376,10 @@ const masLeidas = [
   .hero-link:hover .hero-titulo { text-decoration: underline; text-underline-offset: 4px; }
   .hero-titulo {
     font-family: var(--font-titular);
-    font-size: clamp(1.4rem, 4vw, 3rem); font-weight: 700; line-height: 1.12;
-    color: #fff; margin: 0.5rem 0 0.65rem; max-width: 56rem;
+    font-size: clamp(1.4rem, 3.5vw, 2.6rem); font-weight: 700; line-height: 1.12;
+    color: #fff; margin: 0.5rem 0 0.65rem; max-width: 46rem;
     text-shadow: 0 1px 4px rgba(0,0,0,0.35);
-    word-break: break-word;
-    overflow-wrap: break-word;
+    word-break: break-word; overflow-wrap: break-word;
   }
   @media (max-width: 480px) {
     .hero-titulo { font-size: 1.4rem; }
@@ -313,8 +388,8 @@ const masLeidas = [
   }
   .hero-bajada {
     font-family: var(--font-cuerpo);
-    font-size: clamp(0.875rem, 1.4vw, 1.05rem); color: rgba(255,255,255,0.85);
-    max-width: 46rem; line-height: 1.55; margin: 0 0 0.75rem;
+    font-size: clamp(0.875rem, 1.2vw, 1rem); color: rgba(255,255,255,0.85);
+    max-width: 40rem; line-height: 1.55; margin: 0 0 0.75rem;
   }
   .hero-meta {
     font-family: var(--font-cuerpo); font-size: 0.75rem;
