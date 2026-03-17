@@ -538,14 +538,18 @@ const linkEdicionActual: string = ultimaEdicion?.pdfUrl ?? '/edicion-actual.pdf'
     buscadorRes.innerHTML = '<p class="buscador-loading">Buscando...</p>';
     buscadorRes.hidden = false;
     try {
-      var query = '*[_type == "articulo" && titulo match $q + "*"] | order(fechaPublicacion desc)[0...6] { titulo, "slug": slug.current, categoria, "imgUrl": imagenPrincipal.asset->url }';
-      var url = 'https://' + SANITY_PROJECT + '.apicdn.sanity.io/v' + SANITY_VER + '/data/query/' + SANITY_DATASET
+      // GROQ: match requiere wildcards en el valor del parámetro, no en la query.
+      // Se usa api.sanity.io (no apicdn) para evitar problemas de CORS y caché.
+      var query = '*[_type == "articulo" && titulo match $q] | order(fechaPublicacion desc)[0...8] { titulo, "slug": slug.current, categoria, "imgUrl": imagenPrincipal.asset->url }';
+      var url = 'https://' + SANITY_PROJECT + '.api.sanity.io/v' + SANITY_VER + '/data/query/' + SANITY_DATASET
         + '?query=' + encodeURIComponent(query)
-        + '&$q=' + encodeURIComponent(JSON.stringify(q));
+        + '&$q=' + encodeURIComponent(JSON.stringify('*' + q + '*'));
       var res  = await fetch(url);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
       var data = await res.json();
       mostrarResultados(data.result || []);
     } catch(err) {
+      console.error('[Buscador]', err);
       buscadorRes.innerHTML = '<p class="buscador-empty">Error al buscar. Intenta de nuevo.</p>';
     }
   }
