@@ -280,6 +280,7 @@ const heroImg = hero?.imagen
     grid-template-columns: 2fr 1fr;
     align-items: stretch;
     min-height: 480px;
+    gap: 16px;
   }
   @media (min-width: 1024px) { .hero-grid { min-height: 560px; } }
   @media (max-width: 767px)  { .hero-grid { grid-template-columns: 1fr; min-height: auto; } }
@@ -289,6 +290,7 @@ const heroImg = hero?.imagen
   /* Panel derecho: dos tarjetas apiladas con separador */
   .hero-der {
     display: flex; flex-direction: column;
+    gap: 12px;
     border-left: 1px solid #D0D0D0;
     background: #fff;
   }
