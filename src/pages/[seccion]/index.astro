@@ -46,9 +46,17 @@ const categoriaMap: Record<string, string> = {
 
 const nombreSeccion  = nombres[seccion]      ?? seccion;
 const descripcionSec = descripciones[seccion] ?? `Noticias de ${nombreSeccion} en San Martín`;
+// categoriaQuery: valor en mayúsculas con tilde, como está almacenado en Sanity
 const categoriaQuery = categoriaMap[seccion]  ?? seccion.toUpperCase();
 
-const notas: Articulo[] = await sanityClient.fetch(SECCION_QUERY, { seccion: categoriaQuery });
+// SECCION_QUERY usa upper(categoria) == $seccion para comparar en mayúsculas
+// (fix: antes se usaba lower() pero se pasaba el valor en mayúsculas → 0 resultados)
+let notas: Articulo[] = [];
+try {
+  notas = await sanityClient.fetch(SECCION_QUERY, { seccion: categoriaQuery });
+} catch (e) {
+  console.warn(`[seccion/${seccion}] No se pudo obtener notas:`, e);
+}
 
 function formatearFecha(iso: string): string {
   return new Date(iso).toLocaleDateString('es-AR', {

@@ -33,8 +33,9 @@ export const ARTICULO_QUERY = `*[_type == "articulo" && slug.current == $slug][0
   }
 }`
 
-// Notas por sección
-export const SECCION_QUERY = `*[_type == "articulo" && lower(categoria) == $seccion] | order(fechaPublicacion desc) {
+// Notas por sección — $seccion debe ser el valor EN MAYÚSCULAS tal como está en Sanity
+// (ej: 'SOCIEDAD', 'DEPORTES', 'EDUCACIÓN')
+export const SECCION_QUERY = `*[_type == "articulo" && upper(categoria) == $seccion] | order(fechaPublicacion desc) {
   _id,
   titulo,
   slug,

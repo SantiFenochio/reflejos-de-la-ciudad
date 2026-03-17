@@ -2,10 +2,12 @@
 import { createClient } from '@sanity/client'
 import imageUrlBuilder from '@sanity/image-url'
 
+// import.meta.env lee las variables PUBLIC_* del .env y del dashboard de Vercel.
+// Los valores hardcodeados son fallback de seguridad por si las vars no están definidas.
 export const sanityClient = createClient({
-  projectId: 'k3agywgt',
-  dataset:   'production',
-  useCdn:    false,   // false = datos frescos en build time (Astro estático)
+  projectId:  import.meta.env.PUBLIC_SANITY_PROJECT_ID ?? 'k3agywgt',
+  dataset:    import.meta.env.PUBLIC_SANITY_DATASET    ?? 'production',
+  useCdn:     false,   // false = datos frescos en build time (Astro estático)
   apiVersion: '2024-01-01',
 })
 

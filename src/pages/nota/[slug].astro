@@ -6,14 +6,25 @@ import { ARTICULO_QUERY } from '../../lib/queries';
 import type { Articulo } from '../../types/article';
 
 export async function getStaticPaths() {
-  const notas: Articulo[] = await sanityClient.fetch(
-    `*[_type == "articulo"]{ slug }`
-  );
-  return notas.map(nota => ({ params: { slug: nota.slug.current } }));
+  try {
+    const notas: Articulo[] = await sanityClient.fetch(
+      `*[_type == "articulo"]{ slug }`
+    );
+    return notas.map(nota => ({ params: { slug: nota.slug.current } }));
+  } catch (e) {
+    console.warn('[slug] No se pudo obtener rutas estáticas:', e);
+    return [];
+  }
 }
 
 const { slug } = Astro.params;
-const articulo: Articulo = await sanityClient.fetch(ARTICULO_QUERY, { slug });
+let articulo: Articulo;
+try {
+  articulo = await sanityClient.fetch(ARTICULO_QUERY, { slug });
+} catch (e) {
+  console.warn(`[slug] No se pudo obtener articulo "${slug}":`, e);
+  return Astro.redirect('/');
+}
 if (!articulo) return Astro.redirect('/');
 
 function formatearFecha(iso: string): string {

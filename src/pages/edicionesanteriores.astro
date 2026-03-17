@@ -17,7 +17,12 @@ const query = `*[_type == "edicionImpresa"] | order(fecha desc) {
   "pdfUrl": archivoPdf.asset->url
 }`;
 
-const ediciones: Edicion[] = await sanityClient.fetch(query);
+let ediciones: Edicion[] = [];
+try {
+  ediciones = await sanityClient.fetch(query);
+} catch (e) {
+  console.warn('[edicionesanteriores] No se pudo obtener ediciones:', e);
+}
 
 function formatearFecha(iso: string): string {
   if (!iso) return '';

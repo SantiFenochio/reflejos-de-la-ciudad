@@ -21,14 +21,24 @@ const secciones = [
   { label: 'Breves',    href: '/breves'     },
 ];
 
-const tickerNotas: { titulo: string; slug: { current: string } }[] = await sanityClient.fetch(
-  `*[_type == "articulo"] | order(fechaPublicacion desc) [0...5] { titulo, slug }`
-);
+let tickerNotas: { titulo: string; slug: { current: string } }[] = [];
+try {
+  tickerNotas = await sanityClient.fetch(
+    `*[_type == "articulo"] | order(fechaPublicacion desc) [0...5] { titulo, slug }`
+  );
+} catch (e) {
+  console.warn('[Header] No se pudo obtener ticker notas:', e);
+}
 
 // Traemos el PDF de la edición impresa más reciente (ordenada por fecha DESC)
-const ultimaEdicion = await sanityClient.fetch<{ pdfUrl: string | null }>(
-  `*[_type == "edicionImpresa"] | order(fecha desc)[0] { "pdfUrl": archivoPdf.asset->url }`
-);
+let ultimaEdicion: { pdfUrl: string | null } | null = null;
+try {
+  ultimaEdicion = await sanityClient.fetch<{ pdfUrl: string | null }>(
+    `*[_type == "edicionImpresa"] | order(fecha desc)[0] { "pdfUrl": archivoPdf.asset->url }`
+  );
+} catch (e) {
+  console.warn('[Header] No se pudo obtener ultima edicion:', e);
+}
 const linkEdicionActual: string = ultimaEdicion?.pdfUrl ?? '/edicion-actual.pdf';
 ---
 

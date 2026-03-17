@@ -7,16 +7,25 @@ import type { Articulo } from '../types/article';
 import Publicidad from '../components/ui/Publicidad.astro';
 
 // Noticias: hero + hasta 9 cards en grilla (para dar lugar a intercalados)
-const notas: Articulo[] = await sanityClient.fetch(HOME_QUERY);
+let notas: Articulo[] = [];
+try {
+  notas = await sanityClient.fetch(HOME_QUERY);
+} catch (e) {
+  console.warn('[index] No se pudo obtener notas:', e);
+}
 
 // Publicidades: todas activas, ordenadas por campo "orden" asc
-// Se separan en: las 3 primeras van al sidebar, el resto se intercala en la grilla
-const publicidades: any[] = await sanityClient.fetch(
-  `*[_type == "publicidad" && activa == true] | order(orden asc) {
-    _id, nombre, linkDestino, posicion,
-    "imagenUrl": imagen.asset->url
-  }`
-);
+let publicidades: any[] = [];
+try {
+  publicidades = await sanityClient.fetch(
+    `*[_type == "publicidad" && activa == true] | order(orden asc) {
+      _id, nombre, linkDestino, posicion,
+      "imagenUrl": imagen.asset->url
+    }`
+  );
+} catch (e) {
+  console.warn('[index] No se pudo obtener publicidades:', e);
+}
 
 const hero             = notas[0] ?? null;
 const notasSecundarias = notas.slice(1, 3);   // Las 2 siguientes para el panel derecho del hero
