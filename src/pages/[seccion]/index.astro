@@ -92,13 +92,13 @@ function formatearFecha(iso: string): string {
     <div class="seccion-grid">
       {notas.map((nota) => {
         const imgUrl = nota.imagen
-          ? urlFor(nota.imagen).width(800).height(450).url()
+          ? urlFor(nota.imagen).width(600).height(400).fit('crop').format('webp').url()
           : `https://picsum.photos/seed/${nota.slug.current}/800/450`;
         return (
           <article style="display:flex;flex-direction:column;gap:0.6rem;">
             <a href={`/nota/${nota.slug.current}`} style="display:block;overflow:hidden;">
               <img src={imgUrl} alt={nota.titulo} loading="lazy"
-                   style="width:100%;aspect-ratio:16/9;object-fit:cover;transition:transform 0.3s ease;"
+                   style="width:100%;aspect-ratio:3/2;object-fit:cover;transition:transform 0.3s ease;"
                    onmouseover="this.style.transform='scale(1.03)'"
                    onmouseout="this.style.transform='scale(1)'" />
             </a>

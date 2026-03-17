@@ -33,9 +33,9 @@ function formatearFecha(iso: string): string {
   });
 }
 
-// Hero — 1400×620, auto-format (WebP en navegadores modernos, JPEG fallback)
+// Hero — 900×506 16:9 webp, crop centrado
 const imagenHero = articulo.imagen
-  ? urlFor(articulo.imagen).width(1400).height(620).fit('crop').auto('format').url()
+  ? urlFor(articulo.imagen).width(900).height(506).fit('crop').format('webp').url()
   : null;
 
 // OG image — exactamente 1200×630 WebP: tamaño ideal para WhatsApp, Facebook y Twitter
@@ -188,7 +188,7 @@ const cuerpoHtml = portableTextToHtml(articulo.cuerpo ?? []);
     <div class="rel-grid">
       {articulo.relacionadas.map((nota) => {
         const relImg = nota.imagen
-          ? urlFor(nota.imagen).width(600).height(338).fit('crop').auto('format').url()
+          ? urlFor(nota.imagen).width(600).height(400).fit('crop').format('webp').url()
           : `https://picsum.photos/seed/${nota.slug?.current}/600/338`;
         return (
           <article class="rel-card">
@@ -443,7 +443,7 @@ const cuerpoHtml = portableTextToHtml(articulo.cuerpo ?? []);
 
   .rel-img-wrap {
     display: block; overflow: hidden;
-    aspect-ratio: 16/9; background: #e5e5e5; margin-bottom: 0.65rem;
+    aspect-ratio: 3/2; background: #e5e5e5; margin-bottom: 0.65rem;
   }
   .rel-img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s; }
   .rel-img-wrap:hover .rel-img { transform: scale(1.05); }
