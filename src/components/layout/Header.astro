@@ -56,7 +56,7 @@ const linkEdicionActual: string = ultimaEdicion?.pdfUrl ?? '/edicion-actual.pdf'
 <!-- LOGO -->
 <div class="logo-area">
 
-  <!-- ZONA IZQUIERDA: RRSS + Ediciones Anteriores -->
+  <!-- ZONA IZQUIERDA: RRSS + Imagen 96 años -->
   <div class="logo-zona-izq">
 
     <!-- 1: RRSS -->
@@ -85,11 +85,13 @@ const linkEdicionActual: string = ultimaEdicion?.pdfUrl ?? '/edicion-actual.pdf'
       </a>
     </div>
 
-    <!-- 2: Ediciones Anteriores -->
-    <div class="logo-btn-lateral">
-      <a href="/edicionesanteriores" target="_blank" rel="noopener noreferrer" aria-label="Ver ediciones anteriores del diario" class="logo-btn-link">
-        <Image src={imgEdicionesAnteriores} alt="Ver Ediciones Anteriores" class="logo-btn-img" />
-      </a>
+    <!-- 2: Ícono 96 años -->
+    <div class="logo-col-derecha">
+      <Image
+        src={imgIconoDerecha}
+        alt="96 Años de Periodismo Local"
+        class="logo-btn-img logo-img-96"
+      />
     </div>
 
   </div>
@@ -109,23 +111,21 @@ const linkEdicionActual: string = ultimaEdicion?.pdfUrl ?? '/edicion-actual.pdf'
     </div>
   </div>
 
-  <!-- ZONA DERECHA: Edición Actual + 96 años -->
+  <!-- ZONA DERECHA: Ediciones Anteriores + Edición Actual -->
   <div class="logo-zona-der">
 
-    <!-- 4: Edición Actual PDF -->
+    <!-- 4: Ediciones Anteriores -->
+    <div class="logo-btn-lateral">
+      <a href="/edicionesanteriores" target="_blank" rel="noopener noreferrer" aria-label="Ver ediciones anteriores del diario" class="logo-btn-link">
+        <Image src={imgEdicionesAnteriores} alt="Ver Ediciones Anteriores" class="logo-btn-img" />
+      </a>
+    </div>
+
+    <!-- 5: Edición Actual PDF -->
     <div class="logo-btn-lateral">
       <a href={linkEdicionActual} target="_blank" rel="noopener noreferrer" aria-label="Ver edición actual en PDF" class="logo-btn-link">
         <Image src={imgUltimaEdicion} alt="Ver Edición Actual" class="logo-btn-img" />
       </a>
-    </div>
-
-    <!-- 5: Ícono 96 años — extremo derecho -->
-    <div class="logo-col-derecha">
-      <Image
-        src={imgIconoDerecha}
-        alt="96 Años de Periodismo Local"
-        class="logo-btn-img logo-img-96"
-      />
     </div>
 
   </div>
