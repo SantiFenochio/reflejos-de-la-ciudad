@@ -15,6 +15,7 @@ export const HOME_QUERY = `*[_type == "articulo"] | order(fechaPublicacion desc)
 // Nota individual por slug
 export const ARTICULO_QUERY = `*[_type == "articulo" && slug.current == $slug][0] {
   _id,
+  _updatedAt,
   titulo,
   slug,
   bajada,
