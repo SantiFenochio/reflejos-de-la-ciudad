@@ -296,17 +296,38 @@ const cuerpoHtml = portableTextToHtml(articulo.cuerpo ?? []);
   .nota-breadcrumb ol {
     display: flex; align-items: center; flex-wrap: wrap; gap: 0.25rem;
     list-style: none; padding: 0; margin: 0 0 1.25rem;
-    font-family: var(--font-cuerpo); font-size: 0.75rem; color: #888;
+    font-family: var(--font-cuerpo); font-size: 0.8rem; color: #888; /* FIX #6: era 0.75rem */
   }
   .nota-breadcrumb a { color: #888; text-decoration: none; transition: color 0.15s; }
   .nota-breadcrumb a:hover { color: #4c6a92; text-decoration: none; }
-  .nota-breadcrumb-actual { opacity: 0.6; }
+  /* FIX #6: truncar el último item (título largo) con ellipsis en mobile */
+  .nota-breadcrumb-actual {
+    opacity: 0.6;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  @media (min-width: 640px) {
+    .nota-breadcrumb-actual { max-width: none; white-space: normal; }
+  }
 
   /* Bajada */
   .nota-bajada {
     font-family: var(--font-titular);
     font-size: 1.2rem; font-weight: 400; font-style: italic;
     color: #4A4A4A; line-height: 1.55; margin: 0 0 1.25rem;
+  }
+  /* FIX #10: en mobile, el lead pierde la itálica (confunde con cuerpo) y gana
+     un borde izquierdo negro para que el lector lo identifique como copete */
+  @media (max-width: 640px) {
+    .nota-bajada {
+      font-style: normal;
+      font-weight: 500;
+      font-size: 1.05rem;
+      border-left: 3px solid #1C1C1C;
+      padding-left: 0.85rem;
+    }
   }
 
   /* Byline */
@@ -333,6 +354,14 @@ const cuerpoHtml = portableTextToHtml(articulo.cuerpo ?? []);
     font-size: 1.125rem; line-height: 1.85;
     color: #1a1a1a; margin-bottom: 1.5rem;
   }
+  /* FIX #5: reducir line-height y font-size en mobile para no requerir scroll eterno */
+  @media (max-width: 640px) {
+    .nota-cuerpo p {
+      font-size: 1rem;       /* 16px en vez de 18px */
+      line-height: 1.65;     /* era 1.85 — más compacto sin perder legibilidad */
+      margin-bottom: 1.25rem;
+    }
+  }
   .nota-cuerpo h2, .nota-cuerpo h3 {
     font-family: var(--font-titular); font-weight: 700; color: #1a1a1a;
     margin: 2rem 0 0.75rem; padding-bottom: 0.375rem;
@@ -347,8 +376,11 @@ const cuerpoHtml = portableTextToHtml(articulo.cuerpo ?? []);
     font-style: italic; font-size: 1.15rem; line-height: 1.6; color: #555;
   }
   .nota-cuerpo strong { font-weight: 700; color: #1a1a1a; }
-  /* Drop cap en primer parrafo */
-  .nota-cuerpo p:first-of-type::first-letter {
+  /* Drop cap SOLO en el primer párrafo real del artículo (clase .first-para).
+     El selector anterior (.nota-cuerpo p:first-of-type) capturaba el epígrafe
+     de foto "Foto Juventud radical" dándole una F gigante. Ahora la clase
+     first-para la asigna portableTextToHtml() solo al primer <p> con >80 chars. */
+  .nota-cuerpo p.first-para::first-letter {
     font-family: var(--font-titular); font-size: 3.5rem; font-weight: 900;
     line-height: 0.85; float: left; margin-right: 0.08em; margin-top: 0.1em;
     color: #1a1a1a;
@@ -410,7 +442,7 @@ const cuerpoHtml = portableTextToHtml(articulo.cuerpo ?? []);
     text-decoration: none; transition: opacity 0.15s;
   }
   .share-btn:hover { opacity: 0.82; text-decoration: none; }
-  .share-wa { background: #25D366; }
+  .share-wa { background: #1C1C1C; } /* FIX #7: era #25D366 */
   .share-x  { background: #000000; }
   .share-fb { background: #1877F2; }
 
@@ -468,21 +500,24 @@ const cuerpoHtml = portableTextToHtml(articulo.cuerpo ?? []);
 </style>
 
 <style>
-  /* BOTÓN FLOTANTE WHATSAPP */
+  /* FIX #7: Botón flotante WhatsApp — negro (#1C1C1C) en vez de verde para
+     respetar la paleta B&W del diario. El ícono queda blanco sobre negro. */
   .wa-float {
     position: fixed;
     right: 1rem; bottom: 5rem;
     width: 48px; height: 48px;
     border-radius: 50%;
-    background: #25D366; color: #fff;
+    background: #1C1C1C; color: #fff; /* era #25D366 verde WhatsApp */
+    border: 2px solid #D0D0D0;
     display: flex; align-items: center; justify-content: center;
     box-shadow: 0 3px 12px rgba(0,0,0,0.25);
     text-decoration: none;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
     z-index: 90;
   }
   .wa-float:hover {
     transform: scale(1.1);
+    background: #111111;
     box-shadow: 0 5px 18px rgba(0,0,0,0.3);
     text-decoration: none;
   }

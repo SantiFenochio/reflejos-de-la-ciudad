@@ -126,7 +126,7 @@
   margin-bottom: 1.5rem;
 }
 
-.portable-text p:first-child::first-letter {
+.portable-text p.first-para::first-letter {
   font-family: var(--font-titular);
   font-size: 3.75rem;
   font-weight: 900;

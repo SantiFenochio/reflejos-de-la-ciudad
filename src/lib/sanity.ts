@@ -2,12 +2,10 @@
 import { createClient } from '@sanity/client'
 import imageUrlBuilder from '@sanity/image-url'
 
-// import.meta.env lee las variables PUBLIC_* del .env y del dashboard de Vercel.
-// Los valores hardcodeados son fallback de seguridad por si las vars no están definidas.
 export const sanityClient = createClient({
   projectId:  import.meta.env.PUBLIC_SANITY_PROJECT_ID ?? 'k3agywgt',
   dataset:    import.meta.env.PUBLIC_SANITY_DATASET    ?? 'production',
-  useCdn:     false,   // false = datos frescos en build time (Astro estático)
+  useCdn:     false,
   apiVersion: '2024-01-01',
 })
 
@@ -21,10 +19,23 @@ import { toHTML } from '@portabletext/to-html'
 
 export function portableTextToHtml(blocks: any[]): string {
   if (!blocks || blocks.length === 0) return ''
+
+  // FIX DROP-CAP: rastrear el primer párrafo real (>80 chars) con clase first-para.
+  // Epígrafes cortos como "Foto Juventud radical" no reciben la clase.
+  // La closure vive por invocación de esta función, no por bloque.
+  let firstRealParagraphFound = false
+
   return toHTML(blocks, {
     components: {
       block: {
-        normal:     ({ children }: any) => `<p>${children}</p>`,
+        normal: ({ children }: any) => {
+          const rawText = String(children ?? '').replace(/<[^>]+>/g, '')
+          if (!firstRealParagraphFound && rawText.length > 80) {
+            firstRealParagraphFound = true
+            return `<p class="first-para">${children}</p>`
+          }
+          return `<p>${children}</p>`
+        },
         h3:         ({ children }: any) => `<h3>${children}</h3>`,
         blockquote: ({ children }: any) => `<blockquote>${children}</blockquote>`,
       },
@@ -33,7 +44,6 @@ export function portableTextToHtml(blocks: any[]): string {
         em:     ({ children }: any) => `<em>${children}</em>`,
       },
       types: {
-        // Imagen intercalada dentro del cuerpo
         image: ({ value }: any) => {
           if (!value?.asset) return ''
           const imgUrl = urlFor(value).width(900).fit('max').auto('format').url()
@@ -46,10 +56,8 @@ export function portableTextToHtml(blocks: any[]): string {
             '</figure>',
           ].filter(Boolean).join('\n')
         },
-        // Video de YouTube embebido
         youtube: ({ value }: any) => {
           const url = value?.url ?? ''
-          // Soporta: watch?v=ID, youtu.be/ID, /embed/ID, /shorts/ID
           const match = url.match(
             /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/
           )

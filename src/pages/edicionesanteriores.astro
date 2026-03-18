@@ -61,7 +61,7 @@ function formatearFecha(iso: string): string {
       </p>
     </div>
   ) : (
-    <ul style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.5rem;list-style:none;padding:0;margin:0;">
+    <ul class="ediciones-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;list-style:none;padding:0;margin:0;">
       {ediciones.map((ed) => (
         <li style="background:#fff;border:1px solid #D0D0D0;padding:1.25rem 1.25rem 1rem;display:flex;flex-direction:column;gap:0.75rem;transition:box-shadow 0.15s;">
           <!-- Ícono + fecha -->
@@ -110,3 +110,9 @@ function formatearFecha(iso: string): string {
   )}
 
 </BaseLayout>
+
+<style>
+  /* FIX #8: grid responsivo para ediciones anteriores */
+  @media (min-width: 640px)  { .ediciones-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 1.25rem !important; } }
+  @media (min-width: 1024px) { .ediciones-grid { grid-template-columns: repeat(4, 1fr) !important; gap: 1.5rem !important; } }
+</style>
