@@ -54,6 +54,7 @@ const linkEdicionActual: string = ultimaEdicion?.pdfUrl ?? '/edicion-actual.pdf'
 </div>
 
 <!-- LOGO -->
+<div class="logo-area-bg">
 <div class="logo-area">
 
   <!-- ZONA IZQUIERDA: RRSS + Imagen 96 años -->
@@ -138,6 +139,7 @@ const linkEdicionActual: string = ultimaEdicion?.pdfUrl ?? '/edicion-actual.pdf'
   </div>
 
 </div>
+</div>
 
 <!-- BARRA EDICIONES MOBILE — solo visible < 768px -->
 <div class="ediciones-mobile-bar">
@@ -215,7 +217,7 @@ const linkEdicionActual: string = ultimaEdicion?.pdfUrl ?? '/edicion-actual.pdf'
 <!-- TICKER -->
 {tickerNotas.length > 0 && (
   <div class="ticker-bar" role="region" aria-label="Ultimas noticias">
-    <span class="ticker-label">ULTIMO</span>
+    <span class="ticker-label">ÚLTIMA HORA</span>
     <div class="ticker-content">
       <div class="ticker-track">
         <span class="ticker-bloque">
@@ -263,10 +265,14 @@ const linkEdicionActual: string = ultimaEdicion?.pdfUrl ?? '/edicion-actual.pdf'
     .top-clima  { display: none; }
   }
 
+  /* ── LOGO AREA — wrapper full-width para que el blanco cubra todo el ancho ── */
+  .logo-area-bg {
+    background: #fff;
+    border-bottom: 2px solid #1a1a1a; /* filete oscuro tipo masthead periodístico */
+  }
+
   /* ── LOGO AREA — 3 zonas de 33% con space-between ── */
   .logo-area {
-    background: #fff;
-    border-bottom: 1px solid #e5e5e5;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -381,16 +387,17 @@ const linkEdicionActual: string = ultimaEdicion?.pdfUrl ?? '/edicion-actual.pdf'
   @media (max-width: 767px) {
     .logo-area {
       justify-content: center;
-      padding: 0.4rem 1rem;
+      padding: 0.75rem 1rem;
+      min-height: auto;
     }
     .logo-zona-izq    { display: none; }
-    .logo-zona-centro { width: 100%; }
+    .logo-zona-centro { width: 100%; justify-content: center; }
     .logo-zona-der    { display: none; }
-    .logo-img         { height: 48px; }
+    .logo-img         { width: 190px; height: auto; max-width: 72vw; }
   }
 
   /* NAV */
-  .nav-bar { background: #4c6a92; position: sticky; top: 0; z-index: 50; box-shadow: 0 2px 8px rgba(0,0,0,0.28); }
+  .nav-bar { background: #4c6a92; position: sticky; top: 0; z-index: 50; box-shadow: 0 2px 8px rgba(0,0,0,0.28); border-top: 3px solid #1a1a1a; }
   .nav-desktop { display: none; max-width: 1280px; margin: 0 auto; padding: 0 0.5rem; justify-content: center; flex-wrap: wrap; align-items: stretch; }
   @media (min-width: 768px) { .nav-desktop { display: flex; } }
   .nav-lnk { font-family: var(--font-cuerpo); font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #fff; padding: 0.65rem 0.6rem; display: inline-block; white-space: nowrap; text-decoration: none; transition: background-color 0.15s; }

@@ -230,10 +230,22 @@ const articleProps = {
   /* ============================================================
      HERO DE NOTA
      ============================================================ */
-  .nh-section { margin: -1.5rem -1rem 0; }
+  /* Hero full-bleed: márgenes negativos que contrarrestan el px-4/6/8 del main */
+  .nh-section {
+    margin-top: -1.5rem;   /* compensa py-6 del main */
+    margin-left: -1rem;    /* compensa px-4 (mobile) */
+    margin-right: -1rem;
+    margin-bottom: 0;
+  }
+  @media (min-width: 640px) {
+    .nh-section { margin-left: -1.5rem; margin-right: -1.5rem; } /* compensa px-6 */
+  }
+  @media (min-width: 1024px) {
+    .nh-section { margin-left: -2rem; margin-right: -2rem; } /* compensa px-8 */
+  }
 
   .nh-wrap {
-    position: relative; width: 100%; height: 280px;
+    position: relative; width: 100%; height: 300px;
     overflow: hidden; background: #1a1a1a;
   }
   @media (min-width: 640px)  { .nh-wrap { height: 380px; } }
@@ -272,8 +284,8 @@ const articleProps = {
     overflow-wrap: break-word;
   }
   @media (max-width: 480px) {
-    .nh-titulo { font-size: 1.35rem; }
-    .nh-content { padding: 1rem 1rem; }
+    .nh-titulo { font-size: 1.25rem; }
+    .nh-content { padding: 1rem; }
   }
 </style>
 
@@ -369,6 +381,13 @@ const articleProps = {
     background: #FAF9F7;
     font-style: italic; font-size: 1.15rem; line-height: 1.6; color: #555;
   }
+  @media (max-width: 640px) {
+    .nota-cuerpo blockquote {
+      padding: 0.6rem 1rem;
+      margin: 1.5rem 0;
+      font-size: 1.05rem;
+    }
+  }
   .nota-cuerpo strong { font-weight: 700; color: #1a1a1a; }
   /* Drop cap SOLO en el primer párrafo real del artículo (clase .first-para).
      El selector anterior (.nota-cuerpo p:first-of-type) capturaba el epígrafe
@@ -378,6 +397,9 @@ const articleProps = {
     font-family: var(--font-titular); font-size: 3.5rem; font-weight: 900;
     line-height: 0.85; float: left; margin-right: 0.08em; margin-top: 0.1em;
     color: #1a1a1a;
+  }
+  @media (max-width: 640px) {
+    .nota-cuerpo p.first-para::first-letter { font-size: 2.75rem; }
   }
 
   /* ── IMAGEN INTERCALADA ────────────────────────── */
@@ -439,6 +461,22 @@ const articleProps = {
   .share-wa { background: #1C1C1C; } /* FIX #7: era #25D366 */
   .share-x  { background: #000000; }
   .share-fb { background: #1877F2; }
+
+  /* Mobile: botones apilados full-width, táctil-amigables */
+  @media (max-width: 500px) {
+    .compartir-inner {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.5rem;
+    }
+    .compartir-label { text-align: center; padding-bottom: 0.25rem; }
+    .share-btn {
+      min-height: 44px;
+      justify-content: center;
+      font-size: 0.8rem;
+      padding: 0.5rem 1rem;
+    }
+  }
 
   /* ============================================================
      RELACIONADAS
