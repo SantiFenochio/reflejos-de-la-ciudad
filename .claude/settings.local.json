@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /c/Users/Tino/Desktop/reflejos-de-la-ciudad -name tailwind.config.* -o -name astro.config.*)"
+    ]
+  }
+}
