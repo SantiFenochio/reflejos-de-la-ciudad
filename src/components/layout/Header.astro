@@ -280,8 +280,8 @@ const publicSanityApiVersion: string = '2024-01-01';
     width: 100%;
     max-width: 1400px;
     margin: 0 auto;
-    padding: 1rem 1.5rem;   /* era 0.6rem — más aire vertical */
-    min-height: 130px;       /* garantiza altura mínima del banner */
+    padding: 1.25rem 1.5rem;
+    min-height: 220px;
     box-sizing: border-box;
   }
 
@@ -290,7 +290,7 @@ const publicSanityApiVersion: string = '2024-01-01';
     display: flex;
     align-items: center;
     gap: 3rem;
-    width: 33%;
+    width: 30%;
     justify-content: flex-start;
   }
 
@@ -298,7 +298,7 @@ const publicSanityApiVersion: string = '2024-01-01';
   .logo-zona-centro {
     display: flex;
     justify-content: center;
-    width: 33%;
+    width: 40%;
   }
 
   /* Zona derecha: Edición Actual + 96 años */
@@ -306,7 +306,7 @@ const publicSanityApiVersion: string = '2024-01-01';
     display: flex;
     align-items: center;
     gap: 3rem;
-    width: 33%;
+    width: 30%;
     justify-content: flex-end;
   }
 
@@ -377,12 +377,12 @@ const publicSanityApiVersion: string = '2024-01-01';
   /* 3 — Logo central */
   .logo-center { display: flex; align-items: center; flex-shrink: 0; }
   .logo-link   { display: inline-block; }
-  .logo-img    { display: block; width: 280px; height: auto; max-width: 100%; } /* era height:80px — ahora width-driven */
+  .logo-img    { display: block; width: 560px; height: auto; max-width: 100%; }
   .logo-text   { display: none; font-family: var(--font-titular); font-weight: 900; font-size: 2.25rem; color: #1a1a1a; letter-spacing: -0.02em; }
 
   /* 5 — Ícono 96 años: crecer junto al banner */
   .logo-col-derecha { display: flex; align-items: center; flex-shrink: 0; }
-  .logo-img-96 { height: 90px !important; width: auto; object-fit: contain; } /* era 80px */
+  .logo-img-96 { height: 180px !important; width: auto; object-fit: contain; }
 
   /* ── MOBILE < 768px: solo el logo centrado ── */
   @media (max-width: 767px) {
