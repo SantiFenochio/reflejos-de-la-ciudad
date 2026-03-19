@@ -16,7 +16,7 @@ export default defineType({
   ],
   preview: {
     select:  { title: 'url' },
-    prepare: ({ title }: { title: string }) => ({
+    prepare: ({ title }) => ({
       title: title || 'Video de YouTube',
     }),
   },

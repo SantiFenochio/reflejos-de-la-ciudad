@@ -10,7 +10,10 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "migrar:noticias": "node scripts/migrar-noticias.js",
+    "lint": "echo No hay linter configurado",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.1",
@@ -19,6 +22,7 @@
     "@sanity/image-url": "^2.0.3",
     "@tailwindcss/vite": "^4.2.1",
     "astro": "6.0.5",
+    "axios": "^1.13.6",
     "cheerio": "^1.2.0",
     "dotenv": "^17.3.1",
     "nprogress": "^0.2.0",
@@ -28,6 +32,7 @@
     "@sanity/cli": "^6.1.5",
     "@sanity/vision": "^5.16.0",
     "@types/nprogress": "^0.2.3",
-    "sanity": "^5.16.0"
+    "sanity": "^5.16.0",
+    "typescript": "^5.9.3"
   }
 }
