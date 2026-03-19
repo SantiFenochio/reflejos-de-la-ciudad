@@ -84,7 +84,7 @@ const articleProps = {
 <section class="nh-section">
   <div class="nh-wrap">
     {imagenHero ? (
-      <img src={imagenHero} alt={articulo.titulo} class="nh-img" loading="eager" />
+      <img src={imagenHero} alt={articulo.titulo} class="nh-img w-full aspect-video object-cover object-center" loading="eager" />
     ) : (
       <div class="nh-placeholder"></div>
     )}
@@ -300,11 +300,9 @@ const articleProps = {
   }
 
   .nh-wrap {
-    position: relative; width: 100%; height: 300px;
+    position: relative; width: 100%; aspect-ratio: 16/9;
     overflow: hidden; background: #1a1a1a;
   }
-  @media (min-width: 640px)  { .nh-wrap { height: 380px; } }
-  @media (min-width: 1024px) { .nh-wrap { height: 500px; } }
 
   .nh-placeholder { position: absolute; inset: 0; background: #1a1a1a; }
 
