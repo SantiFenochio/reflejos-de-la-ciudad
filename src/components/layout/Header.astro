@@ -1,4 +1,4 @@
-﻿---
+---
 // src/components/layout/Header.astro
 import { sanityClient } from '../../lib/sanity';
 import { Image } from 'astro:assets';
@@ -40,6 +40,9 @@ try {
   console.warn('[Header] No se pudo obtener ultima edicion:', e);
 }
 const linkEdicionActual: string = ultimaEdicion?.pdfUrl ?? '/edicion-actual.pdf';
+const publicSanityProjectId: string = import.meta.env.PUBLIC_SANITY_PROJECT_ID ?? 'k3agywgt';
+const publicSanityDataset: string = import.meta.env.PUBLIC_SANITY_DATASET ?? 'production';
+const publicSanityApiVersion: string = '2024-01-01';
 ---
 
 <!-- BARRA SUPERIOR -->
@@ -503,7 +506,7 @@ const linkEdicionActual: string = ultimaEdicion?.pdfUrl ?? '/edicion-actual.pdf'
   @keyframes ticker-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 </style>
 
-<script>
+<script define:vars={{ publicSanityProjectId, publicSanityDataset, publicSanityApiVersion }}>
 (function() {
   // ── Fecha dinamica ──────────────────────────────────────────────
   const el = document.getElementById('header-fecha');
@@ -565,9 +568,9 @@ const linkEdicionActual: string = ultimaEdicion?.pdfUrl ?? '/edicion-actual.pdf'
   }
 
   // ── Buscador ────────────────────────────────────────────────────
-  var SANITY_PROJECT = 'k3agywgt';
-  var SANITY_DATASET = 'production';
-  var SANITY_VER     = '2024-01-01';
+  var SANITY_PROJECT = publicSanityProjectId;
+  var SANITY_DATASET = publicSanityDataset;
+  var SANITY_VER     = publicSanityApiVersion;
 
   var buscadorPanel = document.getElementById('buscador-panel');
   var buscadorInput = document.getElementById('buscador-input');
