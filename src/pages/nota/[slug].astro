@@ -57,7 +57,6 @@ const paginaURL = `${SITE_URL}/nota/${slug}`;
 const tituloEnc = encodeURIComponent(articulo.titulo);
 const urlEnc    = encodeURIComponent(paginaURL);
 const shareWA   = `https://wa.me/?text=${tituloEnc}%20${urlEnc}`;
-const shareX    = `https://twitter.com/intent/tweet?text=${tituloEnc}&url=${urlEnc}`;
 const shareFB   = `https://www.facebook.com/sharer/sharer.php?u=${urlEnc}`;
 
 const cuerpoHtml = portableTextToHtml(articulo.cuerpo ?? []);
@@ -148,7 +147,7 @@ const articleProps = {
 <div class="nota-cuerpo portable-text" set:html={cuerpoHtml} />
 
 <!-- ============================================================
-     COMPARTIR: WhatsApp, X, Facebook
+     COMPARTIR: WhatsApp, Facebook y botón nativo
      ============================================================ -->
 <div class="nota-compartir">
   <hr class="nota-hr" />
@@ -158,16 +157,87 @@ const articleProps = {
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.533 5.854L0 24l6.335-1.508A11.93 11.93 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.8 9.8 0 0 1-5.034-1.388l-.361-.214-3.762.896.952-3.664-.235-.374A9.786 9.786 0 0 1 2.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>
       WhatsApp
     </a>
-    <a href={shareX} target="_blank" rel="noopener noreferrer" class="share-btn share-x" aria-label="Compartir en X">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.258 5.63 5.906-5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-      X
-    </a>
     <a href={shareFB} target="_blank" rel="noopener noreferrer" class="share-btn share-fb" aria-label="Compartir en Facebook">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987H7.898V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>
       Facebook
     </a>
+    <button
+      type="button"
+      id="share-native-btn"
+      class="share-btn share-generic"
+      aria-label="Compartir nota"
+      data-share-title={articulo.titulo}
+    >
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="18" cy="5" r="3"></circle>
+        <circle cx="6" cy="12" r="3"></circle>
+        <circle cx="18" cy="19" r="3"></circle>
+        <line x1="8.6" y1="10.8" x2="15.4" y2="6.2"></line>
+        <line x1="8.6" y1="13.2" x2="15.4" y2="17.8"></line>
+      </svg>
+      <span class="share-native-text">Compartir</span>
+    </button>
   </div>
 </div>
+
+<script>
+  (function () {
+    var btn = document.getElementById('share-native-btn');
+    if (!btn) return;
+
+    var textEl = btn.querySelector('.share-native-text');
+    var defaultLabel = textEl ? textEl.textContent : 'Compartir';
+    var copiedLabel = '¡Copiado!';
+    var resetTimer;
+
+    function setTempLabel(label) {
+      if (!textEl) return;
+      textEl.textContent = label;
+      clearTimeout(resetTimer);
+      resetTimer = setTimeout(function () {
+        textEl.textContent = defaultLabel;
+      }, 1800);
+    }
+
+    async function copyCurrentUrl() {
+      var url = window.location.href;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(url);
+      } else {
+        var textarea = document.createElement('textarea');
+        textarea.value = url;
+        textarea.setAttribute('readonly', '');
+        textarea.style.position = 'absolute';
+        textarea.style.left = '-9999px';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+      }
+      setTempLabel(copiedLabel);
+    }
+
+    btn.addEventListener('click', async function () {
+      var title = btn.getAttribute('data-share-title') || document.title;
+      var url = window.location.href;
+
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: title, url: url });
+          return;
+        } catch (error) {
+          if (error && error.name === 'AbortError') return;
+        }
+      }
+
+      try {
+        await copyCurrentUrl();
+      } catch (error) {
+        alert('No se pudo compartir ni copiar el enlace.');
+      }
+    });
+  })();
+</script>
 
 <!-- ============================================================
      NOTAS RELACIONADAS — 3 de la misma categoria
@@ -444,8 +514,8 @@ const articleProps = {
   }
   .share-btn:hover { opacity: 0.82; text-decoration: none; }
   .share-wa { background: #1C1C1C; } /* FIX #7: era #25D366 */
-  .share-x  { background: #000000; }
   .share-fb { background: #1877F2; }
+  .share-generic { background: #2f2f2f; border: none; cursor: pointer; }
 
   /* Mobile: botones apilados full-width, táctil-amigables */
   @media (max-width: 500px) {
