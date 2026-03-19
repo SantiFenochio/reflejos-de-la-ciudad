@@ -632,7 +632,6 @@ const publicSanityApiVersion: string = '2024-01-01';
       return '<a href="/nota/' + n.slug + '" class="buscador-resultado">'
         + img
         + '<div class="buscador-res-body">'
-        + (n.categoria ? '<span class="buscador-res-cat">' + n.categoria + '</span>' : '')
         + '<span class="buscador-res-titulo">' + n.titulo + '</span>'
         + '</div></a>';
     }).join('');
@@ -649,7 +648,7 @@ const publicSanityApiVersion: string = '2024-01-01';
     try {
       // GROQ: match requiere wildcards en el valor del parámetro, no en la query.
       // Se usa api.sanity.io (no apicdn) para evitar problemas de CORS y caché.
-      var query = '*[_type == "articulo" && titulo match $q] | order(fechaPublicacion desc)[0...8] { titulo, "slug": slug.current, categoria, "imgUrl": imagenPrincipal.asset->url }';
+      var query = '*[_type == "articulo" && titulo match $q] | order(fechaPublicacion desc)[0...8] { titulo, "slug": slug.current, "imgUrl": imagenPrincipal.asset->url }';
       var url = 'https://' + SANITY_PROJECT + '.api.sanity.io/v' + SANITY_VER + '/data/query/' + SANITY_DATASET
         + '?query=' + encodeURIComponent(query)
         + '&$q=' + encodeURIComponent(JSON.stringify('*' + q + '*'));
