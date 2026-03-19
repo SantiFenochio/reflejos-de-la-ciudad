@@ -144,12 +144,10 @@ const linkEdicionActual: string = ultimaEdicion?.pdfUrl ?? '/edicion-actual.pdf'
 <!-- BARRA EDICIONES MOBILE — solo visible < 768px -->
 <div class="ediciones-mobile-bar">
   <a href="/edicionesanteriores" class="edicion-mobile-btn" aria-label="Ver ediciones anteriores del diario">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-    Ediciones Anteriores
+    <Image src={imgEdicionesAnteriores} alt="Ver Ediciones Anteriores" class="edicion-mobile-img" />
   </a>
-  <a href={linkEdicionActual} target="_blank" rel="noopener noreferrer" class="edicion-mobile-btn edicion-mobile-btn--primary" aria-label="Ver última edición semanal en PDF">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
-    Última Edición Semanal
+  <a href={linkEdicionActual} target="_blank" rel="noopener noreferrer" class="edicion-mobile-btn" aria-label="Ver última edición semanal en PDF">
+    <Image src={imgUltimaEdicion} alt="Ver Última Edición Semanal" class="edicion-mobile-img" />
   </a>
 </div>
 
@@ -470,30 +468,25 @@ const linkEdicionActual: string = ultimaEdicion?.pdfUrl ?? '/edicion-actual.pdf'
     }
     .edicion-mobile-btn {
       flex: 1;
-      min-height: 44px;
+      min-height: 74px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.4rem;
-      font-family: var(--font-cuerpo);
-      font-size: 0.68rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
       color: #1C1C1C;
       text-decoration: none;
-      padding: 0.55rem 0.5rem;
+      padding: 0.45rem 0.4rem;
       border-right: 1px solid #D0D0D0;
       transition: background-color 0.15s;
-      text-align: center;
     }
     .edicion-mobile-btn:last-child { border-right: none; }
     .edicion-mobile-btn:active     { background: #e8e8e8; }
-    .edicion-mobile-btn--primary {
-      background: #1C1C1C;
-      color: #F5F5F0;
+    .edicion-mobile-img {
+      display: block;
+      height: 60px;
+      width: auto;
+      max-width: 100%;
+      object-fit: contain;
     }
-    .edicion-mobile-btn--primary:active { background: #333; }
   }
 
   /* TICKER */
