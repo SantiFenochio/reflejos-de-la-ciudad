@@ -4,7 +4,8 @@ import { sanityClient } from '../../lib/sanity';
 import { Image } from 'astro:assets';
 import imgEdicionesAnteriores from '../../assets/Anteriores17.png';
 import imgUltimaEdicion       from '../../assets/ultima17.png';
-import imgIconoDerecha        from '../../assets/96Actual.png';
+import imgIconoDerecha        from '../../assets/Nuevo96.png';
+import imgLogoPrincipal       from '../../assets/NuevoLogo.png';
 
 const secciones = [
   { label: 'Inicio',    href: '/'           },
@@ -109,7 +110,7 @@ const publicSanityApiVersion: string = '2024-01-01';
     <div class="logo-center">
       <a href="/" aria-label="Inicio de Reflejos de la Ciudad" class="logo-link">
         <img
-          src="/Logo.png"
+          src={imgLogoPrincipal.src}
           alt="Reflejos de la Ciudad"
           class="logo-img"
           onerror="this.style.display='none';document.getElementById('logo-text').style.display='block';"
@@ -359,16 +360,16 @@ const publicSanityApiVersion: string = '2024-01-01';
   /* Imagen de edición: 90px de alto */
   .logo-btn-img {
     display: block;
-    height: 90px;   /* era 80px */
+    height: 117px;
     width: auto;
-    max-width: 200px;
+    max-width: 260px;
     object-fit: contain;
   }
 
   /* Separador vertical entre los dos botones — ajustado a la nueva altura */
   .logo-btn-sep {
     width: 1px;
-    height: 90px;   /* proporcional a las imágenes */
+    height: 117px;
     background: #D0D0D0;
     flex-shrink: 0;
     margin: 0 0.25rem;
@@ -382,7 +383,7 @@ const publicSanityApiVersion: string = '2024-01-01';
 
   /* 5 — Ícono 96 años: crecer junto al banner */
   .logo-col-derecha { display: flex; align-items: center; flex-shrink: 0; }
-  .logo-img-96 { height: 180px !important; width: auto; object-fit: contain; }
+  .logo-img-96 { height: 234px !important; width: auto; object-fit: contain; }
 
   /* ── MOBILE < 768px: solo el logo centrado ── */
   @media (max-width: 767px) {
