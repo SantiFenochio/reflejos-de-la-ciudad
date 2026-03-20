@@ -31,16 +31,15 @@ try {
   console.warn('[Header] No se pudo obtener ticker notas:', e);
 }
 
-// Traemos el PDF de la edición impresa más reciente (ordenada por fecha DESC)
 let ultimaEdicion: { pdfUrl: string | null } | null = null;
 try {
   ultimaEdicion = await sanityClient.fetch<{ pdfUrl: string | null }>(
-    `*[_type == "edicionImpresa"] | order(fecha desc)[0] { "pdfUrl": archivoPdf.asset->url }`
+    `*[_type == "edicionImpresa"] | order(_createdAt desc) [0] { "pdfUrl": archivoPdf.asset->url }`
   );
 } catch (e) {
   console.warn('[Header] No se pudo obtener ultima edicion:', e);
 }
-const linkEdicionActual: string = ultimaEdicion?.pdfUrl ?? '/edicion-actual.pdf';
+const linkEdicionActual: string = ultimaEdicion?.pdfUrl ?? '/edicionesanteriores';
 const publicSanityProjectId: string = import.meta.env.PUBLIC_SANITY_PROJECT_ID ?? 'k3agywgt';
 const publicSanityDataset: string = import.meta.env.PUBLIC_SANITY_DATASET ?? 'production';
 const publicSanityApiVersion: string = '2024-01-01';
