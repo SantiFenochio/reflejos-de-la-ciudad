@@ -1,10 +1,11 @@
-﻿---
+---
 // src/pages/nota/[slug].astro
 import ArticleLayout from '../../layouts/ArticleLayout.astro';
 import { sanityClient, urlFor, portableTextToHtml } from '../../lib/sanity';
 import { ARTICULO_QUERY } from '../../lib/queries';
 import { SITE_URL } from '../../lib/seo';
 import type { Articulo } from '../../types/article';
+import Publicidad from '../../components/ui/Publicidad.astro';
 
 export async function getStaticPaths() {
   try {
@@ -27,6 +28,31 @@ try {
   return Astro.redirect('/');
 }
 if (!articulo) return Astro.redirect('/');
+
+let publicidades: any[] = [];
+try {
+  publicidades = await sanityClient.fetch(
+    `*[_type == "publicidad" && activa == true && defined(imagen.asset->url) && defined(linkDestino)] | order(orden asc) {
+      _id, nombre, linkDestino, posicion,
+      "imagenUrl": imagen.asset->url
+    }`
+  );
+} catch (e) {
+  console.warn('[slug] No se pudo obtener publicidades:', e);
+}
+
+if (publicidades.length === 0) {
+  try {
+    publicidades = await sanityClient.fetch(
+      `*[_type == "publicidad" && defined(imagen.asset->url) && defined(linkDestino)] | order(orden asc) [0..4] {
+        _id, nombre, linkDestino, posicion,
+        "imagenUrl": imagen.asset->url
+      }`
+    );
+  } catch (e) {
+    console.warn('[slug] No se pudo obtener publicidades de fallback:', e);
+  }
+}
 
 function formatearFecha(iso: string): string {
   return new Date(iso).toLocaleDateString('es-AR', {
@@ -144,40 +170,52 @@ const articleProps = {
 <!-- ============================================================
      CUERPO DEL ARTICULO — Portable Text, 720px centrado
      ============================================================ -->
-<div class="nota-cuerpo portable-text" set:html={cuerpoHtml} />
+<div class="nota-layout grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
+  <div class="nota-main">
+    <div class="nota-cuerpo portable-text" set:html={cuerpoHtml} />
 
-<!-- ============================================================
-     COMPARTIR: WhatsApp, Facebook y botón nativo
-     ============================================================ -->
-<div class="nota-compartir">
-  <hr class="nota-hr" />
-  <div class="compartir-inner">
-    <span class="compartir-label">Compartir</span>
-    <a href={shareWA} target="_blank" rel="noopener noreferrer sponsored" class="share-btn share-wa" aria-label="Compartir en WhatsApp">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.533 5.854L0 24l6.335-1.508A11.93 11.93 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.8 9.8 0 0 1-5.034-1.388l-.361-.214-3.762.896.952-3.664-.235-.374A9.786 9.786 0 0 1 2.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>
-      WhatsApp
-    </a>
-    <a href={shareFB} target="_blank" rel="noopener noreferrer" class="share-btn share-fb" aria-label="Compartir en Facebook">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987H7.898V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>
-      Facebook
-    </a>
-    <button
-      type="button"
-      id="share-native-btn"
-      class="share-btn share-generic"
-      aria-label="Compartir nota"
-      data-share-title={articulo.titulo}
-    >
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <circle cx="18" cy="5" r="3"></circle>
-        <circle cx="6" cy="12" r="3"></circle>
-        <circle cx="18" cy="19" r="3"></circle>
-        <line x1="8.6" y1="10.8" x2="15.4" y2="6.2"></line>
-        <line x1="8.6" y1="13.2" x2="15.4" y2="17.8"></line>
-      </svg>
-      <span class="share-native-text">Compartir</span>
-    </button>
+    <div class="nota-compartir">
+      <hr class="nota-hr" />
+      <div class="compartir-inner">
+        <span class="compartir-label">Compartir</span>
+        <a href={shareWA} target="_blank" rel="noopener noreferrer sponsored" class="share-btn share-wa" aria-label="Compartir en WhatsApp">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.533 5.854L0 24l6.335-1.508A11.93 11.93 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.8 9.8 0 0 1-5.034-1.388l-.361-.214-3.762.896.952-3.664-.235-.374A9.786 9.786 0 0 1 2.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>
+          WhatsApp
+        </a>
+        <a href={shareFB} target="_blank" rel="noopener noreferrer" class="share-btn share-fb" aria-label="Compartir en Facebook">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987H7.898V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>
+          Facebook
+        </a>
+        <button
+          type="button"
+          id="share-native-btn"
+          class="share-btn share-generic"
+          aria-label="Compartir nota"
+          data-share-title={articulo.titulo}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="18" cy="5" r="3"></circle>
+            <circle cx="6" cy="12" r="3"></circle>
+            <circle cx="18" cy="19" r="3"></circle>
+            <line x1="8.6" y1="10.8" x2="15.4" y2="6.2"></line>
+            <line x1="8.6" y1="13.2" x2="15.4" y2="17.8"></line>
+          </svg>
+          <span class="share-native-text">Compartir</span>
+        </button>
+      </div>
+    </div>
   </div>
+
+  <aside class="nota-sidebar">
+    {publicidades.length > 0 && (
+      <div class="nota-sidebar-list">
+        <p class="text-xs text-gray-400 uppercase tracking-widest mb-2">Publicidad</p>
+        {publicidades.map((pub: any) => (
+          <Publicidad pub={pub} />
+        ))}
+      </div>
+    )}
+  </aside>
 </div>
 
 <script>
@@ -282,21 +320,39 @@ const articleProps = {
 </ArticleLayout>
 
 <style>
+  .nota-layout {
+    max-width: 72rem;
+    margin: 0 auto 2.5rem;
+    align-items: start;
+  }
+  .nota-main {
+    width: 100%;
+    max-width: 56rem;
+    justify-self: center;
+  }
+  .nota-sidebar-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  @media (min-width: 1024px) {
+    .nota-sidebar {
+      position: sticky;
+      top: 6rem;
+      align-self: start;
+    }
+  }
+
   /* ============================================================
      HERO DE NOTA
      ============================================================ */
   /* Hero full-bleed: márgenes negativos que contrarrestan el px-4/6/8 del main */
   .nh-section {
     margin-top: -1.5rem;   /* compensa py-6 del main */
-    margin-left: -1rem;    /* compensa px-4 (mobile) */
-    margin-right: -1rem;
+    margin-left: auto;
+    margin-right: auto;
     margin-bottom: 0;
-  }
-  @media (min-width: 640px) {
-    .nh-section { margin-left: -1.5rem; margin-right: -1.5rem; } /* compensa px-6 */
-  }
-  @media (min-width: 1024px) {
-    .nh-section { margin-left: -2rem; margin-right: -2rem; } /* compensa px-8 */
+    max-width: 56rem;
   }
 
   .nh-wrap {
@@ -347,7 +403,7 @@ const articleProps = {
      META, BREADCRUMB, BYLINE
      ============================================================ */
   .nota-meta {
-    max-width: 45rem; margin: 0 auto;
+    max-width: 56rem; margin: 0 auto;
     padding-top: 1.5rem;
   }
 
@@ -406,7 +462,7 @@ const articleProps = {
      CUERPO DEL ARTICULO
      ============================================================ */
   .nota-cuerpo {
-    max-width: 45rem; margin: 0 auto 2.5rem;
+    max-width: 56rem; margin: 0 auto 2.5rem;
   }
   .nota-cuerpo p {
     font-family: var(--font-cuerpo);
@@ -493,7 +549,7 @@ const articleProps = {
   /* ============================================================
      COMPARTIR
      ============================================================ */
-  .nota-compartir { max-width: 45rem; margin: 0 auto; }
+  .nota-compartir { max-width: 56rem; margin: 0 auto; }
 
   .compartir-inner {
     display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;
@@ -535,7 +591,7 @@ const articleProps = {
   /* ============================================================
      RELACIONADAS
      ============================================================ */
-  .nota-relacionadas { margin-top: 3rem; padding-top: 0.5rem; }
+  .nota-relacionadas { max-width: 56rem; margin: 3rem auto 0; padding-top: 0.5rem; }
 
   .rel-header {
     display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.75rem;
