@@ -1,11 +1,11 @@
-﻿---
+---
 // src/pages/404.astro
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { sanityClient, urlFor } from '../lib/sanity';
 
 // Últimas 3 notas para mostrar en la 404
 const recientes: any[] = await sanityClient.fetch(
-  `*[_type == "articulo"] | order(fechaPublicacion desc) [0...3] {
+  `*[_type == "articulo"] | order(orderRank) [0...3] {
     titulo, slug, categoria, fechaPublicacion,
     "imagen": imagenPrincipal
   }`
