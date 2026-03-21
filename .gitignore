@@ -33,4 +33,9 @@ pnpm-debug.log*
 migrate.mjs
 scrape.mjs
 
+# Temporales de scripts
+*.bat
+*_out.txt
+_cleanup*
+
 .vercel
