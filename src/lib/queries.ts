@@ -1,7 +1,7 @@
 // src/lib/queries.ts
 
 // Últimas 7 noticias para la Home (hero + grilla de 6)
-export const HOME_QUERY = `*[_type == "articulo"] | order(orderRank) [0...13] {
+export const HOME_QUERY = `*[_type == "articulo"] | order(fechaPublicacion desc) [0...13] {
   _id,
   titulo,
   slug,
@@ -25,7 +25,7 @@ export const ARTICULO_QUERY = `*[_type == "articulo" && slug.current == $slug][0
   imagenCaption,
   autor,
   cuerpo,
-  "relacionadas": *[_type == "articulo" && categoria == ^.categoria && slug.current != $slug] | order(orderRank) [0...3] {
+  "relacionadas": *[_type == "articulo" && categoria == ^.categoria && slug.current != $slug] | order(fechaPublicacion desc) [0...3] {
     titulo,
     slug,
     categoria,
@@ -36,7 +36,7 @@ export const ARTICULO_QUERY = `*[_type == "articulo" && slug.current == $slug][0
 
 // Notas por sección — $seccion debe ser el valor EN MAYÚSCULAS tal como está en Sanity
 // (ej: 'SOCIEDAD', 'DEPORTES', 'EDUCACIÓN')
-export const SECCION_QUERY = `*[_type == "articulo" && upper(categoria) == $seccion] | order(orderRank) {
+export const SECCION_QUERY = `*[_type == "articulo" && upper(categoria) == $seccion] | order(fechaPublicacion desc) {
   _id,
   titulo,
   slug,

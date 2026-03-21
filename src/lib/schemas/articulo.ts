@@ -1,15 +1,11 @@
 // src/lib/schemas/articulo.ts
 import { defineField, defineType } from 'sanity'
-import { orderRankField, orderRankOrdering } from '@sanity/orderable-document-list'
 
 export default defineType({
   name:  'articulo',
   title: 'Artículo',
   type:  'document',
-  orderings: [orderRankOrdering],
   fields: [
-    orderRankField({ type: 'articulo' }),
-
     defineField({
       name:  'titulo',
       title: 'Título',

@@ -812,7 +812,7 @@ const heroImg = hero?.imagen
 
     try {
       var end   = offset + LIMIT - 1;
-      var query = '*[_type == "articulo"] | order(orderRank) [' + offset + '...' + (offset + LIMIT) + '] { titulo, "slug": slug.current, bajada, categoria, fechaPublicacion, autor, "imgUrl": imagenPrincipal.asset->url }';
+      var query = '*[_type == "articulo"] | order(fechaPublicacion desc) [' + offset + '...' + (offset + LIMIT) + '] { titulo, "slug": slug.current, bajada, categoria, fechaPublicacion, autor, "imgUrl": imagenPrincipal.asset->url }';
       var url   = 'https://' + SANITY_PROJECT + '.apicdn.sanity.io/v' + SANITY_VER + '/data/query/' + SANITY_DATASET + '?query=' + encodeURIComponent(query);
       var res   = await fetch(url);
       var data  = await res.json();
