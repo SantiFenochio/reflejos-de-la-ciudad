@@ -59,7 +59,8 @@ const publicSanityApiVersion: string = '2024-01-01';
 <!-- LOGO -->
 <div class="logo-area-bg">
 <div class="block md:hidden">
-  <div class="mx-auto flex w-full max-w-[1400px] items-center justify-between gap-3 px-3 py-3">
+  <!-- FIX mobile: py-3 → py-4 para más espacio vertical -->
+  <div class="mx-auto flex w-full max-w-[1400px] items-center justify-between gap-3 px-3 py-4">
     <a href="/" aria-label="Inicio de Reflejos de la Ciudad" class="shrink-0">
       <Image
         src={imgIconoDerecha}
@@ -69,10 +70,11 @@ const publicSanityApiVersion: string = '2024-01-01';
     </a>
 
     <a href="/" aria-label="Inicio de Reflejos de la Ciudad" class="flex justify-center">
+      <!-- FIX mobile: logo w-36 → w-48 -->
       <img
         src={imgLogoPrincipal.src}
         alt="Reflejos de la Ciudad"
-        class="w-36 h-auto max-w-full"
+        class="w-48 h-auto max-w-full"
         onerror="this.style.display='none';document.getElementById('logo-text-mobile').style.display='block';"
       />
       <span id="logo-text-mobile" class="hidden font-titular text-lg font-black text-[#1a1a1a]">Reflejos de la Ciudad</span>
@@ -496,26 +498,30 @@ const publicSanityApiVersion: string = '2024-01-01';
   .buscador-empty { font-family: var(--font-cuerpo); font-size: 0.85rem; color: #888; padding: 1rem; text-align: center; }
   .buscador-loading { font-family: var(--font-cuerpo); font-size: 0.85rem; color: #aaa; padding: 1rem; text-align: center; }
 
-  /* BARRA EDICIONES MOBILE */
+  /* ── BARRA EDICIONES MOBILE — solo visible < 768px ── */
   .ediciones-mobile-bar {
     display: none; /* oculta en desktop */
   }
   @media (max-width: 767px) {
     .ediciones-mobile-bar {
       display: flex;
+      /* FIX mobile: altura mínima explícita en la barra */
+      min-height: 64px;
       background: #fff;
       border-top: 1px solid #D0D0D0;
       border-bottom: 2px solid #1C1C1C;
     }
     .edicion-mobile-btn {
       flex: 1;
-      min-height: 74px;
+      /* FIX mobile: subir de 74px a 80px para dar más altura al área táctil */
+      min-height: 80px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #1C1C1C;
       text-decoration: none;
-      padding: 0.45rem 0.4rem;
+      /* FIX mobile: más padding vertical (0.45 → 0.6rem) */
+      padding: 0.6rem 0.5rem;
       border-right: 1px solid #D0D0D0;
       transition: background-color 0.15s;
     }
@@ -523,7 +529,8 @@ const publicSanityApiVersion: string = '2024-01-01';
     .edicion-mobile-btn:active     { background: #e8e8e8; }
     .edicion-mobile-img {
       display: block;
-      height: 60px;
+      /* FIX mobile: imagen de 60px → 68px, proporcional al nuevo min-height */
+      height: 68px;
       width: auto;
       max-width: 100%;
       object-fit: contain;
