@@ -97,7 +97,7 @@ function formatearFecha(iso: string): string {
         return (
           <article style="display:flex;flex-direction:column;gap:0.6rem;">
             <a href={`/nota/${nota.slug.current}`} style="display:block;overflow:hidden;">
-              <img src={imgUrl} alt={nota.titulo} loading="lazy"
+              <img src={imgUrl} alt={nota.titulo} width="600" height="400" loading="lazy"
                    style="width:100%;aspect-ratio:3/2;object-fit:cover;transition:transform 0.3s ease;"
                    onmouseover="this.style.transform='scale(1.03)'"
                    onmouseout="this.style.transform='scale(1)'" />

@@ -110,7 +110,7 @@ const articleProps = {
 <section class="nh-section">
   <div class="nh-wrap">
     {imagenHero ? (
-      <img src={imagenHero} alt={articulo.titulo} class="nh-img w-full aspect-video object-cover object-center" loading="eager" />
+      <img src={imagenHero} alt={articulo.titulo} width="900" height="506" class="nh-img w-full aspect-video object-cover object-center" loading="eager" />
     ) : (
       <div class="nh-placeholder"></div>
     )}
@@ -295,7 +295,7 @@ const articleProps = {
         return (
           <article class="rel-card">
             <a href={`/nota/${nota.slug?.current}`} class="rel-img-wrap">
-              <img src={relImg} alt={nota.titulo} loading="lazy" class="rel-img" />
+              <img src={relImg} alt={nota.titulo} width="600" height="400" loading="lazy" class="rel-img" />
             </a>
             <div class="rel-body">
               {nota.categoria && (

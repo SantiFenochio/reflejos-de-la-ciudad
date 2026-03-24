@@ -64,7 +64,7 @@ const heroImg = hero?.imagen
     <div class="hero-izq">
       {hero ? (
         <div class="hero-wrap">
-          <img src={heroImg} alt={hero.titulo} class="hero-img" loading="eager" />
+          <img src={heroImg} alt={hero.titulo} width="900" height="506" class="hero-img" loading="eager" />
           <div class="hero-overlay"></div>
           <div class="hero-content">
             {hero.categoria && <span class="badge-rojo">{hero.categoria}</span>}
@@ -98,7 +98,7 @@ const heroImg = hero?.imagen
           return (
             <article class="card-sec">
               <a href={`/nota/${nota.slug.current}`} class="card-sec-img-wrap">
-                <img src={imgSec} alt={nota.titulo} loading="eager" class="card-sec-img" />
+                <img src={imgSec} alt={nota.titulo} width="600" height="450" loading="eager" class="card-sec-img" />
                 {nota.categoria && <span class="badge-rojo badge-sm badge-sobre-img">{nota.categoria}</span>}
               </a>
               <div class="card-sec-body">
@@ -150,7 +150,7 @@ const heroImg = hero?.imagen
           return (
             <div class="car-slide" data-index={i}>
               <a href={`/nota/${nota.slug.current}`} class="car-img-wrap">
-                <img src={imgUrl} alt={nota.titulo} loading="lazy" class="car-img" />
+                <img src={imgUrl} alt={nota.titulo} width="600" height="400" loading="lazy" class="car-img" />
               </a>
               <div class="car-body">
                 {nota.categoria && <span class="badge-rojo badge-sm">{nota.categoria}</span>}
@@ -211,7 +211,7 @@ const heroImg = hero?.imagen
               <Fragment>
                 <article class="card animar">
                   <a href={`/nota/${nota.slug.current}`} class="card-img-wrap w-full aspect-video">
-                    <img src={imgUrl} alt={nota.titulo} loading="lazy" class="card-img w-full aspect-video object-cover object-center" />
+                    <img src={imgUrl} alt={nota.titulo} width="600" height="400" loading="lazy" class="card-img w-full aspect-video object-cover object-center" />
                     {nota.categoria && <span class="badge-rojo badge-sm badge-sobre-img">{nota.categoria}</span>}
                   </a>
                   <div class="card-body">
