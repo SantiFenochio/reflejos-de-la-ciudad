@@ -33,6 +33,7 @@ const resolvedNoindex = noindex ?? noIndex ?? false;
 // Normalizar type: acepta ogType legacy o type nuevo
 const resolvedType = (type ?? (ogType === 'article' ? 'article' : 'website')) as 'website' | 'article';
 import Analytics from '@vercel/analytics/astro';
+import SpeedInsights from '@vercel/speed-insights/astro';
 ---
 
 <!doctype html>
@@ -135,6 +136,7 @@ import Analytics from '@vercel/analytics/astro';
     </script>
 
     <Analytics />
+    <SpeedInsights />
 
     <!-- NProgress: barra de progreso de navegación -->
     <script>
