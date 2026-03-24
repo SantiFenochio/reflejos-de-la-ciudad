@@ -267,7 +267,18 @@ const publicSanityApiVersion: string = '2024-01-01';
 {tickerNotas.length > 0 && (
   <div class="ticker-bar" role="region" aria-label="Ultimas noticias">
     <span class="ticker-label">ÚLTIMA HORA</span>
-    <div class="ticker-content">
+    <!-- Skeleton: visible hasta que el DOM esté listo -->
+    <div class="ticker-skeleton" aria-hidden="true">
+      <span class="ticker-skel-bar" style="width:130px"></span>
+      <span class="ticker-skel-dot"></span>
+      <span class="ticker-skel-bar" style="width:95px;animation-delay:0.25s"></span>
+      <span class="ticker-skel-dot"></span>
+      <span class="ticker-skel-bar" style="width:165px;animation-delay:0.5s"></span>
+      <span class="ticker-skel-dot"></span>
+      <span class="ticker-skel-bar" style="width:110px;animation-delay:0.75s"></span>
+    </div>
+    <!-- Contenido real: oculto hasta DOMContentLoaded → fade in suave -->
+    <div class="ticker-content" id="ticker-content" style="display:none;opacity:0">
       <div class="ticker-track">
         <span class="ticker-bloque">
           {tickerNotas.map((n, i) => (
@@ -549,6 +560,26 @@ const publicSanityApiVersion: string = '2024-01-01';
   .ticker-lnk:hover { color: #fff; text-decoration: none; }
   .ticker-sep { color: #4c6a92; font-size: 0.75rem; }
   @keyframes ticker-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* ── TICKER SKELETON ──────────────────────────────────────────── */
+  .ticker-skeleton {
+    flex: 1; display: flex; align-items: center;
+    gap: 0.6rem; padding: 0 0.75rem; overflow: hidden;
+  }
+  .ticker-skel-bar {
+    height: 9px; border-radius: 3px;
+    background: rgba(255,255,255,0.14);
+    flex-shrink: 0;
+    animation: ticker-pulse 1.4s ease-in-out infinite;
+  }
+  .ticker-skel-dot {
+    width: 3px; height: 3px; border-radius: 50%;
+    background: rgba(76,106,146,0.5); flex-shrink: 0;
+  }
+  @keyframes ticker-pulse {
+    0%, 100% { opacity: 0.3; }
+    50%       { opacity: 0.75; }
+  }
 </style>
 
 <script define:vars={{ publicSanityProjectId, publicSanityDataset, publicSanityApiVersion }}>
@@ -718,5 +749,18 @@ const publicSanityApiVersion: string = '2024-01-01';
       debounceTimer = setTimeout(function() { buscar(val); }, 300);
     });
   }
+
+  // ── Ticker: ocultar skeleton → fade in contenido real ──────────
+  (function() {
+    var skeleton = document.querySelector('.ticker-skeleton');
+    var content  = document.getElementById('ticker-content');
+    if (!skeleton || !content) return;
+    skeleton.style.display = 'none';
+    content.style.display  = 'flex';
+    // Forzar reflow antes de iniciar la transición
+    content.getBoundingClientRect();
+    content.style.transition = 'opacity 0.35s ease';
+    content.style.opacity    = '1';
+  })();
 })();
 </script>
