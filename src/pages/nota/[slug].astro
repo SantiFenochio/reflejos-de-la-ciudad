@@ -356,7 +356,7 @@ const articleProps = {
   }
   .nh-overlay {
     position: absolute; inset: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.45) 50%, rgba(0,0,0,0.2) 100%);
+    background: linear-gradient(to top, rgba(26,22,20,0.92) 0%, rgba(26,22,20,0.6) 55%, rgba(0,0,0,0.15) 100%);
   }
   .nh-content {
     position: absolute; bottom: 0; left: 0; right: 0;
@@ -366,17 +366,24 @@ const articleProps = {
   @media (min-width: 768px) { .nh-content { padding: 2rem 1.5rem; } }
 
   .nh-badge {
-    display: inline-block; background: #111111; color: #fff;
-    font-family: var(--font-cuerpo); font-size: 0.63rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.12em;
-    padding: 0.25rem 0.65rem; margin-bottom: 0.65rem;
+    display: inline-block; background: var(--color-acento); color: #fff;
+    font-family: var(--font-cuerpo); font-size: 0.65rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    padding: 0.35rem 0.85rem; margin-bottom: 0.75rem;
+    border-radius: 2px;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+  .nh-badge:hover {
+    background: var(--color-acento-hover);
+    transform: scale(1.05);
   }
   .nh-titulo {
     font-family: var(--font-titular);
-    font-size: clamp(1.35rem, 3.5vw, 2.6rem);
-    font-weight: 700; line-height: 1.15; color: #fff;
+    font-size: clamp(1.4rem, 3.5vw, 2.75rem);
+    font-weight: 900; line-height: 1.1; letter-spacing: -0.02em;
+    color: #fff;
     max-width: 52rem; margin: 0;
-    text-shadow: 0 1px 5px rgba(0,0,0,0.4);
+    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
     word-break: break-word;
     overflow-wrap: break-word;
   }
@@ -415,11 +422,11 @@ const articleProps = {
     .nota-breadcrumb-actual { max-width: none; white-space: normal; }
   }
 
-  /* Bajada */
+  /* Bajada mejorada */
   .nota-bajada {
-    font-family: var(--font-titular);
-    font-size: 1.2rem; font-weight: 400; font-style: italic;
-    color: #4A4A4A; line-height: 1.55; margin: 0 0 1.25rem;
+    font-family: var(--font-cuerpo);
+    font-size: 1.25rem; font-weight: 400; font-style: italic;
+    color: var(--color-secundario); line-height: 1.65; margin: 0 0 1.5rem;
   }
   /* FIX #10: en mobile, el lead pierde la itálica (confunde con cuerpo) y gana
      un borde izquierdo negro para que el lector lo identifique como copete */
@@ -600,8 +607,14 @@ const articleProps = {
   }
   @media (min-width: 640px) { .rel-grid { grid-template-columns: repeat(3, 1fr); } }
 
-  .rel-card { display: flex; flex-direction: column; transition: box-shadow 0.2s; }
-  .rel-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+  .rel-card {
+    display: flex; flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .rel-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  }
 
   .rel-img-wrap {
     display: block; overflow: hidden;
@@ -613,17 +626,28 @@ const articleProps = {
   .rel-body { display: flex; flex-direction: column; }
   .rel-badge {
     display: inline-block; align-self: flex-start;
-    background: #111111; color: #fff;
-    font-family: var(--font-cuerpo); font-size: 0.58rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.1em;
-    padding: 0.2rem 0.5rem; margin-bottom: 0.5rem;
+    background: var(--color-acento); color: #fff;
+    font-family: var(--font-cuerpo); font-size: 0.6rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 0.3rem 0.7rem; margin-bottom: 0.6rem;
+    border-radius: 2px;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+  .rel-badge:hover {
+    background: var(--color-acento-hover);
+    transform: scale(1.05);
   }
   .rel-card-titulo {
-    font-family: var(--font-titular); font-size: 0.95rem; font-weight: 700;
-    line-height: 1.32; color: #1a1a1a; margin: 0 0 0.4rem;
+    font-family: var(--font-titular); font-size: 1rem; font-weight: 700;
+    line-height: 1.25; letter-spacing: -0.01em;
+    color: var(--color-periodico); margin: 0 0 0.5rem;
   }
   .rel-card-lnk { color: inherit; text-decoration: none; transition: color 0.2s; }
-  .rel-card-lnk:hover { color: #4c6a92; text-decoration: none; }
+  .rel-card-lnk:hover {
+    color: var(--color-acento);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
   .rel-fecha {
     font-family: var(--font-cuerpo); font-size: 0.7rem; color: #999; margin-top: auto;
   }

@@ -87,19 +87,19 @@ Astro.response.headers.set('Cache-Tag', `home,seccion-${seccion}`);
           ? urlFor(nota.imagen).width(600).height(400).fit('crop').format('webp').url()
           : `https://picsum.photos/seed/${nota.slug.current}/800/450`;
         return (
-          <article style="display:flex;flex-direction:column;gap:0.6rem;">
+          <article class="card-hover-lift" style="display:flex;flex-direction:column;gap:0.6rem;border-radius:2px;">
             <a href={`/nota/${nota.slug.current}`} style="display:block;overflow:hidden;">
               <img src={imgUrl} alt={nota.titulo} width="600" height="400" loading="lazy"
                    class="img-zoom-hover"
                    style="width:100%;aspect-ratio:3/2;object-fit:cover;" />
             </a>
-            <span style="display:inline-block;align-self:flex-start;font-family:var(--font-cuerpo);font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;background-color:#111;color:#fff;padding:0.2rem 0.5rem;">
+            <span class="badge-categoria" style="display:inline-block;align-self:flex-start;font-family:var(--font-cuerpo);font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;background-color:var(--color-acento);color:#fff;padding:0.3rem 0.7rem;border-radius:2px;">
               {nota.categoria}
             </span>
-            <h2 style="font-family:var(--font-titular);font-size:1.05rem;font-weight:600;line-height:1.35;color:var(--color-periodico);margin:0;">
-              <a href={`/nota/${nota.slug.current}`} class="link-underline-hover" style="text-decoration:none;color:inherit;">{nota.titulo}</a>
+            <h2 style="font-family:var(--font-titular);font-size:1.05rem;font-weight:700;line-height:1.25;letter-spacing:-0.01em;color:var(--color-periodico);margin:0;">
+              <a href={`/nota/${nota.slug.current}`} class="titulo-hover-azul" style="text-decoration:none;color:inherit;transition:color 0.2s ease;">{nota.titulo}</a>
             </h2>
-            <p class="bajada-clamp" style="font-family:var(--font-cuerpo);font-size:0.875rem;color:var(--color-secundario);line-height:1.5;margin:0;">
+            <p class="bajada-clamp" style="font-family:var(--font-cuerpo);font-size:0.875rem;font-style:italic;color:var(--color-secundario);line-height:1.6;margin:0;">
               {nota.bajada}
             </p>
             <span style="font-family:var(--font-cuerpo);font-size:0.72rem;color:var(--color-secundario);">
@@ -161,13 +161,15 @@ Astro.response.headers.set('Cache-Tag', `home,seccion-${seccion}`);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    background-color: #111;
+    background-color: var(--color-acento);
     color: #fff;
-    padding: 0.65rem 1.5rem;
+    padding: 0.75rem 1.75rem;
+    border-radius: 2px;
     text-decoration: none;
-    transition: background-color 0.15s;
+    transition: background-color 0.2s ease, transform 0.2s ease;
   }
   .btn-volver-inicio:hover {
-    background-color: #333;
+    background-color: var(--color-acento-hover);
+    transform: translateY(-2px);
   }
 </style>

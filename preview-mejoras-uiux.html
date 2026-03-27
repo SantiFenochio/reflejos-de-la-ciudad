@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preview: Mejoras UI/UX - Reflejos de la Ciudad</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    /* ════════════════════════════════════════════════════════════════
+       PREVIEW: Mejoras UI/UX para Reflejos de la Ciudad
+
+       OBJETIVO: Refinar el diseño actual manteniendo la estética
+       clásica de diario impreso, mejorando legibilidad, jerarquía
+       visual y micro-interacciones profesionales.
+
+       CAMBIOS PROPUESTOS:
+       1. Tipografía: Jerarquía más pronunciada con peso variable
+       2. Espaciado: Mejor ritmo vertical y breathing room
+       3. Interacciones: Transiciones suaves y estados hover refinados
+       4. Detalles: Bordes decorativos, drop caps, mejores separadores
+       5. Color: Tonos más cálidos para el papel de diario
+       ════════════════════════════════════════════════════════════════ */
+
+    :root {
+      /* Paleta refinada - tonos más cálidos y naturales */
+      --hueso: #FAF8F3;           /* Papel envejecido levemente más cálido */
+      --periodico: #1A1614;       /* Negro con tinte sepia */
+      --gris-medio: #5A5550;      /* Gris con warmth */
+      --gris-claro: #C8C3BC;      /* Bordes suaves */
+      --acento: #8B1E1E;          /* Rojo editorial clásico */
+      --azul-link: #2B4C6F;       /* Azul tinta de imprenta */
+
+      /* Tipografía */
+      --font-display: "Playfair Display", Georgia, serif;
+      --font-body: "Source Serif 4", Georgia, serif;
+      --font-accent: "Crimson Text", Georgia, serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--hueso);
+      color: var(--periodico);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    /* ── Header con filete decorativo ── */
+    .preview-header {
+      background: linear-gradient(to bottom, #1A1614 0%, #2A2420 100%);
+      color: var(--hueso);
+      padding: 2.5rem 1.5rem 2rem;
+      border-bottom: 3px double var(--acento);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    }
+
+    .preview-header h1 {
+      font-family: var(--font-display);
+      font-size: 2.75rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.75rem;
+      text-align: center;
+    }
+
+    .preview-header p {
+      text-align: center;
+      font-size: 0.95rem;
+      color: var(--gris-claro);
+      font-style: italic;
+    }
+
+    /* ── Comparación lado a lado ── */
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 3rem;
+      max-width: 1400px;
+      margin: 3rem auto;
+      padding: 0 1.5rem;
+    }
+
+    @media (min-width: 1024px) {
+      .comparison-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .preview-section {
+      background: white;
+      border: 1px solid var(--gris-claro);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+
+    .section-label {
+      padding: 1rem 1.5rem;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 2px solid var(--periodico);
+    }
+
+    .section-label.current {
+      background: #f0f0f0;
+      color: var(--gris-medio);
+    }
+
+    .section-label.improved {
+      background: var(--acento);
+      color: white;
+    }
+
+    .section-content {
+      padding: 2rem 1.5rem;
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       ESTILO ACTUAL
+       ══════════════════════════════════════════════════════════════ */
+
+    .current-style .article-card {
+      border-bottom: 1px solid #D0D0D0;
+      padding-bottom: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .current-style .article-category {
+      display: inline-block;
+      background: #111;
+      color: white;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.75rem;
+      margin-bottom: 0.75rem;
+      font-weight: 600;
+    }
+
+    .current-style .article-title {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+      color: #1C1C1C;
+    }
+
+    .current-style .article-excerpt {
+      font-size: 1rem;
+      color: #4A4A4A;
+      line-height: 1.5;
+      margin-bottom: 0.5rem;
+    }
+
+    .current-style .article-meta {
+      font-size: 0.875rem;
+      color: #4A4A4A;
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       ESTILO MEJORADO
+       ══════════════════════════════════════════════════════════════ */
+
+    .improved-style .article-card {
+      border-bottom: 2px solid var(--gris-claro);
+      padding-bottom: 2rem;
+      margin-bottom: 2rem;
+      position: relative;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .improved-style .article-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.06);
+      border-bottom-color: var(--acento);
+    }
+
+    .improved-style .article-category {
+      display: inline-block;
+      background: var(--acento);
+      color: white;
+      font-size: 0.7rem;
+      padding: 0.35rem 0.9rem;
+      margin-bottom: 1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-radius: 2px;
+      transition: background 0.2s ease;
+    }
+
+    .improved-style .article-card:hover .article-category {
+      background: #6B1515;
+    }
+
+    .improved-style .article-title {
+      font-family: var(--font-display);
+      font-size: 1.95rem;
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 0.85rem;
+      color: var(--periodico);
+      letter-spacing: -0.015em;
+      transition: color 0.2s ease;
+    }
+
+    /* Drop cap en el primer párrafo */
+    .improved-style .article-excerpt::first-letter {
+      font-family: var(--font-display);
+      font-size: 3.5em;
+      font-weight: 900;
+      float: left;
+      line-height: 0.85;
+      margin: 0.05em 0.1em 0 0;
+      color: var(--acento);
+    }
+
+    .improved-style .article-card:hover .article-title {
+      color: var(--azul-link);
+    }
+
+    .improved-style .article-excerpt {
+      font-family: var(--font-accent);
+      font-size: 1.05rem;
+      color: var(--gris-medio);
+      line-height: 1.7;
+      margin-bottom: 1rem;
+      font-style: italic;
+    }
+
+    .improved-style .article-meta {
+      font-size: 0.85rem;
+      color: var(--gris-medio);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-family: var(--font-body);
+    }
+
+    .improved-style .article-meta::before {
+      content: "";
+      display: inline-block;
+      width: 40px;
+      height: 2px;
+      background: var(--acento);
+      margin-right: 0.25rem;
+    }
+
+    .improved-style .meta-separator {
+      display: inline-block;
+      width: 3px;
+      height: 3px;
+      background: var(--gris-medio);
+      border-radius: 50%;
+    }
+
+    /* ── Hero Section Comparison ── */
+    .hero-comparison {
+      margin-top: 3rem;
+      max-width: 1400px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 0 1.5rem;
+    }
+
+    .hero-improved {
+      background: white;
+      border: 1px solid var(--gris-claro);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero-improved::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--acento) 0%, #2B4C6F 100%);
+    }
+
+    .hero-image-wrapper {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 16/9;
+    }
+
+    .hero-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+
+    .hero-improved:hover .hero-image {
+      transform: scale(1.03);
+    }
+
+    .hero-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 3rem 2rem 2rem;
+      background: linear-gradient(to top,
+        rgba(26,22,20,0.95) 0%,
+        rgba(26,22,20,0.7) 60%,
+        transparent 100%);
+    }
+
+    .hero-category {
+      display: inline-block;
+      background: var(--acento);
+      color: white;
+      font-size: 0.7rem;
+      padding: 0.4rem 1rem;
+      margin-bottom: 1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border-radius: 2px;
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: 2.75rem;
+      font-weight: 900;
+      line-height: 1.1;
+      color: white;
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.02em;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    }
+
+    .hero-excerpt {
+      font-family: var(--font-accent);
+      font-size: 1.15rem;
+      color: rgba(250,248,243,0.95);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+      font-style: italic;
+    }
+
+    .hero-meta {
+      font-size: 0.9rem;
+      color: rgba(200,195,188,0.9);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    /* ── Feature Highlights ── */
+    .features-section {
+      max-width: 1400px;
+      margin: 4rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .features-title {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 2.5rem;
+      color: var(--periodico);
+      position: relative;
+      padding-bottom: 1rem;
+    }
+
+    .features-title::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background: var(--acento);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+
+    .feature-card {
+      background: white;
+      padding: 2rem;
+      border: 1px solid var(--gris-claro);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      border-color: var(--acento);
+    }
+
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .feature-title {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: var(--periodico);
+    }
+
+    .feature-description {
+      font-size: 0.95rem;
+      color: var(--gris-medio);
+      line-height: 1.6;
+    }
+
+    /* ── Footer Note ── */
+    .footer-note {
+      background: #1A1614;
+      color: var(--hueso);
+      padding: 2rem;
+      text-align: center;
+      margin-top: 4rem;
+      font-size: 0.9rem;
+      border-top: 3px double var(--acento);
+    }
+
+    .footer-note p {
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-note strong {
+      color: var(--acento);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="preview-header">
+    <h1>Preview: Mejoras UI/UX</h1>
+    <p>Refinamiento del diseño clásico de "Reflejos de la Ciudad" manteniendo su identidad editorial</p>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       COMPARACIÓN: Cards de Artículos
+       ══════════════════════════════════════════════════════════════ -->
+  <div class="comparison-grid">
+
+    <!-- ACTUAL -->
+    <div class="preview-section">
+      <div class="section-label current">Diseño Actual</div>
+      <div class="section-content current-style">
+
+        <article class="article-card">
+          <span class="article-category">POLÍTICA</span>
+          <h2 class="article-title">Nuevo proyecto de movilidad urbana para San Martín</h2>
+          <p class="article-excerpt">
+            El municipio presentó un plan integral que incluye nuevas ciclovías,
+            reorganización del tránsito y mejoras en el transporte público para
+            los próximos dos años.
+          </p>
+          <div class="article-meta">
+            Por Redacción · 15 de marzo, 2026
+          </div>
+        </article>
+
+        <article class="article-card">
+          <span class="article-category">CULTURA</span>
+          <h2 class="article-title">Reabre el histórico Teatro Municipal tras su restauración</h2>
+          <p class="article-excerpt">
+            Después de 18 meses de trabajos, el emblemático teatro de Villa Ballester
+            vuelve a abrir sus puertas con una programación renovada que incluye
+            teatro, danza y música en vivo.
+          </p>
+          <div class="article-meta">
+            Por María Gonzalez · 14 de marzo, 2026
+          </div>
+        </article>
+
+      </div>
+    </div>
+
+    <!-- MEJORADO -->
+    <div class="preview-section">
+      <div class="section-label improved">Diseño Mejorado ✨</div>
+      <div class="section-content improved-style">
+
+        <article class="article-card">
+          <span class="article-category">Política</span>
+          <h2 class="article-title">Nuevo proyecto de movilidad urbana para San Martín</h2>
+          <p class="article-excerpt">
+            El municipio presentó un plan integral que incluye nuevas ciclovías,
+            reorganización del tránsito y mejoras en el transporte público para
+            los próximos dos años.
+          </p>
+          <div class="article-meta">
+            <span>Por Redacción</span>
+            <span class="meta-separator"></span>
+            <time>15 de marzo, 2026</time>
+          </div>
+        </article>
+
+        <article class="article-card">
+          <span class="article-category">Cultura</span>
+          <h2 class="article-title">Reabre el histórico Teatro Municipal tras su restauración</h2>
+          <p class="article-excerpt">
+            Después de 18 meses de trabajos, el emblemático teatro de Villa Ballester
+            vuelve a abrir sus puertas con una programación renovada que incluye
+            teatro, danza y música en vivo.
+          </p>
+          <div class="article-meta">
+            <span>Por María Gonzalez</span>
+            <span class="meta-separator"></span>
+            <time>14 de marzo, 2026</time>
+          </div>
+        </article>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       HERO MEJORADO
+       ══════════════════════════════════════════════════════════════ -->
+  <div class="hero-comparison">
+    <div class="hero-improved">
+      <div class="hero-image-wrapper">
+        <img
+          class="hero-image"
+          src="https://images.unsplash.com/photo-1508780709619-79562169bc64?w=1200&h=675&fit=crop"
+          alt="Vista de San Martín"
+        >
+        <div class="hero-overlay">
+          <span class="hero-category">Destacado</span>
+          <h2 class="hero-title">
+            La comunidad se organiza para recuperar la plaza histórica del barrio
+          </h2>
+          <p class="hero-excerpt">
+            Vecinos de Villa Ballester impulsan un proyecto colaborativo que busca
+            restaurar uno de los espacios verdes más emblemáticos de la zona con
+            actividades culturales y mejoras en la infraestructura.
+          </p>
+          <div class="hero-meta">
+            <span>Por Juan Pérez</span>
+            <span class="meta-separator"></span>
+            <time>26 de marzo, 2026</time>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       FEATURES: Mejoras Implementadas
+       ══════════════════════════════════════════════════════════════ -->
+  <section class="features-section">
+    <h2 class="features-title">Mejoras Propuestas</h2>
+
+    <div class="features-grid">
+
+      <div class="feature-card">
+        <div class="feature-icon">🎨</div>
+        <h3 class="feature-title">Tipografía Refinada</h3>
+        <p class="feature-description">
+          Jerarquía visual mejorada con pesos variables, mejor tracking y leading.
+          Drop caps editoriales en extractos para darle carácter periodístico clásico.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">✨</div>
+        <h3 class="feature-title">Micro-interacciones</h3>
+        <p class="feature-description">
+          Transiciones suaves en hover, elevación sutil de cards, cambios de color
+          progresivos que mejoran la experiencia sin romper la sobriedad editorial.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📐</div>
+        <h3 class="feature-title">Espaciado Mejorado</h3>
+        <p class="feature-description">
+          Mayor breathing room entre elementos, ritmo vertical más claro,
+          márgenes generosos que facilitan la lectura y dan aire al contenido.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <h3 class="feature-title">Colores Cálidos</h3>
+        <p class="feature-description">
+          Paleta ajustada hacia tonos más cálidos que emulan papel de diario envejecido,
+          con un rojo editorial para acentos y mayor contraste en categorías.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🔍</div>
+        <h3 class="feature-title">Detalles Editoriales</h3>
+        <p class="feature-description">
+          Filetes decorativos, separadores con estilo, líneas de acento antes de
+          metadatos, bordes que respetan la tradición del diseño periodístico.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📱</div>
+        <h3 class="feature-title">Responsive Refinado</h3>
+        <p class="feature-description">
+          Adaptación cuidadosa a todos los dispositivos manteniendo la jerarquía
+          visual y el carácter editorial en mobile, tablet y desktop.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="footer-note">
+    <p><strong>Nota:</strong> Estos son refinamientos conservadores que mantienen la identidad clásica del sitio.</p>
+    <p>Los cambios se enfocan en <strong>pulir la experiencia actual</strong> sin alterar la esencia editorial tradicional.</p>
+    <p style="margin-top: 1.5rem; font-style: italic; opacity: 0.8;">
+      Preview generado con Claude Code · Marzo 2026
+    </p>
+  </div>
+
+</body>
+</html>
