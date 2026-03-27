@@ -34,8 +34,8 @@ Astro.response.headers.set('Vercel-CDN-Cache-Control', 's-maxage=300, stale-whil
 Astro.response.headers.set('Cache-Tag', 'home');
 
 const hero             = notas[0] ?? null;
-const notasSecundarias = notas.slice(1, 5);   // Las 4 siguientes para el panel derecho del hero (grid 2x2)
-const grilla           = notas.slice(5, 13);  // Arranca en 5 para no repetir las del hero
+const notasSecundarias = notas.slice(1, 6);   // 5 notas: llenan exactamente los 5 espacios libres del bento (2 cols derecha + 3 abajo)
+const grilla           = notas.slice(6, 14);  // Arranca en 6 para no repetir las del hero
 const carrusel         = grilla;
 const mobileAdFrequency = 3;
 const mobileInlineAdsCount = Math.min(publicidades.length, Math.ceil(grilla.length / mobileAdFrequency));
@@ -282,7 +282,7 @@ const heroImg = hero?.imagen
 
     <!-- CARGAR MÁS — dentro de la columna principal -->
     <div id="cargar-mas-wrap" style="text-align:center;margin-top:2rem;">
-      <button id="btn-cargar-mas" class="btn-cargar-mas" data-offset="13">
+      <button id="btn-cargar-mas" class="btn-cargar-mas" data-offset="14">
         Cargar más noticias
       </button>
       <p id="cargar-mas-fin" class="cargar-mas-fin" hidden>No hay más noticias.</p>

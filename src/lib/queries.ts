@@ -1,7 +1,7 @@
 // src/lib/queries.ts
 
-// Últimas 7 noticias para la Home (hero + grilla de 6)
-export const HOME_QUERY = `*[_type == "articulo"] | order(fechaPublicacion desc) [0...13] {
+// Hero + 5 secundarias + 8 grilla = 14 notas para la Home
+export const HOME_QUERY = `*[_type == "articulo"] | order(fechaPublicacion desc) [0...14] {
   _id,
   titulo,
   slug,
