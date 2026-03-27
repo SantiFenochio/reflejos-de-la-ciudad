@@ -19,15 +19,16 @@
 
 @theme {
 
-  /* ── PALETA DE COLORES ──────────────────────────────────────── */
-  --color-hueso:       #F5F5F0;  /* Fondo: blanco hueso, papel de diario  */
-  --color-periodico:   #1C1C1C;  /* Texto principal: negro de imprenta    */
-  --color-secundario:  #4A4A4A;  /* Texto secundario, epígrafes, fechas   */
-  --color-borde:       #D0D0D0;  /* Bordes, filetes, separadores          */
-  --color-acento:      #111111;  /* Badges de sección, hover, destacados  */
-  --color-footer-bg:   #1C1C1C;  /* Footer fondo oscuro                   */
-  --color-footer-fg:   #F5F5F0;  /* Footer texto claro                    */
-  --color-primario:        #4c6a92;  /* Azul Pantone 17-4028 TCX — identidad  */
+  /* ── PALETA DE COLORES REFINADA ─────────────────────────────── */
+  --color-hueso:       #FAF8F3;  /* Fondo: papel envejecido más cálido    */
+  --color-periodico:   #1A1614;  /* Texto principal: negro con tinte sepia*/
+  --color-secundario:  #5A5550;  /* Texto secundario con calidez          */
+  --color-borde:       #C8C3BC;  /* Bordes suaves y cálidos               */
+  --color-acento:      #4c6a92;  /* Azul identidad — badges y destacados  */
+  --color-acento-hover:#3d5675;  /* Azul más oscuro para hover            */
+  --color-footer-bg:   #1A1614;  /* Footer fondo oscuro                   */
+  --color-footer-fg:   #FAF8F3;  /* Footer texto claro                    */
+  --color-primario:    #4c6a92;  /* Azul Pantone 17-4028 TCX — identidad  */
 
   /* ── TIPOGRAFÍA ─────────────────────────────────────────────── */
   --font-titular: "Playfair Display", Georgia, "Times New Roman", serif;
@@ -63,7 +64,9 @@
     background-color: var(--color-hueso);
     color: var(--color-periodico);
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    line-height: 1.65;
   }
 
   body {
@@ -77,15 +80,18 @@
     font-family: var(--font-titular);
     font-weight: 700;
     line-height: 1.15;
+    letter-spacing: -0.015em;
     color: var(--color-periodico);
   }
 
   a {
     color: inherit;
     text-decoration: none;
+    transition: color 0.2s ease;
   }
 
   a:hover {
+    color: var(--color-acento);
     text-decoration: underline;
     text-underline-offset: 3px;
   }
@@ -281,6 +287,85 @@
   /* Fallback de imagen con onerror */
   .img-with-fallback {
     /* Los event handlers onerror ahora se reemplazan con picture + source */
+  }
+
+  /* ── MEJORAS UI/UX: Cards y elementos interactivos ──────────── */
+
+  /* Card con elevación suave en hover */
+  .card-hover-lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .card-hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  }
+
+  /* Badge de categoría mejorado */
+  .badge-categoria {
+    display: inline-block;
+    background: var(--color-acento);
+    color: white;
+    font-size: 0.7rem;
+    padding: 0.35rem 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: 2px;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+
+  .badge-categoria:hover {
+    background: var(--color-acento-hover);
+    transform: scale(1.05);
+  }
+
+  /* Separador circular para metadatos */
+  .meta-separator {
+    display: inline-block;
+    width: 3px;
+    height: 3px;
+    background: var(--color-secundario);
+    border-radius: 50%;
+    margin: 0 0.5rem;
+    vertical-align: middle;
+  }
+
+  /* Línea decorativa antes de metadatos */
+  .meta-with-line::before {
+    content: "";
+    display: inline-block;
+    width: 40px;
+    height: 2px;
+    background: var(--color-acento);
+    margin-right: 0.75rem;
+    vertical-align: middle;
+  }
+
+  /* Títulos con hover color azul */
+  .titulo-hover-azul {
+    transition: color 0.2s ease;
+  }
+
+  .titulo-hover-azul:hover {
+    color: var(--color-acento);
+  }
+
+  /* Overlay para hero con gradiente mejorado */
+  .hero-overlay-improved {
+    background: linear-gradient(to top,
+      rgba(26,22,20,0.95) 0%,
+      rgba(26,22,20,0.7) 60%,
+      transparent 100%);
+  }
+
+  /* Borde decorativo doble */
+  .border-decorative-top {
+    border-top: 3px double var(--color-acento);
+  }
+
+  .border-decorative-bottom {
+    border-bottom: 3px double var(--color-acento);
   }
 
 }
