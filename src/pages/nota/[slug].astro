@@ -7,13 +7,14 @@ import { SITE_URL } from '../../lib/seo';
 import type { Articulo } from '../../types/article';
 import Publicidad from '../../components/ui/Publicidad.astro';
 import { formatearFecha } from '../../lib/utils';
+import { logger } from '../../lib/logger';
 
 const { slug } = Astro.params;
 let articulo: Articulo;
 try {
   articulo = await sanityClient.fetch(ARTICULO_QUERY, { slug });
 } catch (e) {
-  console.warn(`[slug] No se pudo obtener articulo "${slug}":`, e);
+  logger.warn('slug', `No se pudo obtener articulo "${slug}"`, e);
   return Astro.redirect('/');
 }
 if (!articulo) return Astro.redirect('/');
@@ -27,7 +28,7 @@ try {
     }`
   );
 } catch (e) {
-  console.warn('[slug] No se pudo obtener publicidades:', e);
+  logger.warn('slug', 'No se pudo obtener publicidades', e);
 }
 
 if (publicidades.length === 0) {
@@ -39,7 +40,7 @@ if (publicidades.length === 0) {
       }`
     );
   } catch (e) {
-    console.warn('[slug] No se pudo obtener publicidades de fallback:', e);
+    logger.warn('slug', 'No se pudo obtener publicidades de fallback', e);
   }
 }
 

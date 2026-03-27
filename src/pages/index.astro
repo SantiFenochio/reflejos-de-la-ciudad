@@ -6,13 +6,14 @@ import { HOME_QUERY } from '../lib/queries';
 import type { Articulo } from '../types/article';
 import Publicidad from '../components/ui/Publicidad.astro';
 import { formatearFecha } from '../lib/utils';
+import { logger } from '../lib/logger';
 
 // Noticias: hero + hasta 9 cards en grilla (para dar lugar a intercalados)
 let notas: Articulo[] = [];
 try {
   notas = await sanityClient.fetch(HOME_QUERY);
 } catch (e) {
-  console.warn('[index] No se pudo obtener notas:', e);
+  logger.warn('index', 'No se pudo obtener notas', e);
 }
 
 // Publicidades: todas activas, ordenadas por campo "orden" asc
@@ -25,7 +26,7 @@ try {
     }`
   );
 } catch (e) {
-  console.warn('[index] No se pudo obtener publicidades:', e);
+  logger.warn('index', 'No se pudo obtener publicidades', e);
 }
 
 // Cache CDN de Vercel: 5 min fresco, 1 hora stale-while-revalidate.
@@ -41,9 +42,17 @@ const mobileAdFrequency = 3;
 const mobileInlineAdsCount = Math.min(publicidades.length, Math.ceil(grilla.length / mobileAdFrequency));
 const mobileRemainingAds = publicidades.slice(mobileInlineAdsCount);
 
+// Hero image - responsive srcset para diferentes tamaños de pantalla
 const heroImg = hero?.imagen
   ? urlFor(hero.imagen).width(900).height(506).fit('crop').format('webp').url()
   : 'https://picsum.photos/seed/hero-rdlc/1400/620';
+
+const heroSrcset = hero?.imagen
+  ? `${urlFor(hero.imagen).width(640).height(360).fit('crop').format('webp').url()} 640w,
+     ${urlFor(hero.imagen).width(900).height(506).fit('crop').format('webp').url()} 900w,
+     ${urlFor(hero.imagen).width(1200).height(675).fit('crop').format('webp').url()} 1200w,
+     ${urlFor(hero.imagen).width(1600).height(900).fit('crop').format('webp').url()} 1600w`
+  : undefined;
 
 
 ---
@@ -70,12 +79,15 @@ const heroImg = hero?.imagen
         <a href={`/nota/${hero.slug.current}`} class="block relative h-full min-h-[280px] lg:min-h-[400px]">
           <img
             src={heroImg}
+            srcset={heroSrcset}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 66vw, 900px"
             alt={hero.titulo}
             width="900"
-            height="600"
+            height="506"
             class="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
             loading="eager"
             fetchpriority="high"
+            decoding="async"
           />
           <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent"></div>
           <div class="absolute bottom-0 left-0 right-0 p-6 lg:p-8">

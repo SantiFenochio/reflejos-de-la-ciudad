@@ -34,6 +34,9 @@ const resolvedNoindex = noindex ?? noIndex ?? false;
 const resolvedType = (type ?? (ogType === 'article' ? 'article' : 'website')) as 'website' | 'article';
 import Analytics from '@vercel/analytics/astro';
 import SpeedInsights from '@vercel/speed-insights/astro';
+
+// Google Analytics 4 ID (configurar en .env)
+const GA_ID = import.meta.env.PUBLIC_GA_ID || 'G-XXXXXXXXXX';
 ---
 
 <!doctype html>
@@ -60,6 +63,23 @@ import SpeedInsights from '@vercel/speed-insights/astro';
     <!-- ══ Breadcrumbs: solo si se pasan ═══════════════════════ -->
     {breadcrumbs && breadcrumbs.length > 0 && (
       <JsonLd type="BreadcrumbList" items={breadcrumbs} />
+    )}
+
+    <!-- ══ GOOGLE ANALYTICS 4 ═══════════════════════════════════ -->
+    {import.meta.env.PROD && GA_ID && GA_ID !== 'G-XXXXXXXXXX' && (
+      <>
+        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
+        <script is:inline define:vars={{ GA_ID }}>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', GA_ID, {
+            page_path: window.location.pathname,
+            cookie_flags: 'SameSite=None;Secure',
+            anonymize_ip: true
+          });
+        </script>
+      </>
     )}
 
     <!-- ══ SLOT HEAD: meta o scripts extra por página ═══════════ -->
