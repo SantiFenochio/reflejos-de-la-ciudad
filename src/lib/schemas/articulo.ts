@@ -5,6 +5,20 @@ export default defineType({
   name:  'articulo',
   title: 'Artículo',
   type:  'document',
+
+  orderings: [
+    {
+      title: 'Fecha de publicación (más reciente)',
+      name:  'fechaPublicacionDesc',
+      by: [{ field: 'fechaPublicacion', direction: 'desc' }],
+    },
+    {
+      title: 'Fecha de publicación (más antigua)',
+      name:  'fechaPublicacionAsc',
+      by: [{ field: 'fechaPublicacion', direction: 'asc' }],
+    },
+  ],
+
   fields: [
     defineField({
       name:  'titulo',
