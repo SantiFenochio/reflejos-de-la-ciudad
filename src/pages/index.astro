@@ -34,8 +34,8 @@ Astro.response.headers.set('Vercel-CDN-Cache-Control', 's-maxage=300, stale-whil
 Astro.response.headers.set('Cache-Tag', 'home');
 
 const hero             = notas[0] ?? null;
-const notasSecundarias = notas.slice(1, 3);   // Las 2 siguientes para el panel derecho del hero
-const grilla           = notas.slice(3, 13);  // Arranca en 3 para no repetir las del hero
+const notasSecundarias = notas.slice(1, 5);   // Las 4 siguientes para el panel derecho del hero (grid 2x2)
+const grilla           = notas.slice(5, 13);  // Arranca en 5 para no repetir las del hero
 const carrusel         = grilla;
 const mobileAdFrequency = 3;
 const mobileInlineAdsCount = Math.min(publicidades.length, Math.ceil(grilla.length / mobileAdFrequency));
@@ -58,63 +58,89 @@ const heroImg = hero?.imagen
   )}
 
 <!-- ============================================================
-     HERO — nota destacada
+     HERO — Bento Grid Layout Moderno
      ============================================================ -->
-<section class="hero-section">
-  <div class="hero-grid">
+<section class="mt-8 -mx-4">
+  <!-- Grid Container: 2 columnas en desktop (2fr 1fr), 1 columna en mobile -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 auto-rows-auto">
 
-    <!-- ── IZQUIERDA: nota principal (≈65%) ── -->
-    <div class="hero-izq">
-      {hero ? (
-        <div class="hero-wrap">
-          <img src={heroImg} alt={hero.titulo} width="900" height="506" class="hero-img" loading="eager" fetchpriority="high" />
-          <div class="hero-overlay"></div>
-          <div class="hero-content">
-            {hero.categoria && <span class="badge-rojo">{hero.categoria}</span>}
-            <a href={`/nota/${hero.slug.current}`} class="hero-link">
-              <h1 class="hero-titulo">{hero.titulo}</h1>
-              {hero.bajada && <p class="hero-bajada">{hero.bajada}</p>}
-            </a>
-            <p class="hero-meta">
+    <!-- ── NOTA PRINCIPAL: ocupa 2 columnas y 2 filas en desktop ── -->
+    {hero ? (
+      <article class="lg:col-span-2 lg:row-span-2 relative overflow-hidden bg-neutral-900 group">
+        <a href={`/nota/${hero.slug.current}`} class="block relative h-full min-h-[400px] lg:min-h-[600px]">
+          <img
+            src={heroImg}
+            alt={hero.titulo}
+            width="900"
+            height="600"
+            class="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+            loading="eager"
+            fetchpriority="high"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent"></div>
+          <div class="absolute bottom-0 left-0 right-0 p-6 lg:p-8">
+            {hero.categoria && (
+              <span class="inline-block bg-red-600 text-white text-xs font-bold uppercase tracking-wider px-3 py-1.5 mb-3">
+                {hero.categoria}
+              </span>
+            )}
+            <h1 class="text-white font-black text-2xl lg:text-4xl xl:text-5xl leading-tight mb-3 max-w-3xl drop-shadow-lg group-hover:underline underline-offset-4">
+              {hero.titulo}
+            </h1>
+            {hero.bajada && (
+              <p class="text-neutral-100 text-base lg:text-lg italic leading-relaxed mb-3 max-w-2xl">
+                {hero.bajada}
+              </p>
+            )}
+            <p class="text-neutral-400 text-xs lg:text-sm flex items-center gap-2 flex-wrap">
               {hero.autor && <span>Por {hero.autor}</span>}
-              {hero.autor && <span class="hero-sep" aria-hidden="true">&middot;</span>}
+              {hero.autor && <span aria-hidden="true">•</span>}
               <span>{formatearFecha(hero.fechaPublicacion)}</span>
             </p>
           </div>
-        </div>
-      ) : (
-        <div class="hero-vacio">
-          <p class="msg-empty">
-            Publica tu primera nota en Sanity para verla aqui
-          </p>
-        </div>
-      )}
-    </div>
-
-    <!-- ── DERECHA: 2 notas secundarias apiladas (≈35%) ── -->
-    {notasSecundarias.length > 0 && (
-      <div class="hero-der">
-        {notasSecundarias.map((nota) => {
-          const imgSec = nota.imagen
-            ? urlFor(nota.imagen).width(600).height(450).fit('crop').format('webp').url()
-            : `https://picsum.photos/seed/sec-${nota.slug.current}/640/360`;
-          return (
-            <article class="card-sec">
-              <a href={`/nota/${nota.slug.current}`} class="card-sec-img-wrap">
-                <img src={imgSec} alt={nota.titulo} width="600" height="450" loading="eager" class="card-sec-img" />
-                {nota.categoria && <span class="badge-rojo badge-sm badge-sobre-img">{nota.categoria}</span>}
-              </a>
-              <div class="card-sec-body">
-                <h2 class="card-sec-titulo">
-                  <a href={`/nota/${nota.slug.current}`} class="card-sec-titulo-lnk">{nota.titulo}</a>
-                </h2>
-                <p class="card-sec-meta">{formatearFecha(nota.fechaPublicacion)}</p>
-              </div>
-            </article>
-          );
-        })}
+        </a>
+      </article>
+    ) : (
+      <div class="lg:col-span-2 lg:row-span-2 bg-neutral-200 flex items-center justify-center min-h-[400px]">
+        <p class="text-neutral-600 text-sm">Publica tu primera nota en Sanity para verla aquí</p>
       </div>
     )}
+
+    <!-- ── NOTAS SECUNDARIAS: 4 cards en grid 2x2 (derecha) ── -->
+    {notasSecundarias.map((nota) => {
+      const imgSec = nota.imagen
+        ? urlFor(nota.imagen).width(500).height(400).fit('crop').format('webp').url()
+        : `https://picsum.photos/seed/sec-${nota.slug.current}/500/400`;
+      return (
+        <article class="relative overflow-hidden bg-white border-l border-neutral-200 group hover:bg-neutral-50 transition-colors duration-200">
+          <a href={`/nota/${nota.slug.current}`} class="flex flex-col h-full min-h-[280px]">
+            <div class="relative overflow-hidden aspect-[4/3] flex-shrink-0">
+              <img
+                src={imgSec}
+                alt={nota.titulo}
+                width="500"
+                height="400"
+                loading="eager"
+                class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+              />
+              {nota.categoria && (
+                <span class="absolute top-3 left-3 bg-red-600 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-1 shadow-lg">
+                  {nota.categoria}
+                </span>
+              )}
+            </div>
+            <div class="p-4 flex flex-col flex-1">
+              <h2 class="text-neutral-900 font-bold text-sm lg:text-base leading-snug mb-2 line-clamp-3 group-hover:text-blue-900 transition-colors">
+                {nota.titulo}
+              </h2>
+              <p class="text-neutral-500 text-[11px] mt-auto">
+                {formatearFecha(nota.fechaPublicacion)}
+              </p>
+            </div>
+          </a>
+        </article>
+      );
+    })}
 
   </div>
 </section>
@@ -290,111 +316,6 @@ const heroImg = hero?.imagen
 
 </BaseLayout>
 
-<style>
-  /* HERO */
-  .hero-section {
-    margin: 2rem -1rem 0;  /* 2rem top para respiro visual, mantiene -1rem lateral para full-bleed */
-  }
-
-  /* Grid 2 columnas en desktop, 1 en mobile */
-  .hero-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    align-items: start;
-    gap: 16px;
-  }
-  @media (max-width: 767px)  { .hero-grid { grid-template-columns: 1fr; } }
-
-  .hero-izq { position: relative; }
-
-  /* Panel derecho: dos tarjetas apiladas con separador */
-  .hero-der {
-    display: flex; flex-direction: column;
-    gap: 12px;
-    border-left: 1px solid #D0D0D0;
-    background: #fff;
-  }
-  @media (max-width: 767px) { .hero-der { border-left: none; border-top: 2px solid #1C1C1C; } }
-
-  /* Tarjetas secundarias mejoradas */
-  .card-sec {
-    display: flex; flex-direction: column; flex: 1;
-    transition: background 0.2s ease, transform 0.2s ease;
-  }
-  .card-sec:not(:last-child) { border-bottom: 1px solid var(--color-borde); }
-  .card-sec:hover {
-    background: var(--color-hueso);
-    transform: translateX(4px);
-  }
-  .card-sec-img-wrap {
-    display: block; overflow: hidden; position: relative;
-    aspect-ratio: 4/3; background: #e5e5e5; flex-shrink: 0;
-  }
-  .card-sec-img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
-  .card-sec-img-wrap:hover .card-sec-img { transform: scale(1.05); }
-  .card-sec-body { padding: 0.85rem 1rem; display: flex; flex-direction: column; flex: 1; }
-  .card-sec-titulo {
-    font-family: var(--font-titular);
-    font-size: clamp(0.9rem, 1.3vw, 1.1rem); font-weight: 700;
-    line-height: 1.3; color: #1C1C1C; margin: 0.2rem 0 0.4rem;
-  }
-  .card-sec-titulo-lnk { color: inherit; text-decoration: none; transition: color 0.15s; }
-  .card-sec-titulo-lnk:hover { color: #4c6a92; }
-  .card-sec-meta { font-family: var(--font-cuerpo); font-size: 0.68rem; color: #999; margin: auto 0 0; }
-
-  /* Hero wrap: ocupa el 100% de la celda izquierda del grid */
-  .hero-wrap {
-    position: relative; width: 100%;
-    height: 380px;
-    overflow: hidden; background: #1a1a1a;
-  }
-  @media (min-width: 640px)  { .hero-wrap { height: 420px; } }
-  @media (min-width: 1024px) { .hero-wrap { height: 480px; } }
-  @media (max-width: 767px)  { .hero-wrap { height: 300px; } }
-  .hero-img {
-    position: absolute; inset: 0; width: 100%; height: 100%;
-    object-fit: cover; object-position: center top;
-    transition: transform 0.7s ease;
-  }
-  .hero-wrap:hover .hero-img { transform: scale(1.03); }
-  .hero-overlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(to top, rgba(26,22,20,0.95) 0%, rgba(26,22,20,0.7) 60%, transparent 100%);
-  }
-  .hero-content {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    padding: 1.5rem 1.25rem; max-width: 1280px;
-  }
-  @media (min-width: 768px) { .hero-content { padding: 2.5rem 2rem; } }
-  .hero-link { display: block; text-decoration: none; }
-  .hero-link:hover .hero-titulo { text-decoration: underline; text-underline-offset: 4px; }
-  .hero-titulo {
-    font-family: var(--font-titular);
-    font-size: clamp(1.5rem, 3.5vw, 2.75rem); font-weight: 900; line-height: 1.1;
-    letter-spacing: -0.02em;
-    color: #fff; margin: 0.5rem 0 0.75rem; max-width: 46rem;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.4);
-    word-break: break-word; overflow-wrap: break-word;
-  }
-  @media (max-width: 480px) {
-    .hero-titulo { font-size: 1.4rem; }
-    .hero-content { padding: 1rem 1rem; }
-    .hero-bajada { font-size: 0.875rem; }
-  }
-  .hero-bajada {
-    font-family: var(--font-cuerpo);
-    font-size: clamp(0.9rem, 1.2vw, 1.05rem); color: rgba(250,248,243,0.9);
-    font-style: italic;
-    max-width: 40rem; line-height: 1.6; margin: 0 0 0.85rem;
-  }
-  .hero-meta {
-    font-family: var(--font-cuerpo); font-size: 0.75rem;
-    color: rgba(255,255,255,0.5); margin: 0;
-    display: flex; flex-wrap: wrap; align-items: center; gap: 0.1rem;
-  }
-  .hero-sep { margin: 0 0.3rem; }
-  .hero-vacio { height: 300px; background: #ddd; display: flex; align-items: center; justify-content: center; }
-</style>
 
 <style>
   /* BADGES MEJORADOS */
