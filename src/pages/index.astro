@@ -121,17 +121,17 @@ const heroSrcset = hero?.imagen
     <!-- ── NOTAS SECUNDARIAS: 4 cards en grid 2x2 (derecha) ── -->
     {notasSecundarias.map((nota) => {
       const imgSec = nota.imagen
-        ? urlFor(nota.imagen).width(560).height(196).fit('crop').crop('focalpoint').format('webp').url()
-        : `https://picsum.photos/seed/sec-${nota.slug.current}/560/196`;
+        ? urlFor(nota.imagen).width(400).height(400).fit('crop').crop('focalpoint').format('webp').url()
+        : `https://picsum.photos/seed/sec-${nota.slug.current}/400/400`;
       return (
         <article class="relative bg-white border-l border-neutral-200 group hover:bg-neutral-50 transition-colors duration-200">
           <a href={`/nota/${nota.slug.current}`} class="flex flex-col h-full min-h-[180px]">
-            <div class="relative overflow-hidden h-[140px] w-full flex-shrink-0">
+            <div class="relative overflow-hidden aspect-square w-full flex-shrink-0">
               <img
                 src={imgSec}
                 alt={nota.titulo}
-                width="560"
-                height="196"
+                width="400"
+                height="400"
                 loading="eager"
                 class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
               />
@@ -243,16 +243,16 @@ const heroSrcset = hero?.imagen
         <div class="notas-grid">
           {grilla.map((nota, i) => {
             const imgUrl = nota.imagen
-              ? urlFor(nota.imagen).width(600).height(338).fit('crop').crop('focalpoint').format('webp').url()
-              : `https://picsum.photos/seed/${nota.slug.current}/600/338`;
+              ? urlFor(nota.imagen).width(600).height(600).fit('crop').crop('focalpoint').format('webp').url()
+              : `https://picsum.photos/seed/${nota.slug.current}/600/600`;
             const shouldShowMobileAd = (i + 1) % mobileAdFrequency === 0;
             const mobileAdIndex = Math.floor(i / mobileAdFrequency);
             const mobileAd = shouldShowMobileAd ? publicidades[mobileAdIndex] : null;
             return (
               <Fragment>
                 <article class="card animar">
-                  <a href={`/nota/${nota.slug.current}`} class="card-img-wrap w-full aspect-video">
-                    <img src={imgUrl} alt={nota.titulo} width="600" height="400" loading="lazy" class="card-img w-full aspect-video object-cover object-center" />
+                  <a href={`/nota/${nota.slug.current}`} class="card-img-wrap w-full aspect-square">
+                    <img src={imgUrl} alt={nota.titulo} width="600" height="600" loading="lazy" class="card-img w-full aspect-square object-cover object-center" />
                     {nota.categoria && <span class="badge-rojo badge-sm badge-sobre-img">{nota.categoria}</span>}
                   </a>
                   <div class="card-body">
@@ -396,7 +396,7 @@ const heroSrcset = hero?.imagen
   }
   .card-img-wrap {
     display: block; overflow: hidden; position: relative;
-    aspect-ratio: 16/9; background: #e5e5e5; margin-bottom: 0.75rem;
+    aspect-ratio: 1/1; background: #e5e5e5; margin-bottom: 0.75rem;
   }
   .card-img {
     width: 100%; height: 100%; object-fit: cover; display: block;
@@ -750,8 +750,8 @@ const heroSrcset = hero?.imagen
     card.className = 'card animar card-nueva';
 
     card.innerHTML =
-      '<a href="/nota/' + nota.slug + '" class="card-img-wrap w-full aspect-video">'
-      + '<img src="' + imgUrl + '" alt="' + nota.titulo.replace(/"/g,'&quot;') + '" loading="lazy" class="card-img w-full aspect-video object-cover object-center" />'
+      '<a href="/nota/' + nota.slug + '" class="card-img-wrap w-full aspect-square">'
+      + '<img src="' + imgUrl + '" alt="' + nota.titulo.replace(/"/g,'&quot;') + '" loading="lazy" class="card-img w-full aspect-square object-cover object-center" />'
       + (nota.categoria ? '<span class="badge-rojo badge-sm badge-sobre-img">' + nota.categoria + '</span>' : '')
       + '</a>'
       + '<div class="card-body">'
