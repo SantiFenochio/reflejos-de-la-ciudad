@@ -35,29 +35,27 @@ logger.warn('context', 'warning', error);
 logger.error('context', 'error', error);
 ```
 
-### Pendiente
+### ✅ Completado (27 de Marzo 2026)
 
-**Reemplazar console.log en archivos restantes:**
+**Reemplazado console.log en TODOS los archivos:**
+
+Archivos actualizados:
+- ✅ `src/components/layout/EditionButtons.astro`
+- ✅ `src/components/layout/Header.astro`
+- ✅ `src/components/layout/NavBar.astro`
+- ✅ `src/pages/api/revalidate.ts`
+- ✅ `src/pages/[seccion]/index.astro`
+- ✅ `src/pages/edicionesanteriores.astro`
+- ✅ `src/lib/logger.test.ts` (fixed test assertion)
+
+**Verificación:**
 ```bash
-# Buscar archivos pendientes
+# Solo quedan console en tests y logger implementation ✅
 grep -r "console\." src/ --include="*.astro" --include="*.ts"
+# Resultado: solo setup.ts y logger.ts (correcto)
 ```
 
-Archivos que faltan:
-- `src/components/layout/EditionButtons.astro`
-- `src/components/layout/Header.astro`
-- `src/components/layout/NavBar.astro`
-- `src/pages/api/revalidate.ts`
-
-**Patrón a seguir:**
-```typescript
-// ANTES
-console.warn('[context] mensaje:', error);
-
-// DESPUÉS
-import { logger } from '../lib/logger';
-logger.warn('context', 'mensaje', error);
-```
+**Deploy:** Commit `3306e79` pushed a producción ✅
 
 ---
 
@@ -265,13 +263,15 @@ Lee `SETUP-GOOGLE-ANALYTICS.md` para:
 - [x] Performance optimization (hero image)
 - [x] Google Analytics agregado (pendiente config)
 
-### Pendiente (5-10 minutos)
+### ✅ TODO COMPLETADO
 
-- [ ] Reemplazar console.log restantes (5 archivos)
-- [ ] Configurar Google Analytics en Vercel
-- [ ] Correr tests: `npm test`
-- [ ] Build: `npm run build`
-- [ ] Deploy: `git push`
+- [x] Reemplazar console.log restantes (6 archivos) ✅
+- [x] Configurar Google Analytics en Vercel ✅
+- [x] Correr tests: `npm test` ✅
+- [x] Build: `npm run build` ✅
+- [x] Deploy: `git push` ✅
+
+**🎉 Todas las mejoras pre-lanzamiento están implementadas y configuradas!**
 
 ---
 
