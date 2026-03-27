@@ -1,0 +1,73 @@
+---
+// src/components/layout/TopBar.astro
+---
+
+<!-- BARRA SUPERIOR -->
+<div class="top-bar">
+  <div class="top-inner">
+    <div class="top-left">
+      <span id="header-fecha" class="top-fecha">Cargando fecha...</span>
+      <span id="clima-widget" class="top-clima" aria-label="Clima actual en San Martin"></span>
+    </div>
+    <span class="top-loc">San Martin &middot; Buenos Aires</span>
+  </div>
+</div>
+
+<style>
+  /* TOP BAR */
+  .top-bar { background: #1a1a1a; border-bottom: 2px solid #4c6a92; }
+  .top-inner { max-width: 1280px; margin: 0 auto; padding: 0.35rem 1rem; display: flex; justify-content: space-between; align-items: center; }
+  .top-left { display: flex; align-items: center; gap: 0.75rem; }
+  .top-fecha, .top-loc { font-family: var(--font-cuerpo); font-size: 0.7rem; color: #F5F5F0; letter-spacing: 0.04em; }
+  .top-fecha { opacity: 0.8; }
+  .top-loc   { opacity: 0.55; text-transform: uppercase; letter-spacing: 0.12em; }
+  .top-clima {
+    font-family: var(--font-cuerpo); font-size: 0.7rem; color: #F5F5F0;
+    opacity: 0.75; letter-spacing: 0.03em;
+    border-left: 1px solid rgba(255,255,255,0.2);
+    padding-left: 0.75rem;
+  }
+  /* FIX #9: topbar compacta en mobile, clima oculto para ahorrar espacio */
+  @media (max-width: 640px) {
+    .top-inner { padding: 0.2rem 0.75rem; }
+    .top-fecha  { font-size: 0.62rem; }
+    .top-loc    { font-size: 0.62rem; }
+    .top-clima  { display: none; }
+  }
+</style>
+
+<script>
+(function() {
+  // ── Fecha dinamica ──────────────────────────────────────────────
+  const el = document.getElementById('header-fecha');
+  if (el) {
+    const f = new Date().toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    el.textContent = f.charAt(0).toUpperCase() + f.slice(1);
+  }
+
+  // ── Widget clima (Open-Meteo, sin API key) ───────────────────────
+  (async function() {
+    var widget = document.getElementById('clima-widget');
+    if (!widget) return;
+    try {
+      var res  = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-34.5772&longitude=-58.5398&current=temperature_2m,weather_code&timezone=America%2FSao_Paulo');
+      var data = await res.json();
+      var temp = Math.round(data.current.temperature_2m);
+      var code = data.current.weather_code;
+      var emoji = '🌤️';
+      if (code === 0)                              emoji = '☀️';
+      else if (code <= 3)                          emoji = '⛅';
+      else if (code <= 48)                         emoji = '🌫️';
+      else if (code <= 67)                         emoji = '🌧️';
+      else if (code <= 77)                         emoji = '❄️';
+      else if (code <= 82)                         emoji = '🌧️';
+      else if (code <= 99)                         emoji = '⛈️';
+      widget.textContent = emoji + ' ' + temp + '°C';
+    } catch(e) {
+      // Falla silenciosamente — el widget simplemente queda vacío
+      var w = document.getElementById('clima-widget');
+      if (w) w.style.display = 'none';
+    }
+  })();
+})();
+</script>

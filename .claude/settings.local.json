@@ -1,7 +1,19 @@
 {
   "permissions": {
     "allow": [
-      "Bash(find /c/Users/Tino/Desktop/reflejos-de-la-ciudad -name tailwind.config.* -o -name astro.config.*)"
+      "Bash(find /c/Users/Tino/Desktop/reflejos-de-la-ciudad -name tailwind.config.* -o -name astro.config.*)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(export PATH=\"/c/Program Files/nodejs:$PATH:/c/Users/Fer 1/AppData/Roaming/npm\")",
+      "Bash(npm run:*)",
+      "Bash(npx vercel:*)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" -X POST https://reflejos-de-la-ciudad.vercel.app/api/revalidate -H \"Content-Type: application/json\" -d '{}')",
+      "Bash(npm install:*)",
+      "Bash(node -e \"const p = require\\(''./node_modules/@sanity/webhook/package.json''\\); console.log\\(p.version, p.exports ? Object.keys\\(p.exports\\) : p.main\\)\")",
+      "Bash(node -e \"const m = require\\(''./node_modules/@sanity/webhook/dist/index.js''\\); console.log\\(Object.keys\\(m\\)\\)\")",
+      "Bash(node -e \"const m = require\\(''./node_modules/@sanity/webhook/dist/index.js''\\); console.log\\(m.SIGNATURE_HEADER_NAME\\); console.log\\(m.isValidSignature.toString\\(\\).slice\\(0, 300\\)\\)\")",
+      "Bash(node -e \"const src = require\\(''fs''\\).readFileSync\\(''./node_modules/@sanity/webhook/dist/index.js'', ''utf8''\\); const start = src.indexOf\\(''assertValidSignature''\\); console.log\\(src.slice\\(start, start + 800\\)\\)\")",
+      "Bash(node -e \"const src = require\\(''fs''\\).readFileSync\\(''./node_modules/@sanity/webhook/dist/index.js'', ''utf8''\\); const start = src.indexOf\\(''encodeSignatureHeader''\\); console.log\\(src.slice\\(start, start + 600\\)\\)\")",
+      "Bash(node -e \":*)"
     ]
   }
 }

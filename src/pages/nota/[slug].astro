@@ -6,18 +6,7 @@ import { ARTICULO_QUERY } from '../../lib/queries';
 import { SITE_URL } from '../../lib/seo';
 import type { Articulo } from '../../types/article';
 import Publicidad from '../../components/ui/Publicidad.astro';
-
-export async function getStaticPaths() {
-  try {
-    const notas: Articulo[] = await sanityClient.fetch(
-      `*[_type == "articulo"]{ slug }`
-    );
-    return notas.map(nota => ({ params: { slug: nota.slug.current } }));
-  } catch (e) {
-    console.warn('[slug] No se pudo obtener rutas estáticas:', e);
-    return [];
-  }
-}
+import { formatearFecha } from '../../lib/utils';
 
 const { slug } = Astro.params;
 let articulo: Articulo;
@@ -54,12 +43,6 @@ if (publicidades.length === 0) {
   }
 }
 
-function formatearFecha(iso: string): string {
-  return new Date(iso).toLocaleDateString('es-AR', {
-    day: 'numeric', month: 'long', year: 'numeric'
-  });
-}
-
 // Hero — 900×506 16:9 webp, crop centrado
 const imagenHero = articulo.imagen
   ? urlFor(articulo.imagen).width(900).height(506).fit('crop').format('webp').url()
@@ -84,6 +67,11 @@ const tituloEnc = encodeURIComponent(articulo.titulo);
 const urlEnc    = encodeURIComponent(paginaURL);
 const shareWA   = `https://wa.me/?text=${tituloEnc}%20${urlEnc}`;
 const shareFB   = `https://www.facebook.com/sharer/sharer.php?u=${urlEnc}`;
+
+// Cache CDN de Vercel: 1 hora fresco, 24 hs stale-while-revalidate.
+// El webhook /api/revalidate invalida 'home' + 'nota-{slug}' al publicar.
+Astro.response.headers.set('Vercel-CDN-Cache-Control', 's-maxage=3600, stale-while-revalidate=86400');
+Astro.response.headers.set('Cache-Tag', `home,nota-${slug}`);
 
 const cuerpoHtml = portableTextToHtml(articulo.cuerpo ?? []);
 

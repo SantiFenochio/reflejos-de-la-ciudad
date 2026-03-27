@@ -1,0 +1,329 @@
+---
+// src/components/layout/EditionButtons.astro
+import { sanityClient } from '../../lib/sanity';
+import { Image } from 'astro:assets';
+import imgEdicionesAnteriores from '../../assets/Anteriores17.webp';
+import imgUltimaEdicion       from '../../assets/ultima17.webp';
+import imgIconoDerecha        from '../../assets/Nuevo96.webp';
+import imgLogoPrincipal       from '../../assets/NuevoLogo.webp';
+
+let ultimaEdicion: { pdfUrl: string | null } | null = null;
+try {
+  ultimaEdicion = await sanityClient.fetch<{ pdfUrl: string | null }>(
+    `*[_type == "edicionImpresa"] | order(_createdAt desc) [0] { "pdfUrl": archivoPdf.asset->url }`
+  );
+} catch (e) {
+  console.warn('[Header] No se pudo obtener ultima edicion:', e);
+}
+const linkEdicionActual: string = ultimaEdicion?.pdfUrl ?? '/edicionesanteriores';
+---
+
+<!-- LOGO -->
+<div class="logo-area-bg">
+<div class="block md:hidden">
+  <!-- FIX mobile: py-3 → py-4 para más espacio vertical -->
+  <div class="mx-auto flex w-full max-w-[1400px] items-center justify-between gap-3 px-3 py-4">
+    <a href="/" aria-label="Inicio de Reflejos de la Ciudad" class="shrink-0">
+      <Image
+        src={imgIconoDerecha}
+        alt="96 Años de Periodismo Local"
+        class="w-20 h-auto"
+      />
+    </a>
+
+    <a href="/" aria-label="Inicio de Reflejos de la Ciudad" class="flex justify-center">
+      <!-- FIX mobile: logo w-36 → w-48 -->
+      <img
+        src={imgLogoPrincipal.src}
+        alt="Reflejos de la Ciudad"
+        class="w-48 h-auto max-w-full"
+        onerror="this.style.display='none';document.getElementById('logo-text-mobile').style.display='block';"
+      />
+      <span id="logo-text-mobile" class="hidden font-titular text-lg font-black text-[#1a1a1a]">Reflejos de la Ciudad</span>
+    </a>
+
+    <div class="flex items-center gap-2">
+      <a
+        href="https://www.facebook.com/reflejosdelaciudad"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex h-8 w-8 items-center justify-center rounded-md text-[#1877F2] hover:bg-gray-100"
+        aria-label="Seguinos en Facebook"
+      >
+        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987H7.898V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/>
+        </svg>
+      </a>
+      <a
+        href="https://www.instagram.com/reflejosdelaciudad/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex h-8 w-8 items-center justify-center rounded-md text-[#E1306C] hover:bg-gray-100"
+        aria-label="Seguinos en Instagram"
+      >
+        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</div>
+<div class="logo-area">
+
+  <!-- ZONA IZQUIERDA: RRSS + Imagen 96 años -->
+  <div class="logo-zona-izq">
+
+    <!-- 1: RRSS -->
+    <div class="logo-col-rrss">
+      <a
+        href="https://www.facebook.com/reflejosdelaciudad"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="rrss-lnk"
+        aria-label="Seguinos en Facebook"
+      >
+        <div class="rrss-box rrss-box-fb">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="white" aria-hidden="true">
+            <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987H7.898V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/>
+          </svg>
+        </div>
+      </a>
+      <a
+        href="https://www.instagram.com/reflejosdelaciudad/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="rrss-lnk"
+        aria-label="Seguinos en Instagram"
+      >
+        <div class="rrss-box rrss-box-ig">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="white" aria-hidden="true">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+          </svg>
+        </div>
+      </a>
+    </div>
+
+    <!-- 2: Ícono 96 años -->
+    <div class="logo-col-derecha">
+      <Image
+        src={imgIconoDerecha}
+        alt="96 Años de Periodismo Local"
+        class="logo-btn-img logo-img-96"
+      />
+    </div>
+
+  </div>
+
+  <!-- ZONA CENTRO: Logo principal -->
+  <div class="logo-zona-centro">
+    <div class="logo-center">
+      <a href="/" aria-label="Inicio de Reflejos de la Ciudad" class="logo-link">
+        <img
+          src={imgLogoPrincipal.src}
+          alt="Reflejos de la Ciudad"
+          class="logo-img"
+          onerror="this.style.display='none';document.getElementById('logo-text').style.display='block';"
+        />
+        <span id="logo-text" class="logo-text">Reflejos de la Ciudad</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ZONA DERECHA: Ediciones Anteriores + Edición Actual -->
+  <div class="logo-zona-der">
+
+    <!-- 4: Ediciones Anteriores — imagen original con hover de fondo -->
+    <div class="logo-btn-lateral">
+      <a href="/edicionesanteriores" aria-label="Ver ediciones anteriores del diario" class="logo-btn-edicion">
+        <Image src={imgEdicionesAnteriores} alt="Ver Ediciones Anteriores" class="logo-btn-img" />
+      </a>
+    </div>
+
+    <!-- Separador vertical entre botones -->
+    <div class="logo-btn-sep" aria-hidden="true"></div>
+
+    <!-- 5: Edición Actual PDF — imagen original con hover de fondo -->
+    <div class="logo-btn-lateral">
+      <a href={linkEdicionActual} target="_blank" rel="noopener noreferrer" aria-label="Ver edición actual en PDF" class="logo-btn-edicion">
+        <Image src={imgUltimaEdicion} alt="Ver Edición Actual" class="logo-btn-img" />
+      </a>
+    </div>
+
+  </div>
+
+</div>
+</div>
+
+<!-- BARRA EDICIONES MOBILE — solo visible < 768px -->
+<div class="ediciones-mobile-bar">
+  <a href="/edicionesanteriores" class="edicion-mobile-btn" aria-label="Ver ediciones anteriores del diario">
+    <Image src={imgEdicionesAnteriores} alt="Ver Ediciones Anteriores" class="edicion-mobile-img" />
+  </a>
+  <a href={linkEdicionActual} target="_blank" rel="noopener noreferrer" class="edicion-mobile-btn" aria-label="Ver última edición semanal en PDF">
+    <Image src={imgUltimaEdicion} alt="Ver Última Edición Semanal" class="edicion-mobile-img" />
+  </a>
+</div>
+
+<style>
+  /* ── LOGO AREA — wrapper full-width para que el blanco cubra todo el ancho ── */
+  .logo-area-bg {
+    background: #fff;
+    border-bottom: 2px solid #1a1a1a; /* filete oscuro tipo masthead periodístico */
+  }
+
+  /* ── LOGO AREA — 3 zonas de 33% con space-between ── */
+  .logo-area {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1.25rem 1.5rem;
+    min-height: 220px;
+    box-sizing: border-box;
+  }
+
+  /* Zona izquierda: RRSS + Ediciones Anteriores */
+  .logo-zona-izq {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    width: 30%;
+    justify-content: flex-start;
+  }
+
+  /* Zona centro: Logo */
+  .logo-zona-centro {
+    display: flex;
+    justify-content: center;
+    width: 40%;
+  }
+
+  /* Zona derecha: Edición Actual + 96 años */
+  .logo-zona-der {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    width: 30%;
+    justify-content: flex-end;
+  }
+
+  /* 1 — RRSS: cajas de color 44×44px con border-radius 8px */
+  .logo-col-rrss {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
+  }
+  .rrss-lnk {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    line-height: 0;
+    transition: opacity 0.2s ease;
+  }
+  .rrss-lnk:hover { opacity: 0.85; text-decoration: none; }
+  /* Caja genérica: 44×44, cuadrado redondeado */
+  .rrss-box {
+    width: 44px; height: 44px;   /* era 38×38 */
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .rrss-box-fb { background: #1877F2; }
+  .rrss-box-ig {
+    background: linear-gradient(135deg, #E1306C 0%, #833AB4 50%, #405DE6 100%);
+  }
+
+  /* 2 & 4 — Botones laterales de edición: envuelven la imagen con hover de fondo */
+  .logo-btn-lateral { display: flex; align-items: center; flex-shrink: 0; }
+
+  /* Enlace de edición: padding + hover suave */
+  .logo-btn-edicion {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.35rem;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+  }
+  .logo-btn-edicion:hover {
+    background-color: #F0F0F0;
+    text-decoration: none;
+  }
+
+  /* Imagen de edición: 90px de alto */
+  .logo-btn-img {
+    display: block;
+    height: 117px;
+    width: auto;
+    max-width: 260px;
+    object-fit: contain;
+  }
+
+  /* Separador vertical entre los dos botones — ajustado a la nueva altura */
+  .logo-btn-sep {
+    width: 1px;
+    height: 117px;
+    background: #D0D0D0;
+    flex-shrink: 0;
+    margin: 0 0.25rem;
+  }
+
+  /* 3 — Logo central */
+  .logo-center { display: flex; align-items: center; flex-shrink: 0; }
+  .logo-link   { display: inline-block; }
+  .logo-img    { display: block; width: 560px; height: auto; max-width: 100%; }
+  .logo-text   { display: none; font-family: var(--font-titular); font-weight: 900; font-size: 2.25rem; color: #1a1a1a; letter-spacing: -0.02em; }
+
+  /* 5 — Ícono 96 años: crecer junto al banner */
+  .logo-col-derecha { display: flex; align-items: center; flex-shrink: 0; }
+  .logo-img-96 { height: 234px !important; width: auto; object-fit: contain; }
+
+  /* ── MOBILE < 768px: logo desktop oculto, usa bloque mobile ── */
+  @media (max-width: 767px) {
+    .logo-area { display: none; }
+  }
+
+  /* ── BARRA EDICIONES MOBILE — solo visible < 768px ── */
+  .ediciones-mobile-bar {
+    display: none; /* oculta en desktop */
+  }
+  @media (max-width: 767px) {
+    .ediciones-mobile-bar {
+      display: flex;
+      /* FIX mobile: altura mínima explícita en la barra */
+      min-height: 64px;
+      background: #fff;
+      border-top: 1px solid #D0D0D0;
+      border-bottom: 2px solid #1C1C1C;
+    }
+    .edicion-mobile-btn {
+      flex: 1;
+      /* FIX mobile: subir de 74px a 80px para dar más altura al área táctil */
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #1C1C1C;
+      text-decoration: none;
+      /* FIX mobile: más padding vertical (0.45 → 0.6rem) */
+      padding: 0.6rem 0.5rem;
+      border-right: 1px solid #D0D0D0;
+      transition: background-color 0.15s;
+    }
+    .edicion-mobile-btn:last-child { border-right: none; }
+    .edicion-mobile-btn:active     { background: #e8e8e8; }
+    .edicion-mobile-img {
+      display: block;
+      /* FIX mobile: imagen de 60px → 68px, proporcional al nuevo min-height */
+      height: 68px;
+      width: auto;
+      max-width: 100%;
+      object-fit: contain;
+    }
+  }
+</style>

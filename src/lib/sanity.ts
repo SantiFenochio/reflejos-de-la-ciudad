@@ -5,7 +5,7 @@ import imageUrlBuilder from '@sanity/image-url'
 export const sanityClient = createClient({
   projectId:  import.meta.env.PUBLIC_SANITY_PROJECT_ID ?? 'k3agywgt',
   dataset:    import.meta.env.PUBLIC_SANITY_DATASET    ?? 'production',
-  useCdn:     import.meta.env.PROD,
+  useCdn:     false, // Siempre false: sitio estático — la data se fetchea una sola vez en build time, el CDN puede devolver datos cacheados/desactualizados
   apiVersion: '2024-01-01',
 })
 

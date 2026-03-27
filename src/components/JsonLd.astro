@@ -26,9 +26,17 @@ const ORG = {
     addressCountry: 'AR',
     postalCode: 'B1653',
   },
-  description: 'Semanario digital del barrio San Martín, Buenos Aires, Argentina.',
+  description: 'Diario digital local de General San Martín y Villa Ballester, Buenos Aires, Argentina.',
   foundingDate: '2024',
   inLanguage: 'es-AR',
+  areaServed: [
+    { '@type': 'City', name: 'General San Martín', containedInPlace: { '@type': 'State', name: 'Buenos Aires' } },
+    { '@type': 'City', name: 'Villa Ballester',    containedInPlace: { '@type': 'State', name: 'Buenos Aires' } },
+  ],
+  sameAs: [
+    'https://www.instagram.com/reflejosdelaciudad',
+    'https://www.facebook.com/reflejosdelaciudad',
+  ],
 };
 
 function buildSchema(data: Props): object {
@@ -42,13 +50,8 @@ function buildSchema(data: Props): object {
             '@id': `${SITE_URL}/#website`,
             url: SITE_URL,
             name: SITE_NAME,
-            description: 'Semanario digital del barrio San Martín, Buenos Aires.',
+            description: 'Diario digital local de General San Martín y Villa Ballester, Buenos Aires.',
             inLanguage: 'es-AR',
-            potentialAction: {
-              '@type': 'SearchAction',
-              target: { '@type': 'EntryPoint', urlTemplate: `${SITE_URL}/buscar?q={search_term_string}` },
-              'query-input': 'required name=search_term_string',
-            },
           },
           ORG,
         ],

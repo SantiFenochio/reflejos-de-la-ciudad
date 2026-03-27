@@ -2,6 +2,7 @@
 // src/pages/edicionesanteriores.astro
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { sanityClient } from '../lib/sanity';
+import { formatearFecha } from '../lib/utils';
 
 interface Edicion {
   _id:    string;
@@ -23,13 +24,6 @@ try {
 } catch (e) {
   console.warn('[edicionesanteriores] No se pudo obtener ediciones:', e);
 }
-
-function formatearFecha(iso: string): string {
-  if (!iso) return '';
-  // Sanity devuelve "YYYY-MM-DD"; parseamos sin conversión de zona horaria
-  const [anio, mes, dia] = iso.split('-');
-  return `${dia}/${mes}/${anio}`;
-}
 ---
 
 <BaseLayout
@@ -49,7 +43,7 @@ function formatearFecha(iso: string): string {
 
   {ediciones.length === 0 ? (
     <!-- Estado vacío: todavía no se subió ninguna edición -->
-    <div style="text-align:center;padding:4rem 1rem;color:#888;">
+    <div class="msg-empty">
       <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" style="margin:0 auto 1rem;" aria-hidden="true">
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
         <polyline points="14 2 14 8 20 8"/>
@@ -88,9 +82,7 @@ function formatearFecha(iso: string): string {
               href={ed.pdfUrl}
               target="_blank"
               rel="noopener noreferrer"
-              style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.45rem 0.85rem;background:#111;color:#fff;font-family:var(--font-cuerpo);font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;text-decoration:none;align-self:flex-start;transition:background 0.15s;"
-              onmouseover="this.style.background='#4c6a92'"
-              onmouseout="this.style.background='#111'"
+              class="btn-descarga-pdf"
             >
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -115,4 +107,25 @@ function formatearFecha(iso: string): string {
   /* FIX #8: grid responsivo para ediciones anteriores */
   @media (min-width: 640px)  { .ediciones-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 1.25rem !important; } }
   @media (min-width: 1024px) { .ediciones-grid { grid-template-columns: repeat(4, 1fr) !important; gap: 1.5rem !important; } }
+
+  /* Botón descarga PDF con hover */
+  .btn-descarga-pdf {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 0.85rem;
+    background: #111;
+    color: #fff;
+    font-family: var(--font-cuerpo);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    align-self: flex-start;
+    transition: background 0.15s;
+  }
+  .btn-descarga-pdf:hover {
+    background: #4c6a92;
+  }
 </style>

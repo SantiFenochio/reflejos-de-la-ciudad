@@ -77,9 +77,9 @@ export function buildArticleSeo(article: {
  */
 export function buildSectionSeo(seccion: string): SeoProps {
   return {
-    title:        `${seccion} | ${SITE_NAME}`,
-    description:  `Las últimas noticias de ${seccion} en el barrio San Martín. Actualidad local en ${SITE_NAME}.`,
-    canonicalURL: `${SITE_URL}/seccion/${seccion.toLowerCase()}`,
+    title:        `${seccion} en San Martín | ${SITE_NAME}`,
+    description:  `Últimas noticias de ${seccion} en General San Martín y Villa Ballester. Actualidad local en ${SITE_NAME}.`,
+    canonicalURL: `${SITE_URL}/${seccion.toLowerCase()}`,
     type:         'website',
     section:      seccion,
   };

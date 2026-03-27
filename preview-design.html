@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preview UI/UX - Reflejos de la Ciudad</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700;900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --hueso: #F5F5F0;
+      --periodico: #1C1C1C;
+      --secundario: #4A4A4A;
+      --acento: #4c6a92;
+      --borde: #D0D0D0;
+      --acento-light: #7b9dc4;
+      --acento-dark: #2a4a6a;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--hueso);
+      color: var(--periodico);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* HEADER MEJORADO */
+    .preview-header {
+      background: linear-gradient(135deg, var(--acento-dark) 0%, var(--acento) 100%);
+      padding: 1.5rem 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .preview-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -50%;
+      width: 200%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 20px,
+        rgba(255,255,255,0.03) 20px,
+        rgba(255,255,255,0.03) 40px
+      );
+      animation: slide 30s linear infinite;
+    }
+
+    @keyframes slide {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(50%); }
+    }
+
+    .preview-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .preview-logo {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .preview-logo-text {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: white;
+      letter-spacing: -0.02em;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+    }
+
+    .preview-badge {
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(10px);
+      padding: 0.5rem 1rem;
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: white;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+
+    .preview-nav {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .preview-nav a {
+      color: rgba(255,255,255,0.9);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+      letter-spacing: 0.02em;
+      transition: all 0.3s ease;
+      position: relative;
+      padding-bottom: 0.25rem;
+    }
+
+    .preview-nav a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: white;
+      transition: width 0.3s ease;
+    }
+
+    .preview-nav a:hover {
+      color: white;
+    }
+
+    .preview-nav a:hover::after {
+      width: 100%;
+    }
+
+    /* HERO MEJORADO */
+    .preview-hero {
+      padding: 4rem 0;
+      background: white;
+    }
+
+    .preview-hero-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    .preview-hero-main {
+      position: relative;
+      overflow: hidden;
+      border-radius: 4px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    .preview-hero-main:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.25);
+    }
+
+    .preview-hero-img {
+      width: 100%;
+      aspect-ratio: 16/10;
+      object-fit: cover;
+      display: block;
+    }
+
+    .preview-hero-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 3rem;
+      background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 70%, transparent 100%);
+    }
+
+    .preview-category {
+      display: inline-block;
+      background: var(--acento);
+      color: white;
+      padding: 0.4rem 1rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+    }
+
+    .preview-hero-title {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 3rem;
+      font-weight: 900;
+      line-height: 1.1;
+      color: white;
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .preview-hero-excerpt {
+      font-size: 1.125rem;
+      color: rgba(255,255,255,0.95);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .preview-meta {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.8);
+    }
+
+    /* TARJETAS SECUNDARIAS */
+    .preview-secondary {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .preview-card {
+      background: white;
+      border-radius: 4px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      border: 1px solid var(--borde);
+    }
+
+    .preview-card:hover {
+      transform: translateX(8px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      border-color: var(--acento);
+    }
+
+    .preview-card-content {
+      padding: 1.5rem;
+    }
+
+    .preview-card-title {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 1.3;
+      color: var(--periodico);
+      margin-bottom: 0.5rem;
+      transition: color 0.3s ease;
+    }
+
+    .preview-card:hover .preview-card-title {
+      color: var(--acento);
+    }
+
+    /* GRILLA DE NOTICIAS */
+    .preview-grid {
+      padding: 4rem 0;
+      background: var(--hueso);
+    }
+
+    .preview-grid-title {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 2.5rem;
+      font-weight: 900;
+      margin-bottom: 3rem;
+      position: relative;
+      padding-left: 1.5rem;
+    }
+
+    .preview-grid-title::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 6px;
+      background: linear-gradient(to bottom, var(--acento) 0%, var(--acento-light) 100%);
+      border-radius: 3px;
+    }
+
+    .preview-grid-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 2rem;
+    }
+
+    .preview-grid-card {
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid transparent;
+    }
+
+    .preview-grid-card:hover {
+      transform: translateY(-12px);
+      box-shadow: 0 20px 50px rgba(76, 106, 146, 0.2);
+      border-color: var(--acento);
+    }
+
+    .preview-grid-img {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+
+    .preview-grid-card:hover .preview-grid-img {
+      transform: scale(1.05);
+    }
+
+    .preview-grid-body {
+      padding: 1.5rem;
+    }
+
+    .preview-grid-card-title {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+      color: var(--periodico);
+    }
+
+    .preview-grid-excerpt {
+      font-size: 0.95rem;
+      color: var(--secundario);
+      line-height: 1.6;
+    }
+
+    /* COMPARACIÓN */
+    .preview-comparison {
+      background: var(--periodico);
+      color: white;
+      padding: 4rem 0;
+      margin-top: 4rem;
+    }
+
+    .preview-comparison h2 {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 2.5rem;
+      font-weight: 900;
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .preview-comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .preview-comparison-item {
+      background: rgba(255,255,255,0.05);
+      padding: 2rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .preview-comparison-item h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--acento-light);
+    }
+
+    .preview-comparison-item ul {
+      list-style: none;
+    }
+
+    .preview-comparison-item li {
+      padding: 0.75rem 0;
+      padding-left: 1.5rem;
+      position: relative;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .preview-comparison-item li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--acento-light);
+      font-weight: 700;
+    }
+
+    @media (max-width: 768px) {
+      .preview-hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .preview-grid-cards {
+        grid-template-columns: 1fr;
+      }
+
+      .preview-comparison-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .preview-hero-title {
+        font-size: 2rem;
+      }
+    }
+
+    .preview-note {
+      background: rgba(76, 106, 146, 0.1);
+      border-left: 4px solid var(--acento);
+      padding: 1.5rem;
+      margin: 3rem 0;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .preview-note strong {
+      color: var(--acento-dark);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER MEJORADO -->
+  <header class="preview-header">
+    <div class="preview-container">
+      <div class="preview-logo">
+        <h1 class="preview-logo-text">Reflejos de la Ciudad</h1>
+        <span class="preview-badge">96 Años</span>
+      </div>
+      <nav class="preview-nav">
+        <a href="#">Inicio</a>
+        <a href="#">Sociedad</a>
+        <a href="#">Deportes</a>
+        <a href="#">Cultura</a>
+        <a href="#">Política</a>
+        <a href="#">Economía</a>
+        <a href="#">Más</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO MEJORADO -->
+  <section class="preview-hero">
+    <div class="preview-container">
+      <div class="preview-hero-grid">
+
+        <article class="preview-hero-main">
+          <img src="https://images.unsplash.com/photo-1495020689067-958852a7765e?w=1200&h=750&fit=crop" alt="Noticia principal" class="preview-hero-img">
+          <div class="preview-hero-content">
+            <span class="preview-category">Sociedad</span>
+            <h2 class="preview-hero-title">Nueva plaza en Villa Ballester: un espacio verde para la comunidad</h2>
+            <p class="preview-hero-excerpt">La municipalidad inauguró un moderno espacio recreativo con juegos infantiles y área deportiva.</p>
+            <div class="preview-meta">
+              <span>Por Redacción</span>
+              <span>•</span>
+              <span>26 de marzo, 2026</span>
+            </div>
+          </div>
+        </article>
+
+        <div class="preview-secondary">
+          <article class="preview-card">
+            <div class="preview-card-content">
+              <span class="preview-category">Deportes</span>
+              <h3 class="preview-card-title">El club local clasificó a la final provincial</h3>
+              <div class="preview-meta">
+                <span>Hace 2 horas</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="preview-card">
+            <div class="preview-card-content">
+              <span class="preview-category">Cultura</span>
+              <h3 class="preview-card-title">Festival de música en el teatro municipal</h3>
+              <div class="preview-meta">
+                <span>Hace 4 horas</span>
+              </div>
+            </div>
+          </article>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- GRILLA DE NOTICIAS -->
+  <section class="preview-grid">
+    <div class="preview-container">
+      <h2 class="preview-grid-title">Últimas Noticias</h2>
+
+      <div class="preview-grid-cards">
+        <article class="preview-grid-card">
+          <img src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&h=400&fit=crop" alt="Noticia" class="preview-grid-img">
+          <div class="preview-grid-body">
+            <span class="preview-category">Economía</span>
+            <h3 class="preview-grid-card-title">Nuevos comercios abren en el centro de San Martín</h3>
+            <p class="preview-grid-excerpt">La zona comercial se revitaliza con propuestas gastronómicas y culturales.</p>
+          </div>
+        </article>
+
+        <article class="preview-grid-card">
+          <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&h=400&fit=crop" alt="Noticia" class="preview-grid-img">
+          <div class="preview-grid-body">
+            <span class="preview-category">Educación</span>
+            <h3 class="preview-grid-card-title">Escuela secundaria gana concurso nacional de ciencias</h3>
+            <p class="preview-grid-excerpt">Estudiantes locales destacan con proyecto de energías renovables.</p>
+          </div>
+        </article>
+
+        <article class="preview-grid-card">
+          <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=400&fit=crop" alt="Noticia" class="preview-grid-img">
+          <div class="preview-grid-body">
+            <span class="preview-category">Salud</span>
+            <h3 class="preview-grid-card-title">Campaña de vacunación gratuita en el barrio</h3>
+            <p class="preview-grid-excerpt">El centro de salud amplía horarios para llegar a más vecinos.</p>
+          </div>
+        </article>
+      </div>
+
+      <div class="preview-note">
+        <strong>📌 Esto es un PREVIEW de diseño</strong><br>
+        Muestra mejoras visuales propuestas: tipografía moderna, colores vibrantes, micro-interacciones, y mejor jerarquía visual. El diseño respeta la identidad periodística pero la moderniza significativamente.
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPARACIÓN ANTES/DESPUÉS -->
+  <section class="preview-comparison">
+    <div class="preview-container">
+      <h2>Mejoras Implementadas</h2>
+      <div class="preview-comparison-grid">
+
+        <div class="preview-comparison-item">
+          <h3>🎨 Visual & Estética</h3>
+          <ul>
+            <li>Tipografía distintiva (Crimson Pro + DM Sans)</li>
+            <li>Uso creativo del azul Pantone corporativo</li>
+            <li>Gradientes sutiles y sombras profesionales</li>
+            <li>Layouts asimétricos que rompen la grilla</li>
+            <li>Espaciado generoso y jerarquía clara</li>
+          </ul>
+        </div>
+
+        <div class="preview-comparison-item">
+          <h3>✨ Interactividad</h3>
+          <ul>
+            <li>Hover effects suaves en tarjetas</li>
+            <li>Animaciones de navegación fluidas</li>
+            <li>Transiciones de imágenes al hover</li>
+            <li>Elevación de elementos con sombras dinámicas</li>
+            <li>Estados visuales claros</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>

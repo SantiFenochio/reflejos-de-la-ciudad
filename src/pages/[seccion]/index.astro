@@ -4,14 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { sanityClient, urlFor } from '../../lib/sanity';
 import { SECCION_QUERY } from '../../lib/queries';
 import type { Articulo } from '../../types/article';
-
-export async function getStaticPaths() {
-  const secciones = [
-    'sociedad','deportes','salud','educacion','seguridad',
-    'cultura','economia','vecinos','politica','opiniones','breves'
-  ];
-  return secciones.map(seccion => ({ params: { seccion } }));
-}
+import { formatearFecha } from '../../lib/utils';
 
 const { seccion } = Astro.params;
 
@@ -58,11 +51,10 @@ try {
   console.warn(`[seccion/${seccion}] No se pudo obtener notas:`, e);
 }
 
-function formatearFecha(iso: string): string {
-  return new Date(iso).toLocaleDateString('es-AR', {
-    day: 'numeric', month: 'long', year: 'numeric'
-  });
-}
+// Cache CDN de Vercel: 5 min fresco, 1 hora stale-while-revalidate.
+// El webhook /api/revalidate invalida 'home' + 'seccion-{nombre}' al publicar.
+Astro.response.headers.set('Vercel-CDN-Cache-Control', 's-maxage=300, stale-while-revalidate=3600');
+Astro.response.headers.set('Cache-Tag', `home,seccion-${seccion}`);
 ---
 
 <BaseLayout
@@ -98,17 +90,14 @@ function formatearFecha(iso: string): string {
           <article style="display:flex;flex-direction:column;gap:0.6rem;">
             <a href={`/nota/${nota.slug.current}`} style="display:block;overflow:hidden;">
               <img src={imgUrl} alt={nota.titulo} width="600" height="400" loading="lazy"
-                   style="width:100%;aspect-ratio:3/2;object-fit:cover;transition:transform 0.3s ease;"
-                   onmouseover="this.style.transform='scale(1.03)'"
-                   onmouseout="this.style.transform='scale(1)'" />
+                   class="img-zoom-hover"
+                   style="width:100%;aspect-ratio:3/2;object-fit:cover;" />
             </a>
             <span style="display:inline-block;align-self:flex-start;font-family:var(--font-cuerpo);font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;background-color:#111;color:#fff;padding:0.2rem 0.5rem;">
               {nota.categoria}
             </span>
             <h2 style="font-family:var(--font-titular);font-size:1.05rem;font-weight:600;line-height:1.35;color:var(--color-periodico);margin:0;">
-              <a href={`/nota/${nota.slug.current}`} style="text-decoration:none;color:inherit;"
-                 onmouseover="this.style.textDecoration='underline'"
-                 onmouseout="this.style.textDecoration='none'">{nota.titulo}</a>
+              <a href={`/nota/${nota.slug.current}`} class="link-underline-hover" style="text-decoration:none;color:inherit;">{nota.titulo}</a>
             </h2>
             <p class="bajada-clamp" style="font-family:var(--font-cuerpo);font-size:0.875rem;color:var(--color-secundario);line-height:1.5;margin:0;">
               {nota.bajada}
@@ -121,17 +110,14 @@ function formatearFecha(iso: string): string {
       })}
     </div>
   ) : (
-    <div style="text-align:center;padding:4rem 1rem;">
+    <div class="msg-empty">
       <p style="font-family:var(--font-titular);font-size:1.25rem;color:var(--color-periodico);margin-bottom:0.75rem;">
         Todavía no hay noticias en esta sección.
       </p>
       <p style="font-family:var(--font-cuerpo);font-size:0.95rem;color:var(--color-secundario);margin-bottom:1.75rem;">
         Volvé pronto o explorá otras secciones.
       </p>
-      <a href="/"
-         style="display:inline-block;font-family:var(--font-cuerpo);font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;background-color:#111;color:#fff;padding:0.65rem 1.5rem;text-decoration:none;"
-         onmouseover="this.style.backgroundColor='#333'"
-         onmouseout="this.style.backgroundColor='#111'">← Volver al inicio</a>
+      <a href="/" class="btn-volver-inicio">← Volver al inicio</a>
     </div>
   )}
 </div>
@@ -166,5 +152,22 @@ function formatearFecha(iso: string): string {
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+  }
+
+  .btn-volver-inicio {
+    display: inline-block;
+    font-family: var(--font-cuerpo);
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    background-color: #111;
+    color: #fff;
+    padding: 0.65rem 1.5rem;
+    text-decoration: none;
+    transition: background-color 0.15s;
+  }
+  .btn-volver-inicio:hover {
+    background-color: #333;
   }
 </style>

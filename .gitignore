@@ -39,3 +39,4 @@ scrape.mjs
 _cleanup*
 
 .vercel
+.env*.local

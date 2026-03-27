@@ -2,6 +2,7 @@
 // src/pages/404.astro
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { sanityClient, urlFor } from '../lib/sanity';
+import { formatearFecha } from '../lib/utils';
 
 // Últimas 3 notas para mostrar en la 404
 const recientes: any[] = await sanityClient.fetch(
@@ -10,12 +11,6 @@ const recientes: any[] = await sanityClient.fetch(
     "imagen": imagenPrincipal
   }`
 );
-
-function formatearFecha(iso: string): string {
-  return new Date(iso).toLocaleDateString('es-AR', {
-    day: 'numeric', month: 'long', year: 'numeric'
-  });
-}
 ---
 
 <BaseLayout

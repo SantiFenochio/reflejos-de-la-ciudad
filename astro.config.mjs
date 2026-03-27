@@ -1,6 +1,7 @@
 // astro.config.mjs
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
+import vercel from '@astrojs/vercel';
 
 import sitemap from '@astrojs/sitemap';
 
@@ -8,7 +9,8 @@ export default defineConfig({
   // Dominio actual: Vercel preview → cambiar a .com.ar cuando esté listo el DNS.
   site: 'https://reflejos-de-la-ciudad.vercel.app',
 
-  output: 'static',
+  output: 'server',
+  adapter: vercel(),
 
   vite: {
     plugins: [
