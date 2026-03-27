@@ -5,6 +5,7 @@ import TopBar from './TopBar.astro';
 import EditionButtons from './EditionButtons.astro';
 import NavBar from './NavBar.astro';
 import TickerNews from './TickerNews.astro';
+import { logger } from '../../lib/logger';
 
 const secciones = [
   { label: 'Inicio',    href: '/'           },
@@ -27,7 +28,7 @@ try {
     `*[_type == "articulo"] | order(fechaPublicacion desc) [0...5] { titulo, slug }`
   );
 } catch (e) {
-  console.warn('[Header] No se pudo obtener ticker notas:', e);
+  logger.warn('Header', 'No se pudo obtener ticker notas', e);
 }
 
 const publicSanityProjectId: string = import.meta.env.PUBLIC_SANITY_PROJECT_ID ?? 'k3agywgt';

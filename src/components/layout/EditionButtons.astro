@@ -6,6 +6,7 @@ import imgEdicionesAnteriores from '../../assets/Anteriores17.webp';
 import imgUltimaEdicion       from '../../assets/ultima17.webp';
 import imgIconoDerecha        from '../../assets/Nuevo96.webp';
 import imgLogoPrincipal       from '../../assets/NuevoLogo.webp';
+import { logger } from '../../lib/logger';
 
 let ultimaEdicion: { pdfUrl: string | null } | null = null;
 try {
@@ -13,7 +14,7 @@ try {
     `*[_type == "edicionImpresa"] | order(_createdAt desc) [0] { "pdfUrl": archivoPdf.asset->url }`
   );
 } catch (e) {
-  console.warn('[Header] No se pudo obtener ultima edicion:', e);
+  logger.warn('EditionButtons', 'No se pudo obtener ultima edicion', e);
 }
 const linkEdicionActual: string = ultimaEdicion?.pdfUrl ?? '/edicionesanteriores';
 ---

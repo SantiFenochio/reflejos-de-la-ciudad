@@ -5,6 +5,7 @@ import { sanityClient, urlFor } from '../../lib/sanity';
 import { SECCION_QUERY } from '../../lib/queries';
 import type { Articulo } from '../../types/article';
 import { formatearFecha } from '../../lib/utils';
+import { logger } from '../../lib/logger';
 
 const { seccion } = Astro.params;
 
@@ -48,7 +49,7 @@ let notas: Articulo[] = [];
 try {
   notas = await sanityClient.fetch(SECCION_QUERY, { seccion: categoriaQuery });
 } catch (e) {
-  console.warn(`[seccion/${seccion}] No se pudo obtener notas:`, e);
+  logger.warn('seccion', `No se pudo obtener notas para ${seccion}`, e);
 }
 
 // Cache CDN de Vercel: 5 min fresco, 1 hora stale-while-revalidate.

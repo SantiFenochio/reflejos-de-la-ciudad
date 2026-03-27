@@ -3,6 +3,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { sanityClient } from '../lib/sanity';
 import { formatearFecha } from '../lib/utils';
+import { logger } from '../lib/logger';
 
 interface Edicion {
   _id:    string;
@@ -22,7 +23,7 @@ let ediciones: Edicion[] = [];
 try {
   ediciones = await sanityClient.fetch(query);
 } catch (e) {
-  console.warn('[edicionesanteriores] No se pudo obtener ediciones:', e);
+  logger.warn('edicionesanteriores', 'No se pudo obtener ediciones', e);
 }
 ---
 

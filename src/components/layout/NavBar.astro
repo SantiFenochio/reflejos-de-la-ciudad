@@ -253,7 +253,9 @@ const { secciones, publicSanityProjectId, publicSanityDataset, publicSanityApiVe
       var data = await res.json();
       mostrarResultados(data.result || []);
     } catch(err) {
-      console.error('[Buscador]', err);
+      if (typeof window !== 'undefined' && window.logger) {
+        window.logger.error('Buscador', 'Error al buscar', err);
+      }
       buscadorRes.innerHTML = '<p class="buscador-empty">Error al buscar. Intenta de nuevo.</p>';
     }
   }

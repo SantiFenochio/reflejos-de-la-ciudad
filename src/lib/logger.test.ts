@@ -43,10 +43,9 @@ describe('Logger', () => {
 
       if (import.meta.env.DEV) {
         expect(consoleWarnSpy).toHaveBeenCalledWith(
-          expect.stringContaining('[WARN]'),
-          expect.stringContaining('sanity-fetch'),
-          expect.anything(),
-          expect.anything()
+          expect.stringContaining('[WARN][sanity-fetch]'),
+          'Failed to fetch',
+          ''
         );
       }
     });

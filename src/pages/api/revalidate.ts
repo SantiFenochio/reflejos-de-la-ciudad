@@ -15,6 +15,7 @@
 
 import type { APIRoute } from 'astro';
 import { isValidSignature, SIGNATURE_HEADER_NAME } from '@sanity/webhook';
+import { logger } from '../../lib/logger';
 
 export const POST: APIRoute = async ({ request }) => {
   const secret    = import.meta.env.SANITY_WEBHOOK_SECRET;
@@ -23,7 +24,7 @@ export const POST: APIRoute = async ({ request }) => {
   const teamId    = import.meta.env.VERCEL_ORG_ID;
 
   if (!secret || !vToken || !projectId) {
-    console.error('[revalidate] Faltan env vars: SANITY_WEBHOOK_SECRET, VERCEL_REVALIDATE_TOKEN, VERCEL_PROJECT_ID');
+    logger.error('revalidate', 'Faltan env vars: SANITY_WEBHOOK_SECRET, VERCEL_REVALIDATE_TOKEN, VERCEL_PROJECT_ID');
     return json({ error: 'Server misconfigured' }, 500);
   }
 
@@ -33,7 +34,7 @@ export const POST: APIRoute = async ({ request }) => {
   // isValidSignature usa base64url internamente — era el bug de la impl. manual
   const valid = await isValidSignature(rawBody, signature, secret);
   if (!valid) {
-    console.warn('[revalidate] Firma inválida');
+    logger.warn('revalidate', 'Firma inválida');
     return json({ error: 'Unauthorized' }, 401);
   }
 
@@ -45,7 +46,7 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   const tags = buildTags(payload);
-  console.log('[revalidate] Purgando tags:', tags);
+  logger.info('revalidate', 'Purgando tags', tags);
 
   const purgeUrl = new URL('https://api.vercel.com/v1/edge-cache/invalidate-by-tags');
   purgeUrl.searchParams.set('projectIdOrName', projectId);
@@ -62,11 +63,11 @@ export const POST: APIRoute = async ({ request }) => {
 
   if (!res.ok) {
     const err = await res.text();
-    console.error('[revalidate] Vercel purge error:', res.status, err);
+    logger.error('revalidate', 'Vercel purge error', { status: res.status, error: err });
     return json({ error: 'Purge failed', detail: err }, 500);
   }
 
-  console.log('[revalidate] OK — purge status:', res.status);
+  logger.info('revalidate', 'OK — purge status', res.status);
   return json({ ok: true, purged: tags }, 200);
 };
 
