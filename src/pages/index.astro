@@ -80,7 +80,7 @@ const heroImg = hero?.imagen
           <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent"></div>
           <div class="absolute bottom-0 left-0 right-0 p-6 lg:p-8">
             {hero.categoria && (
-              <span class="inline-block bg-red-600 text-white text-xs font-bold uppercase tracking-wider px-3 py-1.5 mb-3">
+              <span class="inline-block bg-acento text-white text-xs font-bold uppercase tracking-wider px-3 py-1.5 mb-3">
                 {hero.categoria}
               </span>
             )}
@@ -112,7 +112,7 @@ const heroImg = hero?.imagen
         ? urlFor(nota.imagen).width(500).height(400).fit('crop').format('webp').url()
         : `https://picsum.photos/seed/sec-${nota.slug.current}/500/400`;
       return (
-        <article class="relative overflow-hidden bg-white border-l border-neutral-200 group hover:bg-neutral-50 transition-colors duration-200">
+        <article class="relative bg-white border-l border-neutral-200 group hover:bg-neutral-50 transition-colors duration-200">
           <a href={`/nota/${nota.slug.current}`} class="flex flex-col h-full min-h-[280px]">
             <div class="relative overflow-hidden aspect-[4/3] flex-shrink-0">
               <img
@@ -124,7 +124,7 @@ const heroImg = hero?.imagen
                 class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
               />
               {nota.categoria && (
-                <span class="absolute top-3 left-3 bg-red-600 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-1 shadow-lg">
+                <span class="absolute top-3 left-3 bg-acento text-white text-[10px] font-bold uppercase tracking-wider px-2 py-1 shadow-lg">
                   {nota.categoria}
                 </span>
               )}
