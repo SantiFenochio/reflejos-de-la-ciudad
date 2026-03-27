@@ -109,8 +109,8 @@ const heroImg = hero?.imagen
     <!-- ── NOTAS SECUNDARIAS: 4 cards en grid 2x2 (derecha) ── -->
     {notasSecundarias.map((nota) => {
       const imgSec = nota.imagen
-        ? urlFor(nota.imagen).width(500).height(400).fit('crop').format('webp').url()
-        : `https://picsum.photos/seed/sec-${nota.slug.current}/500/400`;
+        ? urlFor(nota.imagen).width(560).height(196).fit('crop').crop('focalpoint').format('webp').url()
+        : `https://picsum.photos/seed/sec-${nota.slug.current}/560/196`;
       return (
         <article class="relative bg-white border-l border-neutral-200 group hover:bg-neutral-50 transition-colors duration-200">
           <a href={`/nota/${nota.slug.current}`} class="flex flex-col h-full min-h-[180px]">
@@ -118,8 +118,8 @@ const heroImg = hero?.imagen
               <img
                 src={imgSec}
                 alt={nota.titulo}
-                width="500"
-                height="400"
+                width="560"
+                height="196"
                 loading="eager"
                 class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
               />
@@ -174,8 +174,8 @@ const heroImg = hero?.imagen
       <div class="car-track" id="car-track">
         {carrusel.map((nota, i) => {
           const imgUrl = nota.imagen
-            ? urlFor(nota.imagen).width(600).height(400).fit('crop').format('webp').url()
-            : `https://picsum.photos/seed/car-${nota.slug.current}/600/340`;
+            ? urlFor(nota.imagen).width(600).height(338).fit('crop').crop('focalpoint').format('webp').url()
+            : `https://picsum.photos/seed/car-${nota.slug.current}/600/338`;
           return (
             <div class="car-slide" data-index={i}>
               <a href={`/nota/${nota.slug.current}`} class="car-img-wrap">
@@ -231,8 +231,8 @@ const heroImg = hero?.imagen
         <div class="notas-grid">
           {grilla.map((nota, i) => {
             const imgUrl = nota.imagen
-              ? urlFor(nota.imagen).width(600).height(400).fit('crop').format('webp').url()
-              : `https://picsum.photos/seed/${nota.slug.current}/800/450`;
+              ? urlFor(nota.imagen).width(600).height(338).fit('crop').crop('focalpoint').format('webp').url()
+              : `https://picsum.photos/seed/${nota.slug.current}/600/338`;
             const shouldShowMobileAd = (i + 1) % mobileAdFrequency === 0;
             const mobileAdIndex = Math.floor(i / mobileAdFrequency);
             const mobileAd = shouldShowMobileAd ? publicidades[mobileAdIndex] : null;
