@@ -6,8 +6,9 @@ import vercel from '@astrojs/vercel';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  // Dominio actual: Vercel preview → cambiar a .com.ar cuando esté listo el DNS.
-  site: 'https://reflejos-de-la-ciudad.vercel.app',
+  // Dominio de producción — DNS pendiente de propagación.
+  // Vercel preview: https://reflejos-de-la-ciudad.vercel.app
+  site: 'https://reflejosdelaciudad.com.ar',
 
   output: 'server',
   adapter: vercel(),
@@ -47,7 +48,7 @@ export default defineConfig({
         !page.includes('/draft') &&
         !page.includes('/preview'),
       serialize(item) {
-        if (item.url === 'https://reflejos-de-la-ciudad.vercel.app/') {
+        if (item.url === 'https://reflejosdelaciudad.com.ar/') {
           return { ...item, changefreq: 'hourly', priority: 1.0 };
         }
         if (item.url.includes('/nota/')) {
