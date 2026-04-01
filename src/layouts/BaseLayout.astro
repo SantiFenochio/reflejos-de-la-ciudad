@@ -102,6 +102,28 @@ const GA_ID = import.meta.env.PUBLIC_GA_ID || 'G-XXXXXXXXXX';
       #nprogress .peg { box-shadow: 0 0 10px #4c6a92, 0 0 5px #4c6a92 !important; }
       #nprogress .spinner { display: none !important; }
 
+      /* Skip to content — visible solo con foco de teclado */
+      .skip-to-content {
+        position: absolute;
+        top: -100%;
+        left: 1rem;
+        z-index: 9999;
+        background: #4c6a92;
+        color: #fff;
+        padding: 0.6rem 1.2rem;
+        font-family: var(--font-cuerpo, sans-serif);
+        font-size: 0.875rem;
+        font-weight: 700;
+        text-decoration: none;
+        border-radius: 0 0 4px 4px;
+        transition: top 0.2s ease;
+      }
+      .skip-to-content:focus {
+        top: 0;
+        outline: 3px solid #fff;
+        outline-offset: 2px;
+      }
+
       /* Botón scroll to top custom */
       .btn-top-custom {
         position: fixed;
@@ -136,6 +158,9 @@ const GA_ID = import.meta.env.PUBLIC_GA_ID || 'G-XXXXXXXXXX';
 
   <body class="min-h-screen flex flex-col bg-hueso text-periodico">
 
+    <!-- ══ SKIP TO CONTENT — accesibilidad por teclado ══════════ -->
+    <a href="#main-content" class="skip-to-content">Saltar al contenido principal</a>
+
     <!-- ══ HEADER ════════════════════════════════════════════════
          Componente Header: franja superior + logo + nav completo
     ═══════════════════════════════════════════════════════════════ -->
@@ -144,7 +169,7 @@ const GA_ID = import.meta.env.PUBLIC_GA_ID || 'G-XXXXXXXXXX';
     <!-- ══ CONTENIDO PRINCIPAL ═══════════════════════════════════
          <slot /> sin nombre recibe el contenido de cada página
     ═══════════════════════════════════════════════════════════════ -->
-    <main class="flex-1 w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <main id="main-content" class="flex-1 w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
       <slot />
     </main>
 

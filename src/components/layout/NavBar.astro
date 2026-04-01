@@ -67,13 +67,13 @@ const { secciones, publicSanityProjectId, publicSanityDataset, publicSanityApiVe
         </svg>
       </button>
     </div>
-    <div id="buscador-resultados" class="buscador-resultados" hidden></div>
+    <div id="buscador-resultados" class="buscador-resultados" hidden aria-live="polite" aria-atomic="true" role="status"></div>
   </div>
 </div>
 
 <style>
   /* NAV */
-  .nav-bar { background: #4c6a92; position: sticky; top: 0; z-index: 50; box-shadow: 0 2px 8px rgba(0,0,0,0.28); border-top: 3px solid #1a1a1a; }
+  .nav-bar { background: #4c6a92; position: sticky; top: 0; z-index: 50; box-shadow: 0 2px 8px rgba(0,0,0,0.28); }
   .nav-desktop { display: none; max-width: 1280px; margin: 0 auto; padding: 0 0.5rem; justify-content: center; flex-wrap: wrap; align-items: stretch; }
   @media (min-width: 768px) { .nav-desktop { display: flex; } }
   .nav-lnk { font-family: var(--font-cuerpo); font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #fff; padding: 0.65rem 0.6rem; display: inline-block; white-space: nowrap; text-decoration: none; transition: background-color 0.15s; }
@@ -146,6 +146,7 @@ const { secciones, publicSanityProjectId, publicSanityDataset, publicSanityApiVe
       const open = !panel.hidden;
       panel.hidden = open;
       btn.setAttribute('aria-expanded', String(!open));
+      btn.setAttribute('aria-label', open ? 'Abrir menú' : 'Cerrar menú');
       if (iM) iM.style.display = open ? 'block' : 'none';
       if (iC) iC.style.display = open ? 'none'  : 'block';
       // Scroll-lock: bloquear scroll del fondo cuando el menú está abierto
@@ -180,8 +181,8 @@ const { secciones, publicSanityProjectId, publicSanityDataset, publicSanityApiVe
     if (!buscadorPanel) return;
     buscadorPanel.hidden = false;
     if (buscadorInput) buscadorInput.focus();
-    if (toggleDesk) toggleDesk.setAttribute('aria-expanded', 'true');
-    if (toggleMob)  toggleMob.setAttribute('aria-expanded', 'true');
+    if (toggleDesk) { toggleDesk.setAttribute('aria-expanded', 'true'); toggleDesk.setAttribute('aria-label', 'Cerrar buscador'); }
+    if (toggleMob)  { toggleMob.setAttribute('aria-expanded', 'true');  toggleMob.setAttribute('aria-label', 'Cerrar buscador'); }
   }
 
   function cerrarBuscador() {
@@ -189,8 +190,8 @@ const { secciones, publicSanityProjectId, publicSanityDataset, publicSanityApiVe
     buscadorPanel.hidden = true;
     if (buscadorInput) buscadorInput.value = '';
     if (buscadorRes)   { buscadorRes.hidden = true; buscadorRes.innerHTML = ''; }
-    if (toggleDesk) toggleDesk.setAttribute('aria-expanded', 'false');
-    if (toggleMob)  toggleMob.setAttribute('aria-expanded', 'false');
+    if (toggleDesk) { toggleDesk.setAttribute('aria-expanded', 'false'); toggleDesk.setAttribute('aria-label', 'Abrir buscador'); }
+    if (toggleMob)  { toggleMob.setAttribute('aria-expanded', 'false');  toggleMob.setAttribute('aria-label', 'Abrir buscador'); }
   }
 
   if (toggleDesk) toggleDesk.addEventListener('click', function() {
@@ -223,8 +224,8 @@ const { secciones, publicSanityProjectId, publicSanityDataset, publicSanityApiVe
     }
     buscadorRes.innerHTML = notas.map(function(n) {
       var img = n.imgUrl
-        ? '<img class="buscador-res-img" src="' + n.imgUrl + '?w=112&h=76&fit=crop&auto=format" alt="" loading="lazy">'
-        : '<div class="buscador-res-img" style="background:#e0e0e0;"></div>';
+        ? '<img class="buscador-res-img" src="' + n.imgUrl + '?w=112&h=76&fit=crop&auto=format" alt="' + n.titulo.replace(/"/g, '&quot;') + '" loading="lazy">'
+        : '<div class="buscador-res-img" aria-hidden="true" style="background:#e0e0e0;"></div>';
       return '<a href="/nota/' + n.slug + '" class="buscador-resultado">'
         + img
         + '<div class="buscador-res-body">'

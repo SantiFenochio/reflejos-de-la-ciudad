@@ -195,10 +195,10 @@ const articleProps = {
     </div>
   </div>
 
-  <aside class="nota-sidebar">
+  <aside class="nota-sidebar" aria-label="Publicidades">
     {publicidades.length > 0 && (
       <div class="nota-sidebar-list">
-        <p class="text-xs text-gray-400 uppercase tracking-widest mb-2">Publicidad</p>
+        <p class="nota-pub-label">Publicidad</p>
         {publicidades.map((pub: any) => (
           <Publicidad pub={pub} />
         ))}
@@ -319,17 +319,57 @@ const articleProps = {
     max-width: 56rem;
     justify-self: center;
   }
-  .nota-sidebar-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+  /* Sidebar: framing visual consistente con el resto del sitio */
+  .nota-sidebar {
+    border-left: 1px solid var(--color-borde);
+    padding-left: 1.25rem;
   }
   @media (min-width: 1024px) {
     .nota-sidebar {
       position: sticky;
       top: 6rem;
       align-self: start;
+      max-height: calc(100vh - 7rem);
+      overflow-y: auto;
+      scrollbar-width: none;
     }
+    .nota-sidebar::-webkit-scrollbar { display: none; }
+  }
+  /* Mobile: sidebar se muestra compacto debajo del artículo */
+  @media (max-width: 1023px) {
+    .nota-sidebar {
+      border-left: none;
+      border-top: 3px solid var(--color-acento);
+      padding-left: 0;
+      padding-top: 1.25rem;
+      margin-top: 1.5rem;
+    }
+    .nota-sidebar-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+    .nota-pub-label {
+      grid-column: 1 / -1;
+    }
+  }
+  .nota-sidebar-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  /* Label de publicidad con estilo consistente */
+  .nota-pub-label {
+    font-family: var(--font-cuerpo);
+    font-size: 0.58rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: #aaa;
+    text-align: center;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--color-borde);
+    margin: 0 0 0.25rem;
   }
 
   /* ============================================================
@@ -458,7 +498,7 @@ const articleProps = {
      CUERPO DEL ARTICULO
      ============================================================ */
   .nota-cuerpo {
-    max-width: 56rem; margin: 0 auto 2.5rem;
+    max-width: 44rem; margin: 0 auto 2.5rem;
   }
   .nota-cuerpo p {
     font-family: var(--font-cuerpo);

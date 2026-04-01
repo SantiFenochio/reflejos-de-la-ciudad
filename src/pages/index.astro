@@ -198,6 +198,7 @@ const heroSrcset = hero?.imagen
                 <h3 class="car-titulo">
                   <a href={`/nota/${nota.slug.current}`} class="car-titulo-lnk">{nota.titulo}</a>
                 </h3>
+                {nota.bajada && <p class="car-bajada">{nota.bajada}</p>}
                 <p class="car-meta">{formatearFecha(nota.fechaPublicacion)}</p>
               </div>
             </div>
@@ -211,16 +212,21 @@ const heroSrcset = hero?.imagen
       </button>
     </div>
 
-    <!-- Dots de navegacion -->
-    <div class="car-dots" id="car-dots" role="tablist">
-      {carrusel.map((_, i) => (
-        <button
-          class={`car-dot${i === 0 ? ' active' : ''}`}
-          data-index={i}
-          aria-label={`Ir a nota ${i + 1}`}
-          role="tab"
-        ></button>
-      ))}
+    <!-- Dots + contador -->
+    <div class="car-footer">
+      <div class="car-dots" id="car-dots" role="tablist">
+        {carrusel.map((_, i) => (
+          <button
+            class={`car-dot${i === 0 ? ' active' : ''}`}
+            data-index={i}
+            aria-label={`Ir a nota ${i + 1}`}
+            role="tab"
+          ></button>
+        ))}
+      </div>
+      <span class="car-contador" id="car-contador" aria-live="polite">
+        1 / {carrusel.length}
+      </span>
     </div>
   </section>
 )}
@@ -243,8 +249,8 @@ const heroSrcset = hero?.imagen
         <div class="notas-grid">
           {grilla.map((nota, i) => {
             const imgUrl = nota.imagen
-              ? urlFor(nota.imagen).width(600).height(600).fit('crop').crop('focalpoint').format('webp').url()
-              : `https://picsum.photos/seed/${nota.slug.current}/600/600`;
+              ? urlFor(nota.imagen).width(600).height(338).fit('crop').crop('focalpoint').format('webp').url()
+              : `https://picsum.photos/seed/${nota.slug.current}/600/338`;
             const shouldShowMobileAd = (i + 1) % mobileAdFrequency === 0;
             const mobileAdIndex = Math.floor(i / mobileAdFrequency);
             const mobileAd = shouldShowMobileAd ? publicidades[mobileAdIndex] : null;
@@ -252,7 +258,7 @@ const heroSrcset = hero?.imagen
               <Fragment>
                 <article class="card animar">
                   <a href={`/nota/${nota.slug.current}`} class="card-img-wrap">
-                    <img src={imgUrl} alt={nota.titulo} width="600" height="600" loading="lazy" class="card-img object-cover object-center" />
+                    <img src={imgUrl} alt={nota.titulo} width="600" height="338" loading="lazy" class="card-img object-cover object-center" />
                     {nota.categoria && <span class="badge-rojo badge-sm badge-sobre-img">{nota.categoria}</span>}
                   </a>
                   <div class="card-body">
@@ -376,9 +382,10 @@ const heroSrcset = hero?.imagen
   }
 
   /* GRILLA DE NOTICIAS */
-  .notas-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
-  @media (min-width: 640px)  { .notas-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (min-width: 1024px) { .notas-grid { grid-template-columns: repeat(3, 1fr); } }
+  .notas-grid { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
+  @media (min-width: 480px)  { .notas-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; } }
+  @media (min-width: 640px)  { .notas-grid { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; } }
+  @media (min-width: 1024px) { .notas-grid { grid-template-columns: repeat(3, 1fr); gap: 2rem; } }
 
   .empty-msg { font-family: var(--font-cuerpo); color: #888; font-size: 0.95rem; padding: 2rem 0; text-align: center; }
 </style>
@@ -389,7 +396,8 @@ const heroSrcset = hero?.imagen
     display: flex; flex-direction: column;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     border-radius: 2px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--color-borde);
+    background: var(--color-card, #FDFCF9);
     padding: 0.5rem;
   }
   .card:hover {
@@ -398,8 +406,8 @@ const heroSrcset = hero?.imagen
   }
   .card-img-wrap {
     display: block; overflow: hidden; position: relative;
-    width: min(100%, 220px); aspect-ratio: 1/1;
-    background: #e5e5e5; margin: 0 auto 0.75rem;
+    width: 100%; aspect-ratio: 16/9;
+    background: #e5e5e5; margin: 0 0 0.75rem;
   }
   .card-img {
     width: 100%; height: 100%; object-fit: cover; display: block;
@@ -537,6 +545,7 @@ const heroSrcset = hero?.imagen
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
+    touch-action: pan-x;
     gap: 1.25rem;
     flex: 1;
     padding-bottom: 0.25rem; /* espacio para el shadow de hover */
@@ -565,11 +574,17 @@ const heroSrcset = hero?.imagen
   /* Body del slide */
   .car-body { display: flex; flex-direction: column; }
   .car-titulo {
-    font-family: var(--font-titular); font-size: 0.95rem;
-    font-weight: 700; line-height: 1.3; color: #1a1a1a; margin: 0 0 0.35rem;
+    font-family: var(--font-titular); font-size: 1.05rem;
+    font-weight: 700; line-height: 1.3; color: #1a1a1a; margin: 0 0 0.4rem;
   }
   .car-titulo-lnk { color: inherit; text-decoration: none; transition: color 0.2s ease; }
-  .car-titulo-lnk:hover { color: #4c6a92; text-decoration: none; }
+  .car-titulo-lnk:hover { color: #4c6a92; text-decoration: underline; text-underline-offset: 3px; }
+  .car-bajada {
+    font-family: var(--font-cuerpo); font-size: 0.8rem;
+    color: var(--color-secundario); font-style: italic;
+    line-height: 1.5; margin: 0 0 0.4rem;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
   .car-meta { font-family: var(--font-cuerpo); font-size: 0.68rem; color: #999; margin: 0; }
 
   /* Flechas */
@@ -584,10 +599,20 @@ const heroSrcset = hero?.imagen
   /* Ocultar flechas en mobile para no molestar el scroll tactil */
   @media (max-width: 639px) { .car-btn { display: none; } }
 
+  /* Footer: dots + contador alineados */
+  .car-footer {
+    display: flex; align-items: center; justify-content: center;
+    gap: 1rem; margin-top: 1rem;
+  }
+  .car-contador {
+    font-family: var(--font-cuerpo); font-size: 0.7rem;
+    color: #999; font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
   /* FIX #4: Dots con área táctil mínima de 44px (WCAG 2.5.5) */
   .car-dots {
     display: flex; justify-content: center; gap: 0.25rem;
-    margin-top: 1rem;
   }
   .car-dot {
     width: 8px; height: 8px;
@@ -636,19 +661,20 @@ const heroSrcset = hero?.imagen
     var dotsEl = document.getElementById('car-dots');
     if (!track) return;
 
-    var slides = Array.from(track.querySelectorAll('.car-slide'));
-    var dots   = dotsEl ? Array.from(dotsEl.querySelectorAll('.car-dot')) : [];
+    var slides  = Array.from(track.querySelectorAll('.car-slide'));
+    var dots    = dotsEl ? Array.from(dotsEl.querySelectorAll('.car-dot')) : [];
+    var contador = document.getElementById('car-contador');
     var current = 0;
     var timer;
 
     function setActive(idx) {
       current = ((idx % slides.length) + slides.length) % slides.length;
-      // Scroll al slide target usando offsetLeft para maximo soporte
       track.scrollTo({ left: slides[current].offsetLeft, behavior: 'smooth' });
       dots.forEach(function(d, i) { d.classList.toggle('active', i === current); });
+      if (contador) contador.textContent = (current + 1) + ' / ' + slides.length;
     }
 
-    // Sincronizar dots con scroll tactil (mobile)
+    // Sincronizar dots + contador con scroll táctil (mobile)
     var scrollTimer;
     track.addEventListener('scroll', function () {
       clearTimeout(scrollTimer);
@@ -661,6 +687,7 @@ const heroSrcset = hero?.imagen
         if (best !== current) {
           current = best;
           dots.forEach(function(d, i) { d.classList.toggle('active', i === current); });
+          if (contador) contador.textContent = (current + 1) + ' / ' + slides.length;
         }
       }, 80);
     }, { passive: true });
@@ -676,8 +703,8 @@ const heroSrcset = hero?.imagen
       d.addEventListener('click', function () { clearInterval(timer); setActive(i); startAuto(); });
     });
 
-    // Autoplay cada 4 segundos
-    function startAuto() { timer = setInterval(function () { setActive(current + 1); }, 4000); }
+    // Autoplay cada 6 segundos (más tiempo para leer la bajada)
+    function startAuto() { timer = setInterval(function () { setActive(current + 1); }, 6000); }
 
     // Pausar autoplay cuando el usuario interactua con el track
     track.addEventListener('pointerdown', function () { clearInterval(timer); }, { passive: true });

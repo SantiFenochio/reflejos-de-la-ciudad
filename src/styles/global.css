@@ -20,7 +20,8 @@
 @theme {
 
   /* ── PALETA DE COLORES REFINADA ─────────────────────────────── */
-  --color-hueso:       #FAF8F3;  /* Fondo: papel envejecido más cálido    */
+  --color-hueso:       #F5F3EE;  /* Fondo: papel envejecido más cálido — unificado con cards */
+  --color-card:        #FDFCF9;  /* Cards: levemente más claro que el fondo, sin blanco puro */
   --color-periodico:   #1A1614;  /* Texto principal: negro con tinte sepia*/
   --color-secundario:  #5A5550;  /* Texto secundario con calidez          */
   --color-borde:       #C8C3BC;  /* Bordes suaves y cálidos               */
