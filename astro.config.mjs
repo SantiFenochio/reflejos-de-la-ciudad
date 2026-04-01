@@ -6,9 +6,10 @@ import vercel from '@astrojs/vercel';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  // Dominio de producción — DNS pendiente de propagación.
-  // Vercel preview: https://reflejos-de-la-ciudad.vercel.app
-  site: 'https://reflejosdelaciudad.com.ar',
+  // ⚠️ IMPORTANTE: este valor controla la generación del sitemap.
+  // Cambiar a 'https://reflejosdelaciudad.com.ar' SOLO cuando el DNS esté activo.
+  // SITE_URL en src/lib/seo.ts ya apunta a .com.ar para canonical/OG tags.
+  site: 'https://reflejos-de-la-ciudad.vercel.app',
 
   output: 'server',
   adapter: vercel(),

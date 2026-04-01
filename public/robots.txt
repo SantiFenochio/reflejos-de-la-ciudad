@@ -6,4 +6,5 @@ Disallow: /draft/
 Disallow: /preview/
 Disallow: /studio/
 
-Sitemap: https://reflejosdelaciudad.com.ar/sitemap-index.xml
+# Cuando reflejosdelaciudad.com.ar esté activo, cambiar esta URL
+Sitemap: https://reflejos-de-la-ciudad.vercel.app/sitemap-index.xml
