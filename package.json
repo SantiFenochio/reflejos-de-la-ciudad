@@ -12,6 +12,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "migrar:noticias": "node scripts/migrar-noticias.js",
+    "migrar:noticias:rango": "node scripts/migrar-noticias-rango.js",
     "lint": "echo No hay linter configurado",
     "typecheck": "tsc --noEmit",
     "test": "vitest",
@@ -35,6 +36,7 @@
     "axios": "^1.13.6",
     "cheerio": "^1.2.0",
     "dotenv": "^17.3.1",
+    "mysql2": "^3.22.3",
     "nprogress": "^0.2.0",
     "styled-components": "^6.3.12",
     "tailwindcss": "^4.2.1"
