@@ -32,6 +32,11 @@ const {
 const resolvedNoindex = noindex ?? noIndex ?? false;
 // Normalizar type: acepta ogType legacy o type nuevo
 const resolvedType = (type ?? (ogType === 'article' ? 'article' : 'website')) as 'website' | 'article';
+
+// Canonical fijo al dominio canónico (SITE_URL), no al host del request
+// — así vercel.app, www y apex apuntan todos al canonical correcto.
+const canonicalURL = (restSeo as any).canonicalURL
+  ?? `${SITE_URL}${Astro.url.pathname}`;
 import Analytics from '@vercel/analytics/astro';
 import SpeedInsights from '@vercel/speed-insights/astro';
 
@@ -53,7 +58,7 @@ const GA_ID = import.meta.env.PUBLIC_GA_ID || 'G-XXXXXXXXXX';
       image={image}
       noindex={resolvedNoindex}
       type={resolvedType}
-      canonicalURL={Astro.url.href}
+      canonicalURL={canonicalURL}
       {...restSeo}
     />
 

@@ -3,7 +3,7 @@
 // Importar desde layouts y componentes.
 
 export const SITE_NAME = 'Reflejos de la Ciudad';
-export const SITE_URL  = 'https://reflejosdelaciudad.com.ar';
+export const SITE_URL  = 'https://www.reflejosdelaciudad.com.ar';
 export const SITE_DESCRIPTION =
   'El semanario digital del barrio San Martín, Buenos Aires. Noticias de sociedad, deportes, cultura, política y más.';
 export const SITE_LOCALE   = 'es_AR';
