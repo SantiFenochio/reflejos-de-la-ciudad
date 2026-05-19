@@ -12,5 +12,6 @@ export interface Articulo {
   imagenCaption?:   string
   autor:            string
   cuerpo?:          any[]
+  featured?:        boolean  // marcada manualmente como destacada en Sanity
   relacionadas?:    Partial<Articulo>[]
 }

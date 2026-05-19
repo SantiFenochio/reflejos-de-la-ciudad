@@ -1,11 +1,8 @@
 ---
 // src/components/layout/Header.astro
-import { sanityClient } from '../../lib/sanity';
 import TopBar from './TopBar.astro';
 import EditionButtons from './EditionButtons.astro';
 import NavBar from './NavBar.astro';
-import TickerNews from './TickerNews.astro';
-import { logger } from '../../lib/logger';
 
 const secciones = [
   { label: 'Inicio',    href: '/'           },
@@ -22,15 +19,6 @@ const secciones = [
   { label: 'Breves',    href: '/breves'     },
 ];
 
-let tickerNotas: { titulo: string; slug: { current: string } }[] = [];
-try {
-  tickerNotas = await sanityClient.fetch(
-    `*[_type == "articulo"] | order(fechaPublicacion desc) [0...5] { titulo, slug }`
-  );
-} catch (e) {
-  logger.warn('Header', 'No se pudo obtener ticker notas', e);
-}
-
 const publicSanityProjectId: string = import.meta.env.PUBLIC_SANITY_PROJECT_ID ?? 'k3agywgt';
 const publicSanityDataset: string = import.meta.env.PUBLIC_SANITY_DATASET ?? 'production';
 const publicSanityApiVersion: string = '2024-01-01';
@@ -44,4 +32,3 @@ const publicSanityApiVersion: string = '2024-01-01';
   publicSanityDataset={publicSanityDataset}
   publicSanityApiVersion={publicSanityApiVersion}
 />
-<TickerNews tickerNotas={tickerNotas} />

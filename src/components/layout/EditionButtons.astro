@@ -36,6 +36,8 @@ const linkEdicionActual: string = ultimaEdicion?.pdfUrl ?? '/edicionesanteriores
       <img
         src={imgLogoPrincipal.src}
         alt="Reflejos de la Ciudad"
+        width={imgLogoPrincipal.width}
+        height={imgLogoPrincipal.height}
         class="w-48 h-auto max-w-full"
         onerror="this.style.display='none';document.getElementById('logo-text-mobile').style.display='block';"
       />
@@ -121,6 +123,8 @@ const linkEdicionActual: string = ultimaEdicion?.pdfUrl ?? '/edicionesanteriores
         <img
           src={imgLogoPrincipal.src}
           alt="Reflejos de la Ciudad"
+          width={imgLogoPrincipal.width}
+          height={imgLogoPrincipal.height}
           class="logo-img"
           onerror="this.style.display='none';document.getElementById('logo-text').style.display='block';"
         />

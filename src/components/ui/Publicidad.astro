@@ -12,6 +12,12 @@ interface Props {
 
 const { pub } = Astro.props
 const tieneImagen = !!pub?.imagenUrl
+
+// El asset id de Sanity codifica dimensiones: `...-{W}x{H}.{ext}`.
+// Las sacamos para poder setear width/height en el <img> y evitar layout shift (CLS).
+const dims = pub?.imagenUrl?.match(/-(\d+)x(\d+)\.[a-z]+/i)
+const imgW = dims ? Number(dims[1]) : undefined
+const imgH = dims ? Number(dims[2]) : undefined
 ---
 
 {tieneImagen && (
@@ -29,7 +35,10 @@ const tieneImagen = !!pub?.imagenUrl
         <img
           src={pub.imagenUrl}
           alt={pub.nombre}
+          width={imgW}
+          height={imgH}
           loading="lazy"
+          decoding="async"
           class="pub-img"
         />
       </a>
@@ -37,7 +46,10 @@ const tieneImagen = !!pub?.imagenUrl
       <img
         src={pub.imagenUrl}
         alt={pub.nombre}
+        width={imgW}
+        height={imgH}
         loading="lazy"
+        decoding="async"
         class="pub-img"
       />
     )}

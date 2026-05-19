@@ -9,6 +9,21 @@ export const HOME_QUERY = `*[_type == "articulo"] | order(fechaPublicacion desc)
   categoria,
   fechaPublicacion,
   "imagen": imagenPrincipal,
+  autor,
+  featured
+}`
+
+// Destacadas: notas marcadas manualmente con featured == true en Sanity,
+// para el carrusel "Destacadas" de la Home. Si no hay ninguna marcada,
+// la Home cae de vuelta a las notas recientes (ver index.astro).
+export const DESTACADAS_QUERY = `*[_type == "articulo" && featured == true] | order(fechaPublicacion desc) [0...8] {
+  _id,
+  titulo,
+  slug,
+  bajada,
+  categoria,
+  fechaPublicacion,
+  "imagen": imagenPrincipal,
   autor
 }`
 
@@ -56,9 +71,3 @@ export const PUBLICIDADES_QUERY = `*[_type == "publicidad" && activa == true && 
     posicion,
     "imagenUrl": imagen.asset->url
   }`
-
-// Ticker: 5 titulos mas recientes para la barra de scroll del header
-export const TICKER_QUERY = `*[_type == "articulo"] | order(fechaPublicacion desc) [0...5] {
-  titulo,
-  slug
-}`

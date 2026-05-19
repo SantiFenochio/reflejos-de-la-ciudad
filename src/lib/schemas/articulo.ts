@@ -83,6 +83,14 @@ export default defineType({
     }),
 
     defineField({
+      name:         'featured',
+      title:        'Destacada en portada',
+      description:  'Si está activado, la nota aparece en el carrusel "Destacadas" de la home.',
+      type:         'boolean',
+      initialValue: false,
+    }),
+
+    defineField({
       name:    'imagenPrincipal',
       title:   'Imagen principal',
       type:    'image',
