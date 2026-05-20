@@ -400,15 +400,20 @@ const articleProps = {
     background: linear-gradient(to top, rgba(26,22,20,0.92) 0%, rgba(26,22,20,0.6) 55%, rgba(0,0,0,0.15) 100%);
   }
 
-  /* ── MOBILE: badge + título debajo de la imagen, fondo claro ── */
+  /* ── BADGE + TÍTULO (base — mobile sobre imagen, centrado) ─── */
   .nh-content {
-    padding: 1rem 0 0.25rem;
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 0.85rem 1rem 1rem;
+    text-align: center;
+    pointer-events: none;
   }
+  .nh-content > * { pointer-events: auto; }
   .nh-badge {
     display: inline-block; background: var(--color-acento); color: #fff;
-    font-family: var(--font-cuerpo); font-size: 0.66rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.14em;
-    padding: 0.32rem 0.72rem; margin: 0 0 0.7rem;
+    font-family: var(--font-cuerpo); font-size: 0.56rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.12em;
+    padding: 0.22rem 0.6rem; margin: 0 0 0.55rem;
     border-radius: 2px;
     transition: background 0.2s ease, transform 0.2s ease;
   }
@@ -418,31 +423,37 @@ const articleProps = {
   }
   .nh-titulo {
     font-family: var(--font-titular);
-    font-size: clamp(1.55rem, 6.2vw, 2rem);
-    font-weight: 900; line-height: 1.12; letter-spacing: -0.018em;
-    color: var(--color-periodico);
-    margin: 0;
+    font-size: clamp(1.15rem, 5.2vw, 1.55rem);
+    font-weight: 900; line-height: 1.15; letter-spacing: -0.012em;
+    color: #fff;
+    margin: 0 auto;
+    max-width: 28rem;
     word-break: normal;
     overflow-wrap: break-word;
     hyphens: auto;
     text-wrap: balance;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.55);
   }
 
-  /* En mobile el overlay se oculta porque el título sale de la imagen */
+  /* En mobile, overlay sutil para que el título sea legible sin tapar mucho */
   @media (max-width: 767px) {
-    .nh-overlay { display: none; }
-    .nh-wrap { aspect-ratio: 4/3; }   /* foto un poco más alta = más editorial en celular */
+    .nh-overlay {
+      background: linear-gradient(to top,
+        rgba(26,22,20,0.78) 0%,
+        rgba(26,22,20,0.45) 35%,
+        rgba(26,22,20,0.15) 65%,
+        rgba(0,0,0,0) 100%);
+    }
+    .nh-wrap { aspect-ratio: 4/3; }   /* foto un poco más alta = más espacio para el título */
   }
 
-  /* ── DESKTOP/TABLET: badge + título sobre la imagen, overlay activo ── */
+  /* ── DESKTOP/TABLET: badge + título sobre la imagen, overlay activo, alineados a la izq ── */
   @media (min-width: 768px) {
     .nh-content {
-      position: absolute; bottom: 0; left: 0; right: 0;
       padding: 2rem 1.5rem;
       max-width: 1280px;
-      pointer-events: none;
+      text-align: left;
     }
-    .nh-content > * { pointer-events: auto; }
     .nh-badge {
       font-size: 0.7rem;
       letter-spacing: 0.1em;
@@ -455,6 +466,7 @@ const articleProps = {
       letter-spacing: -0.02em;
       color: #fff;
       max-width: 52rem;
+      margin: 0;
       text-shadow: 0 2px 8px rgba(0,0,0,0.5);
       text-wrap: balance;
     }
@@ -730,5 +742,51 @@ const articleProps = {
   }
   .rel-fecha {
     font-family: var(--font-cuerpo); font-size: 0.7rem; color: #999; margin-top: auto;
+  }
+
+  /* ── MOBILE: título centrado dentro de la imagen con overlay sutil ── */
+  @media (max-width: 639px) {
+    .rel-card { position: relative; }
+    .rel-img-wrap {
+      margin-bottom: 0;
+      aspect-ratio: 16/10;   /* un poco más ancho que 3:2, mejor para texto sobre imagen */
+    }
+    .rel-img-wrap::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(to top,
+        rgba(26,22,20,0.82) 0%,
+        rgba(26,22,20,0.45) 40%,
+        rgba(26,22,20,0.1) 75%,
+        rgba(0,0,0,0) 100%);
+      pointer-events: none;
+    }
+    .rel-body {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 0.65rem 0.85rem 0.85rem;
+      align-items: center;
+      text-align: center;
+      pointer-events: none;
+    }
+    .rel-body > * { pointer-events: auto; }
+    .rel-badge {
+      align-self: center;
+      font-size: 0.54rem;
+      letter-spacing: 0.1em;
+      padding: 0.22rem 0.55rem;
+      margin-bottom: 0.45rem;
+    }
+    .rel-card-titulo {
+      color: #fff;
+      font-size: 0.95rem;
+      line-height: 1.2;
+      margin: 0;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.55);
+      text-wrap: balance;
+    }
+    .rel-card-lnk { color: #fff; }
+    .rel-card-lnk:hover { color: #fff; text-decoration: underline; }
+    .rel-fecha { display: none; }
   }
 </style>
