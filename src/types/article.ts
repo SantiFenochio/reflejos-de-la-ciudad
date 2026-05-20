@@ -14,4 +14,10 @@ export interface Articulo {
   cuerpo?:          any[]
   featured?:        boolean  // marcada manualmente como destacada en Sanity
   relacionadas?:    Partial<Articulo>[]
+  // ── Campos SEO opcionales (configurables por nota desde el Studio) ──
+  tags?:            string[]
+  seoTitle?:        string
+  seoDescription?:  string
+  seoImage?:        any
+  noindex?:         boolean
 }

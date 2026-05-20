@@ -18,9 +18,12 @@ const {
   modifiedTime,
   author,
   section,
-  tags          = [],
   noindex       = false,
 } = Astro.props;
+
+// `tags` puede llegar como null (Sanity proyecta null para campos no seteados),
+// y la destructuración con default solo aplica si es undefined → blindamos a array.
+const tags: string[] = Array.isArray(Astro.props.tags) ? Astro.props.tags : [];
 
 // "Nota | Reflejos de la Ciudad" o sólo "Reflejos de la Ciudad" en la home
 const fullTitle = title === SITE_NAME ? SITE_NAME : `${title} | ${SITE_NAME}`;

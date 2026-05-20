@@ -5,7 +5,7 @@
 import BaseLayout from './BaseLayout.astro';
 import JsonLd from '../components/JsonLd.astro';
 import type { SeoProps } from '../lib/seo';
-import { buildArticleSeo, SITE_URL } from '../lib/seo';
+import { buildArticleSeo, SITE_URL, contarPalabras } from '../lib/seo';
 
 interface Props {
   article: {
@@ -18,6 +18,7 @@ interface Props {
     author?:       string;
     section?:      string;
     tags?:         string[];
+    bodyPlainText?: string;
     seoOverride?:  Partial<SeoProps>;
   };
 }
@@ -31,6 +32,15 @@ const breadcrumbs = [
   ...(article.section ? [{ name: article.section, url: `${SITE_URL}/${article.section.toLowerCase()}` }] : []),
   { name: article.title, url: seo.canonicalURL! },
 ];
+
+// Para NewsArticle JSON-LD: articleBody recortado (Google no necesita 50k chars)
+// y wordCount calculado del texto plano completo.
+const wordCount = contarPalabras(article.bodyPlainText);
+const articleBody = article.bodyPlainText
+  ? article.bodyPlainText.length > 5000
+    ? article.bodyPlainText.slice(0, 5000) + '…'
+    : article.bodyPlainText
+  : undefined;
 ---
 
 <BaseLayout
@@ -60,6 +70,8 @@ const breadcrumbs = [
     author={seo.author!}
     section={article.section}
     keywords={article.tags}
+    articleBody={articleBody}
+    wordCount={wordCount > 0 ? wordCount : undefined}
   />
 
   <slot />

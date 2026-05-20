@@ -1,9 +1,21 @@
 User-agent: *
 Allow: /
 
-# No indexar drafts ni preview
+# No indexar drafts, preview ni Studio
 Disallow: /draft/
 Disallow: /preview/
 Disallow: /studio/
+Disallow: /api/
 
-Sitemap: https://www.reflejosdelaciudad.com.ar/sitemap-index.xml
+# Permitir bots de Google (Search, News, Discover, Images) sin restricciones
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-News
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+# Sitemap index (incluye páginas, notas y Google News)
+Sitemap: https://www.reflejosdelaciudad.com.ar/sitemap.xml

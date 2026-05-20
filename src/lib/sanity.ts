@@ -17,6 +17,26 @@ export function urlFor(source: any) {
 
 import { toHTML } from '@portabletext/to-html'
 
+/**
+ * Extrae el texto plano del cuerpo Portable Text de Sanity.
+ * Útil para articleBody del JSON-LD (NewsArticle) y wordCount.
+ * Ignora imágenes, embeds y elementos no-textuales.
+ */
+export function portableTextToPlainText(blocks: any[] | undefined | null): string {
+  if (!blocks || blocks.length === 0) return ''
+  return blocks
+    .filter((b: any) => b && b._type === 'block' && Array.isArray(b.children))
+    .map((b: any) =>
+      b.children
+        .filter((c: any) => c && typeof c.text === 'string')
+        .map((c: any) => c.text)
+        .join('')
+    )
+    .filter(Boolean)
+    .join('\n\n')
+    .trim()
+}
+
 export function portableTextToHtml(blocks: any[]): string {
   if (!blocks || blocks.length === 0) return ''
 

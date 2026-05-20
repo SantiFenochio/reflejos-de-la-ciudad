@@ -42,7 +42,8 @@ export const DEFAULT_SEO: SeoProps = {
 
 /**
  * Construye props SEO para una nota/artículo.
- * Acepta overrides desde el campo seoOverride de Sanity.
+ * Acepta overrides desde el campo seoOverride de Sanity y un fallback
+ * inteligente para description que prefiere bajada > primer párrafo > título.
  */
 export function buildArticleSeo(article: {
   title:         string;
@@ -54,11 +55,19 @@ export function buildArticleSeo(article: {
   author?:       string;
   section?:      string;
   tags?:         string[];
+  bodyPlainText?: string;       // ayuda al description si excerpt está vacío
   seoOverride?:  Partial<SeoProps>;
 }): SeoProps {
+  // Description: SEO override > excerpt (bajada) > primeras palabras del cuerpo > título
+  const fallbackDesc =
+    article.seoOverride?.description ||
+    (article.excerpt && article.excerpt.trim()) ||
+    (article.bodyPlainText && article.bodyPlainText.trim()) ||
+    article.title;
+
   return {
     title:         article.seoOverride?.title || article.title,
-    description:   trimDescription(article.seoOverride?.description || article.excerpt),
+    description:   trimDescription(fallbackDesc),
     canonicalURL:  `${SITE_URL}/nota/${article.slug}`,
     image:         article.seoOverride?.image || article.mainImageUrl || DEFAULT_OG_IMAGE,
     imageAlt:      article.seoOverride?.imageAlt || `Foto: ${article.title} — ${SITE_NAME}`,
@@ -67,7 +76,7 @@ export function buildArticleSeo(article: {
     modifiedTime:  article.updatedAt || article.publishedAt,
     author:        article.author || `Redacción ${SITE_NAME}`,
     section:       article.section,
-    tags:          article.tags,
+    tags:          Array.isArray(article.tags) ? article.tags : [],
     noindex:       article.seoOverride?.noindex ?? false,
   };
 }
@@ -87,9 +96,19 @@ export function buildSectionSeo(seccion: string): SeoProps {
 
 /**
  * Recorta descripción a máx. 160 chars sin cortar palabras.
+ * Acepta texto con saltos de línea — los colapsa a espacios.
  */
 export function trimDescription(text: string, max = 160): string {
   if (!text) return SITE_DESCRIPTION;
-  if (text.length <= max) return text;
-  return text.substring(0, max).replace(/\s+\S*$/, '') + '…';
+  const clean = text.replace(/\s+/g, ' ').trim();
+  if (clean.length <= max) return clean;
+  return clean.substring(0, max).replace(/\s+\S*$/, '') + '…';
+}
+
+/**
+ * Cuenta palabras de un texto plano. Usado en NewsArticle wordCount.
+ */
+export function contarPalabras(text: string | undefined | null): number {
+  if (!text) return 0;
+  return text.trim().split(/\s+/).filter(Boolean).length;
 }

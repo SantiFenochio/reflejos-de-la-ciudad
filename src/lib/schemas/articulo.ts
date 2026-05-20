@@ -6,6 +6,12 @@ export default defineType({
   title: 'Artículo',
   type:  'document',
 
+  // Grupos visibles como tabs en el Studio
+  groups: [
+    { name: 'contenido', title: 'Contenido', default: true },
+    { name: 'seo',       title: '🔍 SEO'    },
+  ],
+
   orderings: [
     {
       title: 'Fecha de publicación (más reciente)',
@@ -25,6 +31,7 @@ export default defineType({
       title: 'Título',
       type:  'string',
       validation: Rule => Rule.required().min(10).max(200),
+      group: 'contenido',
     }),
 
     defineField({
@@ -33,6 +40,7 @@ export default defineType({
       type:  'slug',
       options: { source: 'titulo', maxLength: 96 },
       validation: Rule => Rule.required(),
+      group: 'contenido',
     }),
 
     defineField({
@@ -41,6 +49,7 @@ export default defineType({
       type:  'text',
       rows:  3,
       validation: Rule => Rule.required().max(300),
+      group: 'contenido',
     }),
 
 
@@ -65,6 +74,7 @@ export default defineType({
         layout: 'radio',
       },
       validation: Rule => Rule.required(),
+      group: 'contenido',
     }),
 
     defineField({
@@ -72,6 +82,7 @@ export default defineType({
       title:        'Autor',
       type:         'string',
       initialValue: 'Redacción Reflejos',
+      group: 'contenido',
     }),
 
 
@@ -80,6 +91,7 @@ export default defineType({
       title:        'Fecha de publicación',
       type:         'datetime',
       initialValue: () => new Date().toISOString(),
+      group: 'contenido',
     }),
 
     defineField({
@@ -88,6 +100,7 @@ export default defineType({
       description:  'Si está activado, la nota aparece en el carrusel "Destacadas" de la home.',
       type:         'boolean',
       initialValue: false,
+      group: 'contenido',
     }),
 
     defineField({
@@ -102,12 +115,14 @@ export default defineType({
           type:  'string',
         }),
       ],
+      group: 'contenido',
     }),
 
     defineField({
       name:  'cuerpo',
       title: 'Cuerpo de la nota',
       type:  'array',
+      group: 'contenido',
       of: [
         {
           type: 'block',
@@ -126,12 +141,61 @@ export default defineType({
         },
         { type: 'image', options: { hotspot: true },
           fields: [
-            defineField({ name: 'alt',     title: 'Texto alternativo', type: 'string' }),
+            defineField({ name: 'alt',     title: 'Texto alternativo (descripción de la imagen para Google y lectores de pantalla)', type: 'string' }),
             defineField({ name: 'caption', title: 'Epígrafe (pie de foto)', type: 'string' }),
           ],
         },
         { type: 'youtube' },
       ],
+    }),
+
+    defineField({
+      name:  'tags',
+      title: 'Etiquetas / palabras clave',
+      description: 'Opcional. Personas, lugares o temas mencionados en la nota. Ej: "Moreira", "Villa Ballester", "Concejo Deliberante". Ayudan a que Google muestre la nota cuando se busca por esos términos.',
+      type:  'array',
+      of:    [{ type: 'string' }],
+      options: { layout: 'tags' },
+      group: 'seo',
+    }),
+
+    defineField({
+      name:  'seoTitle',
+      title: 'Título SEO',
+      type:  'string',
+      description: 'Opcional. Si está vacío, se usa el título de la nota. Máx. 60 caracteres.',
+      validation: (Rule) => Rule.max(60).warning('Títulos largos se truncan en Google.'),
+      group: 'seo',
+    }),
+
+    defineField({
+      name:  'seoDescription',
+      title: 'Descripción para Google',
+      type:  'text',
+      rows:  3,
+      description: 'Opcional. Si está vacía, se usa el copete. Entre 120 y 160 caracteres.',
+      validation: (Rule) =>
+        Rule.min(120).warning('Muy corta: Google puede reemplazarla.')
+            .max(160).warning('Muy larga: se trunca en los resultados.'),
+      group: 'seo',
+    }),
+
+    defineField({
+      name:  'seoImage',
+      title: 'Imagen para redes sociales',
+      type:  'image',
+      description: 'Opcional. Si está vacía, se usa la imagen principal. Ideal: 1200×630px.',
+      options: { hotspot: true },
+      group: 'seo',
+    }),
+
+    defineField({
+      name:  'noindex',
+      title: '🚫 Ocultar de Google',
+      type:  'boolean',
+      description: 'Activá SOLO para notas de prueba o borradores publicados. La nota no aparecerá en buscadores ni en sitemap.',
+      initialValue: false,
+      group: 'seo',
     }),
 
   ],

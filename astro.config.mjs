@@ -3,17 +3,21 @@ import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import vercel from '@astrojs/vercel';
 
-import sitemap from '@astrojs/sitemap';
-
 export default defineConfig({
-  // Dominio canónico. Para que tome efecto en producción, el dominio
-  // www.reflejosdelaciudad.com.ar debe estar asignado al proyecto en Vercel.
-  // Hasta que el DNS resuelva al deploy, las URLs del sitemap referenciarán
-  // un host aún no servido — el deploy sigue siendo accesible vía vercel.app.
+  // Dominio canónico. www.reflejosdelaciudad.com.ar asignado al proyecto en Vercel.
   site: 'https://www.reflejosdelaciudad.com.ar',
 
   output: 'server',
   adapter: vercel(),
+
+  // Sitemaps: NO usamos @astrojs/sitemap porque en output:'server' solo recoge
+  // rutas estáticas y deja huérfanas las dinámicas (/nota/[slug], /[seccion]).
+  // En su lugar tenemos rutas SSR en src/pages/sitemap*.xml.ts que consultan
+  // Sanity en tiempo real (con caché Vercel). Ver:
+  //   /sitemap.xml         → índice
+  //   /sitemap-pages.xml   → home + secciones + ediciones
+  //   /sitemap-notas.xml   → todas las notas publicadas
+  //   /sitemap-news.xml    → últimas 48 h (Google News)
 
   vite: {
     plugins: [
@@ -39,25 +43,4 @@ export default defineConfig({
       },
     },
   },
-
-  integrations: [
-    sitemap({
-      changefreq: 'daily',
-      priority: 0.7,
-      lastmod: new Date(),
-      filter: (page) =>
-        !page.includes('/studio') &&
-        !page.includes('/draft') &&
-        !page.includes('/preview'),
-      serialize(item) {
-        if (item.url === 'https://www.reflejosdelaciudad.com.ar/') {
-          return { ...item, changefreq: 'hourly', priority: 1.0 };
-        }
-        if (item.url.includes('/nota/')) {
-          return { ...item, changefreq: 'weekly', priority: 0.7 };
-        }
-        return { ...item, changefreq: 'daily', priority: 0.8 };
-      },
-    }),
-  ],
 });

@@ -1,7 +1,7 @@
 ---
 // src/pages/nota/[slug].astro
 import ArticleLayout from '../../layouts/ArticleLayout.astro';
-import { sanityClient, urlFor, portableTextToHtml } from '../../lib/sanity';
+import { sanityClient, urlFor, portableTextToHtml, portableTextToPlainText } from '../../lib/sanity';
 import { ARTICULO_QUERY } from '../../lib/queries';
 import { SITE_URL } from '../../lib/seo';
 import type { Articulo } from '../../types/article';
@@ -74,12 +74,14 @@ const shareFB   = `https://www.facebook.com/sharer/sharer.php?u=${urlEnc}`;
 Astro.response.headers.set('Vercel-CDN-Cache-Control', 's-maxage=3600, stale-while-revalidate=86400');
 Astro.response.headers.set('Cache-Tag', `home,nota-${slug}`);
 
-const cuerpoHtml = portableTextToHtml(articulo.cuerpo ?? []);
+const cuerpoHtml      = portableTextToHtml(articulo.cuerpo ?? []);
+// Texto plano del cuerpo: lo usa SEO para fallback de description, articleBody y wordCount.
+const cuerpoPlainText = portableTextToPlainText(articulo.cuerpo ?? []);
 
 // Props para ArticleLayout (buildArticleSeo + NewsArticle JSON-LD + BreadcrumbList)
 const articleProps = {
   title:        articulo.titulo,
-  excerpt:      articulo.bajada ?? articulo.titulo,
+  excerpt:      articulo.bajada ?? '',
   slug:         articulo.slug.current,
   mainImageUrl: imagenOg !== '/Logo.png' ? imagenOg : undefined,
   publishedAt:  articulo.fechaPublicacion,
@@ -88,6 +90,16 @@ const articleProps = {
   section:      articulo.categoria
     ? articulo.categoria.charAt(0).toUpperCase() + articulo.categoria.slice(1).toLowerCase()
     : undefined,
+  tags:         articulo.tags,
+  bodyPlainText: cuerpoPlainText,
+  seoOverride: {
+    title:       articulo.seoTitle,
+    description: articulo.seoDescription,
+    image:       articulo.seoImage
+      ? urlFor(articulo.seoImage).width(1200).height(630).fit('crop').format('webp').url()
+      : undefined,
+    noindex:     articulo.noindex ?? undefined,
+  },
 };
 ---
 

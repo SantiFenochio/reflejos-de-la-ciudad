@@ -1,11 +1,13 @@
 ---
 // src/pages/[seccion]/index.astro
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import JsonLd from '../../components/JsonLd.astro';
 import { sanityClient, urlFor } from '../../lib/sanity';
 import { SECCION_QUERY } from '../../lib/queries';
 import type { Articulo } from '../../types/article';
 import { formatearFecha } from '../../lib/utils';
 import { logger } from '../../lib/logger';
+import { SITE_URL, SITE_NAME } from '../../lib/seo';
 
 const { seccion } = Astro.params;
 
@@ -56,12 +58,47 @@ try {
 // El webhook /api/revalidate invalida 'home' + 'seccion-{nombre}' al publicar.
 Astro.response.headers.set('Vercel-CDN-Cache-Control', 's-maxage=300, stale-while-revalidate=3600');
 Astro.response.headers.set('Cache-Tag', `home,seccion-${seccion}`);
+
+const seccionURL = `${SITE_URL}/${seccion}`;
+
+const breadcrumbs = [
+  { name: 'Inicio',         url: SITE_URL  },
+  { name: nombreSeccion,    url: seccionURL },
+];
+
+// Datos para CollectionPage / ItemList (Schema.org)
+const collectionItems = notas.slice(0, 30).map(n => ({
+  name: n.titulo,
+  url: `${SITE_URL}/nota/${n.slug.current}`,
+  datePublished: n.fechaPublicacion,
+  image: n.imagen
+    ? urlFor(n.imagen).width(800).height(450).fit('crop').format('webp').url()
+    : undefined,
+}));
+
+// Description SEO específica de la sección (más rica que la genérica anterior).
+const seoDescription = `${descripcionSec} Cobertura de ${nombreSeccion} en ${SITE_NAME}, diario digital de General San Martín, Villa Ballester y alrededores.`;
+const seoTitle = `${nombreSeccion} — Noticias de San Martín y Villa Ballester`;
 ---
 
 <BaseLayout
-  title={nombreSeccion}
-  description={`Noticias de ${nombreSeccion} en San Martín y Villa Ballester`}
+  title={seoTitle}
+  description={seoDescription}
+  canonicalURL={seccionURL}
+  section={nombreSeccion}
+  breadcrumbs={breadcrumbs}
 >
+
+{collectionItems.length > 0 && (
+  <JsonLd
+    slot="head"
+    type="CollectionPage"
+    name={`${nombreSeccion} — ${SITE_NAME}`}
+    description={seoDescription}
+    url={seccionURL}
+    items={collectionItems}
+  />
+)}
 
 <!-- 1. CABECERA DE SECCIÓN -->
 <div style="background-color:#1C1C1C;margin-left:calc(-50vw + 50%);margin-right:calc(-50vw + 50%);">
