@@ -94,7 +94,7 @@ const articleProps = {
 <ArticleLayout article={articleProps}>
 
 <!-- ============================================================
-     HERO FULL-BLEED: imagen + overlay + categoria + titulo
+     HERO: imagen + (desktop: overlay + titulo encima | mobile: titulo debajo)
      ============================================================ -->
 <section class="nh-section">
   <div class="nh-wrap">
@@ -104,12 +104,12 @@ const articleProps = {
       <div class="nh-placeholder"></div>
     )}
     <div class="nh-overlay"></div>
-    <div class="nh-content">
-      {articulo.categoria && (
-        <span class="nh-badge">{articulo.categoria}</span>
-      )}
-      <h1 class="nh-titulo">{articulo.titulo}</h1>
-    </div>
+  </div>
+  <div class="nh-content">
+    {articulo.categoria && (
+      <span class="nh-badge">{articulo.categoria}</span>
+    )}
+    <h1 class="nh-titulo">{articulo.titulo}</h1>
   </div>
 </section>
 
@@ -375,13 +375,13 @@ const articleProps = {
   /* ============================================================
      HERO DE NOTA
      ============================================================ */
-  /* Hero full-bleed: márgenes negativos que contrarrestan el px-4/6/8 del main */
   .nh-section {
-    margin-top: 2rem;      /* respiro visual desde el header */
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 0;
+    position: relative;
+    margin: 1rem auto 0;
     max-width: 56rem;
+  }
+  @media (min-width: 768px) {
+    .nh-section { margin-top: 2rem; }
   }
 
   .nh-wrap {
@@ -399,18 +399,16 @@ const articleProps = {
     position: absolute; inset: 0;
     background: linear-gradient(to top, rgba(26,22,20,0.92) 0%, rgba(26,22,20,0.6) 55%, rgba(0,0,0,0.15) 100%);
   }
-  .nh-content {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    padding: 1.25rem 1rem;
-    max-width: 1280px;
-  }
-  @media (min-width: 768px) { .nh-content { padding: 2rem 1.5rem; } }
 
+  /* ── MOBILE: badge + título debajo de la imagen, fondo claro ── */
+  .nh-content {
+    padding: 1rem 0 0.25rem;
+  }
   .nh-badge {
     display: inline-block; background: var(--color-acento); color: #fff;
-    font-family: var(--font-cuerpo); font-size: 0.65rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.1em;
-    padding: 0.35rem 0.85rem; margin-bottom: 0.75rem;
+    font-family: var(--font-cuerpo); font-size: 0.66rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.14em;
+    padding: 0.32rem 0.72rem; margin: 0 0 0.7rem;
     border-radius: 2px;
     transition: background 0.2s ease, transform 0.2s ease;
   }
@@ -420,17 +418,46 @@ const articleProps = {
   }
   .nh-titulo {
     font-family: var(--font-titular);
-    font-size: clamp(1.4rem, 3.5vw, 2.75rem);
-    font-weight: 900; line-height: 1.1; letter-spacing: -0.02em;
-    color: #fff;
-    max-width: 52rem; margin: 0;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
-    word-break: break-word;
+    font-size: clamp(1.55rem, 6.2vw, 2rem);
+    font-weight: 900; line-height: 1.12; letter-spacing: -0.018em;
+    color: var(--color-periodico);
+    margin: 0;
+    word-break: normal;
     overflow-wrap: break-word;
+    hyphens: auto;
+    text-wrap: balance;
   }
-  @media (max-width: 480px) {
-    .nh-titulo { font-size: 1.25rem; }
-    .nh-content { padding: 1rem; }
+
+  /* En mobile el overlay se oculta porque el título sale de la imagen */
+  @media (max-width: 767px) {
+    .nh-overlay { display: none; }
+    .nh-wrap { aspect-ratio: 4/3; }   /* foto un poco más alta = más editorial en celular */
+  }
+
+  /* ── DESKTOP/TABLET: badge + título sobre la imagen, overlay activo ── */
+  @media (min-width: 768px) {
+    .nh-content {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 2rem 1.5rem;
+      max-width: 1280px;
+      pointer-events: none;
+    }
+    .nh-content > * { pointer-events: auto; }
+    .nh-badge {
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      padding: 0.35rem 0.85rem;
+      margin-bottom: 0.75rem;
+    }
+    .nh-titulo {
+      font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: #fff;
+      max-width: 52rem;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      text-wrap: balance;
+    }
   }
 </style>
 
@@ -440,21 +467,26 @@ const articleProps = {
      ============================================================ */
   .nota-meta {
     max-width: 56rem; margin: 0 auto;
-    padding-top: 1.5rem;
+    padding-top: 1.25rem;
+  }
+  @media (min-width: 768px) {
+    .nota-meta { padding-top: 1.5rem; }
   }
 
   /* Breadcrumb */
   .nota-breadcrumb ol {
     display: flex; align-items: center; flex-wrap: wrap; gap: 0.25rem;
-    list-style: none; padding: 0; margin: 0 0 1.25rem;
-    font-family: var(--font-cuerpo); font-size: 0.8rem; color: #888; /* FIX #6: era 0.75rem */
+    list-style: none; padding: 0; margin: 0 0 1rem;
+    font-family: var(--font-cuerpo); font-size: 0.78rem; color: #888;
+  }
+  @media (min-width: 640px) {
+    .nota-breadcrumb ol { margin-bottom: 1.25rem; font-size: 0.8rem; }
   }
   .nota-breadcrumb a { color: #888; text-decoration: none; transition: color 0.15s; }
   .nota-breadcrumb a:hover { color: #4c6a92; text-decoration: none; }
-  /* FIX #6: truncar el último item (título largo) con ellipsis en mobile */
   .nota-breadcrumb-actual {
     opacity: 0.6;
-    max-width: 200px;
+    max-width: 180px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -463,29 +495,33 @@ const articleProps = {
     .nota-breadcrumb-actual { max-width: none; white-space: normal; }
   }
 
-  /* Bajada mejorada */
+  /* Bajada — copete */
   .nota-bajada {
     font-family: var(--font-cuerpo);
     font-size: 1.25rem; font-weight: 400; font-style: italic;
     color: var(--color-secundario); line-height: 1.65; margin: 0 0 1.5rem;
   }
-  /* FIX #10: en mobile, el lead pierde la itálica (confunde con cuerpo) y gana
-     un borde izquierdo negro para que el lector lo identifique como copete */
   @media (max-width: 640px) {
     .nota-bajada {
       font-style: normal;
       font-weight: 500;
-      font-size: 1.05rem;
-      border-left: 3px solid #1C1C1C;
+      font-size: 1.02rem;
+      line-height: 1.55;
+      color: var(--color-periodico);
+      border-left: 3px solid var(--color-acento);
       padding-left: 0.85rem;
+      margin: 0 0 1.1rem;
     }
   }
 
   /* Byline */
   .nota-byline {
-    display: flex; align-items: center; flex-wrap: wrap; gap: 0.4rem;
+    display: flex; align-items: center; flex-wrap: wrap; gap: 0.35rem 0.45rem;
     font-family: var(--font-cuerpo); font-size: 0.82rem; color: #666;
     margin-bottom: 1rem;
+  }
+  @media (max-width: 640px) {
+    .nota-byline { font-size: 0.78rem; gap: 0.3rem 0.4rem; margin-bottom: 0.85rem; }
   }
   .nota-autor { font-weight: 700; color: #1a1a1a; }
   .nota-byline-sep { opacity: 0.4; }
@@ -493,6 +529,9 @@ const articleProps = {
 
   /* HR separador */
   .nota-hr { border: none; border-top: 1px solid #D0D0D0; margin: 0 0 2rem; }
+  @media (max-width: 640px) {
+    .nota-hr { margin: 0 0 1.4rem; }
+  }
 
   /* ============================================================
      CUERPO DEL ARTICULO
