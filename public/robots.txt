@@ -1,21 +1,96 @@
+# Reflejos de la Ciudad — robots.txt
+# Diario digital de General San Martín y Villa Ballester.
+
+# ── Default: dejamos rastrear todo el sitio ─────────────────────────
 User-agent: *
 Allow: /
-
-# No indexar drafts, preview ni Studio
+# Sólo bloqueamos drafts, preview, Studio y APIs internas.
 Disallow: /draft/
 Disallow: /preview/
 Disallow: /studio/
 Disallow: /api/
+# Evitamos que indexen el parámetro de búsqueda interno.
+Disallow: /*?q=
+Disallow: /*&q=
 
-# Permitir bots de Google (Search, News, Discover, Images) sin restricciones
+# ── Bots de Google (Search, News, Discover, Images) sin restricciones ──
 User-agent: Googlebot
 Allow: /
+Disallow: /api/
+Disallow: /studio/
 
 User-agent: Googlebot-News
 Allow: /
+Disallow: /api/
+Disallow: /studio/
 
 User-agent: Googlebot-Image
 Allow: /
+Disallow: /api/
 
-# Sitemap index (incluye páginas, notas y Google News)
+# ── Bing (también IndexNow upstream) ────────────────────────────────
+User-agent: Bingbot
+Allow: /
+Disallow: /api/
+Disallow: /studio/
+
+# ── Otros buscadores principales ────────────────────────────────────
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: YandexBot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+# ── Bots sociales (para previews ricos en redes) ────────────────────
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: WhatsApp
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+# ── Bots de IA: permitimos los que respetan robots y dan atribución ─
+# Estos bots son los más comunes que respetan robots.txt.
+# Si querés bloquearlos todos, cambiá Allow: / por Disallow: /
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+# ── Bots agresivos / scrapers conocidos: bloqueados ─────────────────
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: PetalBot
+Disallow: /
+
+# ── Sitemap principal (índice con notas, secciones y Google News) ───
 Sitemap: https://www.reflejosdelaciudad.com.ar/sitemap.xml
+Sitemap: https://www.reflejosdelaciudad.com.ar/sitemap-news.xml

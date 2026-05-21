@@ -30,6 +30,12 @@ export const DESTACADAS_QUERY = `*[_type == "articulo" && featured == true && (n
 
 // Nota individual por slug — incluye campos SEO (seoTitle, seoDescription,
 // seoImage, noindex) y tags para enriquecer NewsArticle JSON-LD.
+//
+// "relacionadas" usa una estrategia en 3 capas para maximizar internal linking:
+//   1. Notas que comparten al menos 1 tag con esta (más relevantes para SEO)
+//   2. Notas de la misma categoría (fallback temático)
+//   3. Notas recientes (fallback final si no hay suficientes)
+// El array final se deduplica por slug y se limita a 4 elementos.
 export const ARTICULO_QUERY = `*[_type == "articulo" && slug.current == $slug][0] {
   _id,
   _updatedAt,
@@ -47,12 +53,25 @@ export const ARTICULO_QUERY = `*[_type == "articulo" && slug.current == $slug][0
   seoDescription,
   "seoImage": seoImage,
   noindex,
-  "relacionadas": *[_type == "articulo" && categoria == ^.categoria && slug.current != $slug && (noindex != true)] | order(fechaPublicacion desc) [0...3] {
-    titulo,
-    slug,
-    categoria,
-    fechaPublicacion,
-    "imagen": imagenPrincipal
+  "relacionadasPorTags": *[_type == "articulo"
+      && slug.current != $slug
+      && (noindex != true)
+      && count(tags[@ in ^.^.tags]) > 0
+    ] | order(fechaPublicacion desc) [0...4] {
+    titulo, slug, categoria, fechaPublicacion, "imagen": imagenPrincipal
+  },
+  "relacionadasPorCategoria": *[_type == "articulo"
+      && categoria == ^.categoria
+      && slug.current != $slug
+      && (noindex != true)
+    ] | order(fechaPublicacion desc) [0...6] {
+    titulo, slug, categoria, fechaPublicacion, "imagen": imagenPrincipal
+  },
+  "relacionadasRecientes": *[_type == "articulo"
+      && slug.current != $slug
+      && (noindex != true)
+    ] | order(fechaPublicacion desc) [0...8] {
+    titulo, slug, categoria, fechaPublicacion, "imagen": imagenPrincipal
   }
 }`
 

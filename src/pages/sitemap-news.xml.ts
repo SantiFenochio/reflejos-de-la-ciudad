@@ -6,6 +6,7 @@
 //   - <news:publication_date> en formato ISO 8601
 //   - <news:title> idéntico al H1/headline visible
 //   - <news:publication> con name e idioma (es)
+//   - <news:keywords>: categoría + tags (Google News los usa para clasificar)
 //   - Sólo URLs frescas (<=48 h) — Google ignora todo lo más viejo
 //
 // Cache corto (5 min): este sitemap se mira con frecuencia alta cuando
@@ -21,6 +22,7 @@ interface NotaNews {
   titulo: string;
   fechaPublicacion: string;
   categoria?: string;
+  tags?: string[];
   noindex?: boolean;
 }
 
@@ -33,6 +35,24 @@ function escapeXml(s: string): string {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&apos;');
+}
+
+/**
+ * Construye news:keywords combinando categoría + tags.
+ * Google News usa estas keywords para clasificar la nota dentro de su feed.
+ * Máx. ~10 keywords útiles, separadas por coma.
+ */
+function buildKeywords(categoria: string | undefined, tags: string[] | undefined): string {
+  const kws: string[] = [];
+  if (categoria) kws.push(categoria);
+  if (Array.isArray(tags)) {
+    for (const t of tags) {
+      if (typeof t === 'string' && t.trim() && !kws.includes(t.trim())) {
+        kws.push(t.trim());
+      }
+    }
+  }
+  return kws.slice(0, 10).join(', ');
 }
 
 export const GET: APIRoute = async () => {
@@ -52,6 +72,7 @@ export const GET: APIRoute = async () => {
         titulo,
         fechaPublicacion,
         categoria,
+        tags,
         noindex
        }`,
       { corte: corteIso }
@@ -65,7 +86,10 @@ export const GET: APIRoute = async () => {
     .map(n => {
       const loc = `${SITE_URL}/nota/${n.slug.current}`;
       const pub = new Date(n.fechaPublicacion).toISOString();
-      const kw = n.categoria ? `\n      <news:keywords>${escapeXml(n.categoria)}</news:keywords>` : '';
+      const keywords = buildKeywords(n.categoria, n.tags);
+      const kwTag = keywords
+        ? `\n      <news:keywords>${escapeXml(keywords)}</news:keywords>`
+        : '';
       return `  <url>
     <loc>${escapeXml(loc)}</loc>
     <news:news>
@@ -74,7 +98,7 @@ export const GET: APIRoute = async () => {
         <news:language>es</news:language>
       </news:publication>
       <news:publication_date>${pub}</news:publication_date>
-      <news:title>${escapeXml(n.titulo)}</news:title>${kw}
+      <news:title>${escapeXml(n.titulo)}</news:title>${kwTag}
     </news:news>
   </url>`;
     })

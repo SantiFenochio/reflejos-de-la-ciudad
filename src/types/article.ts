@@ -14,6 +14,10 @@ export interface Articulo {
   cuerpo?:          any[]
   featured?:        boolean  // marcada manualmente como destacada en Sanity
   relacionadas?:    Partial<Articulo>[]
+  // Buckets crudos del query — se mergeean en `relacionadas` antes de renderizar.
+  relacionadasPorTags?:       Partial<Articulo>[]
+  relacionadasPorCategoria?:  Partial<Articulo>[]
+  relacionadasRecientes?:     Partial<Articulo>[]
   // ── Campos SEO opcionales (configurables por nota desde el Studio) ──
   tags?:            string[]
   seoTitle?:        string

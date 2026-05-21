@@ -16,6 +16,7 @@
 import type { APIRoute } from 'astro';
 import { isValidSignature, SIGNATURE_HEADER_NAME } from '@sanity/webhook';
 import { logger } from '../../lib/logger';
+import { notifyArticleUpdated } from '../../lib/indexnow';
 
 export const POST: APIRoute = async ({ request }) => {
   const secret    = import.meta.env.SANITY_WEBHOOK_SECRET;
@@ -65,6 +66,24 @@ export const POST: APIRoute = async ({ request }) => {
     const err = await res.text();
     logger.error('revalidate', 'Vercel purge error', { status: res.status, error: err });
     return json({ error: 'Purge failed', detail: err }, 500);
+  }
+
+  // IndexNow: notificar a Bing/Yandex que la nota cambió.
+  // Fire-and-forget — si falla no rompe el webhook.
+  if (payload._type === 'articulo') {
+    const slug = payload.slug?.current ?? payload.result?.slug?.current;
+    const cat  = payload.categoria     ?? payload.result?.categoria;
+    if (slug) {
+      try {
+        const indexNowResults = await notifyArticleUpdated({
+          slug,
+          categoria: typeof cat === 'string' ? cat : undefined,
+        });
+        logger.info('revalidate', 'IndexNow notificado', indexNowResults);
+      } catch (e) {
+        logger.warn('revalidate', 'IndexNow falló (no bloquea)', e);
+      }
+    }
   }
 
   logger.info('revalidate', 'OK — purge status', res.status);

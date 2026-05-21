@@ -32,6 +32,38 @@ const descripciones: Record<string, string> = {
   breves:    'Noticias cortas y urgentes del Partido de San Martín.',
 };
 
+// Descripciones SEO específicas (155-160 chars, con palabras clave locales).
+// Distintas de las "descripciones" mostradas como header — éstas son para
+// <meta name="description"> y deben ser únicas por sección.
+const seoDescriptions: Record<string, string> = {
+  sociedad:  'Noticias de sociedad y comunidad en General San Martín y Villa Ballester. Historias de vecinos, instituciones y vida barrial en Reflejos de la Ciudad.',
+  deportes:  'Toda la actualidad deportiva de San Martín y Villa Ballester: fútbol, básquet, clubes locales y deporte amateur. Cobertura completa en Reflejos.',
+  salud:     'Noticias de salud pública en San Martín: hospitales, campañas, vacunación y atención médica en Villa Ballester y todo el partido.',
+  educacion: 'Educación en General San Martín: escuelas, colegios, UNSAM y noticias del sistema educativo local en Villa Ballester y zona.',
+  seguridad: 'Seguridad vecinal en San Martín: comisarías, prevención, denuncias y operativos en Villa Ballester y todo el partido. Cobertura diaria.',
+  cultura:   'Cultura en San Martín: teatros, museos, música, arte y agenda cultural de Villa Ballester y General San Martín en Reflejos de la Ciudad.',
+  economia:  'Economía local en San Martín: comercios, PyMEs, industria y empleo en Villa Ballester. Noticias económicas del partido y la región.',
+  vecinos:   'Vecinos protagonistas de San Martín y Villa Ballester: reclamos, iniciativas barriales y testimonios. Las voces del barrio en Reflejos.',
+  politica:  'Política en General San Martín: intendencia, concejo deliberante, gestión municipal y noticias políticas de Villa Ballester y zona.',
+  opiniones: 'Opiniones, columnas y cartas de lectores sobre San Martín y Villa Ballester. Análisis y perspectivas en Reflejos de la Ciudad.',
+  breves:    'Noticias breves y de último momento del Partido de General San Martín y Villa Ballester. Lo más urgente, en pocas líneas.',
+};
+
+// Titles SEO únicos por sección — apuntando a búsquedas locales reales.
+const seoTitles: Record<string, string> = {
+  sociedad:  'Sociedad en San Martín — Noticias de comunidad y vecinos',
+  deportes:  'Deportes en San Martín — Fútbol, básquet y clubes locales',
+  salud:     'Salud en San Martín — Hospitales, campañas y atención médica',
+  educacion: 'Educación en San Martín — Escuelas, UNSAM y colegios',
+  seguridad: 'Seguridad en San Martín — Comisarías, denuncias y prevención',
+  cultura:   'Cultura en San Martín — Teatros, museos y agenda cultural',
+  economia:  'Economía en San Martín — Comercios, PyMEs y empleo local',
+  vecinos:   'Vecinos de San Martín — Reclamos, iniciativas y testimonios',
+  politica:  'Política en San Martín — Intendencia, concejo y gestión municipal',
+  opiniones: 'Opiniones — Columnas y análisis de San Martín y Villa Ballester',
+  breves:    'Breves — Noticias urgentes de San Martín y Villa Ballester',
+};
+
 // Mapeamos el slug sin tilde a la categoría en mayúsculas con tilde que usa Sanity
 const categoriaMap: Record<string, string> = {
   sociedad:  'SOCIEDAD',  deportes:  'DEPORTES', salud:     'SALUD',
@@ -76,9 +108,13 @@ const collectionItems = notas.slice(0, 30).map(n => ({
     : undefined,
 }));
 
-// Description SEO específica de la sección (más rica que la genérica anterior).
-const seoDescription = `${descripcionSec} Cobertura de ${nombreSeccion} en ${SITE_NAME}, diario digital de General San Martín, Villa Ballester y alrededores.`;
-const seoTitle = `${nombreSeccion} — Noticias de San Martín y Villa Ballester`;
+// Description y title SEO específicos: prioriza mapas dedicados (más ricos
+// y con palabras clave locales únicas), cae al genérico si la sección no
+// está mapeada (defensa contra slugs nuevos).
+const seoDescription = seoDescriptions[seccion]
+  ?? `${descripcionSec} Cobertura de ${nombreSeccion} en ${SITE_NAME}, diario digital de General San Martín, Villa Ballester y alrededores.`;
+const seoTitle = seoTitles[seccion]
+  ?? `${nombreSeccion} — Noticias de San Martín y Villa Ballester`;
 ---
 
 <BaseLayout

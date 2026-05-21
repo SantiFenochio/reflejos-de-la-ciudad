@@ -19,6 +19,31 @@ try {
 }
 if (!articulo) return Astro.redirect('/');
 
+// Mergeamos las 3 fuentes de relacionadas (tags > categoría > recientes),
+// deduplicamos por slug y nos quedamos con las primeras 4. Maximiza
+// internal linking y autoridad interna para el rastreo de Google.
+{
+  const seen = new Set<string>();
+  const merged: any[] = [];
+  const fuentes = [
+    articulo.relacionadasPorTags ?? [],
+    articulo.relacionadasPorCategoria ?? [],
+    articulo.relacionadasRecientes ?? [],
+  ];
+  for (const fuente of fuentes) {
+    for (const r of fuente) {
+      const s = (r as any)?.slug?.current;
+      if (s && !seen.has(s)) {
+        seen.add(s);
+        merged.push(r);
+        if (merged.length >= 4) break;
+      }
+    }
+    if (merged.length >= 4) break;
+  }
+  articulo.relacionadas = merged;
+}
+
 let publicidades: any[] = [];
 try {
   publicidades = await sanityClient.fetch(
@@ -709,7 +734,8 @@ const articleProps = {
   .rel-grid {
     display: grid; grid-template-columns: 1fr; gap: 1.75rem; margin-bottom: 2rem;
   }
-  @media (min-width: 640px) { .rel-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 640px)  { .rel-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px) { .rel-grid { grid-template-columns: repeat(4, 1fr); } }
 
   .rel-card {
     display: flex; flex-direction: column;

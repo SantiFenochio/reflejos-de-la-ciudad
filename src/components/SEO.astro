@@ -42,6 +42,16 @@ const canonical =
 <title>{fullTitle}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonical} />
+
+<!-- ══ HREFLANG ═══════════════════════════════════════════════════
+     Sitio en español de Argentina. Reforzamos regionalidad para que
+     Google entienda que el contenido es específico de AR (no MX/ES).
+     x-default apunta al mismo canonical porque no hay versiones
+     multilingüe; cualquier locale fallback ve la misma página.
+═══════════════════════════════════════════════════════════════════ -->
+<link rel="alternate" hreflang="es-AR" href={canonical} />
+<link rel="alternate" hreflang="es"    href={canonical} />
+<link rel="alternate" hreflang="x-default" href={canonical} />
 <!-- ══ ROBOTS ═════════════════════════════════════════════════════ -->
 {
   noindex ? (

@@ -6,8 +6,12 @@
 // Cada <url> incluye:
 //   - <loc>: URL canónica de la nota
 //   - <lastmod>: max(_updatedAt, fechaPublicacion) en ISO 8601
-//   - <changefreq>: 'weekly' (las notas no cambian seguido tras publicarse)
-//   - <priority>: 0.8 (alta, son el contenido principal del sitio)
+//   - <changefreq>: depende de la edad (recientes = daily, viejas = monthly)
+//   - <priority>: dinámica según antigüedad:
+//       <=2 días → 1.0   (notas calientes)
+//       <=7 días → 0.9
+//       <=30 días → 0.8
+//       resto    → 0.6
 //   - <image:image>: imagen principal con título como caption (Google Imágenes)
 
 import type { APIRoute } from 'astro';
@@ -24,6 +28,8 @@ interface NotaSitemap {
   noindex?: boolean;
 }
 
+const DIA = 24 * 60 * 60 * 1000;
+
 function escapeXml(s: string): string {
   return s
     .replace(/&/g, '&amp;')
@@ -31,6 +37,20 @@ function escapeXml(s: string): string {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&apos;');
+}
+
+/**
+ * Devuelve priority + changefreq según la antigüedad de la nota.
+ * Más reciente = mayor prioridad y mayor changefreq para que Google
+ * la revisite seguido (las notas frescas a veces se actualizan).
+ */
+function priorityFor(publicadaIso: string): { priority: string; changefreq: string } {
+  const edad = Date.now() - new Date(publicadaIso).getTime();
+  if (edad <= 2 * DIA)  return { priority: '1.0', changefreq: 'hourly' };
+  if (edad <= 7 * DIA)  return { priority: '0.9', changefreq: 'daily' };
+  if (edad <= 30 * DIA) return { priority: '0.8', changefreq: 'weekly' };
+  if (edad <= 180 * DIA) return { priority: '0.7', changefreq: 'weekly' };
+  return { priority: '0.6', changefreq: 'monthly' };
 }
 
 export const GET: APIRoute = async () => {
@@ -62,6 +82,8 @@ export const GET: APIRoute = async () => {
         return max > 0 ? new Date(max).toISOString() : new Date().toISOString();
       })();
 
+      const { priority, changefreq } = priorityFor(n.fechaPublicacion);
+
       const imgTag = n.imagen
         ? (() => {
             try {
@@ -80,8 +102,8 @@ export const GET: APIRoute = async () => {
       return `  <url>
     <loc>${escapeXml(loc)}</loc>
     <lastmod>${lastmod}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>${imgTag}
+    <changefreq>${changefreq}</changefreq>
+    <priority>${priority}</priority>${imgTag}
   </url>`;
     })
     .join('\n');

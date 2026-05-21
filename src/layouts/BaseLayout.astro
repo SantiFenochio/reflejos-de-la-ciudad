@@ -90,16 +90,34 @@ const GA_ID = import.meta.env.PUBLIC_GA_ID || 'G-XXXXXXXXXX';
     <!-- ══ SLOT HEAD: meta o scripts extra por página ═══════════ -->
     <slot name="head" />
 
+    <!-- ══ PRECONNECT: CDN de imágenes (Sanity) ══════════════════
+         Acelera la conexión inicial a cdn.sanity.io — TODAS las
+         imágenes de notas se sirven desde ahí, así que el ahorro
+         de TLS handshake impacta directo en LCP.
+    ════════════════════════════════════════════════════════════ -->
+    <link rel="preconnect" href="https://cdn.sanity.io" crossorigin />
+    <link rel="dns-prefetch" href="https://cdn.sanity.io" />
+
     <!-- ══ GOOGLE FONTS ═════════════════════════════════════════
-         Cargadas también en SEO.astro pero el BaseLayout las mantiene
-         para garantizar que siempre estén disponibles.
+         Carga non-blocking: usamos media="print" + onload swap
+         para que el CSS de fuentes no bloquee el primer render.
+         display=swap garantiza que el texto sea visible mientras
+         baja la fuente — mejora CLS y FCP.
     ════════════════════════════════════════════════════════════ -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&display=swap"
       rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
     />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
 
     <!-- ══ NPROGRESS ════════════════════════════════════════════ -->
     <style is:global>
