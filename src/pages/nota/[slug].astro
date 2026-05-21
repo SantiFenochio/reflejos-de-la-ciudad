@@ -141,10 +141,13 @@ const articleProps = {
       <div class="nh-placeholder"></div>
     )}
     <div class="nh-overlay"></div>
+    {articulo.categoria && (
+      <span class="nh-badge nh-badge--mobile">{articulo.categoria}</span>
+    )}
   </div>
   <div class="nh-content">
     {articulo.categoria && (
-      <span class="nh-badge">{articulo.categoria}</span>
+      <span class="nh-badge nh-badge--desktop">{articulo.categoria}</span>
     )}
     <h1 class="nh-titulo">{articulo.titulo}</h1>
   </div>
@@ -458,6 +461,8 @@ const articleProps = {
     background: var(--color-acento-hover);
     transform: scale(1.05);
   }
+  /* El badge mobile vive dentro de .nh-wrap, anclado arriba-izquierda */
+  .nh-badge--mobile { display: none; }
   .nh-titulo {
     font-family: var(--font-titular);
     font-size: clamp(1.15rem, 5.2vw, 1.55rem);
@@ -482,6 +487,20 @@ const articleProps = {
         rgba(0,0,0,0) 100%);
     }
     .nh-wrap { aspect-ratio: 4/3; }   /* foto un poco más alta = más espacio para el título */
+
+    /* En mobile escondemos el badge del bloque inferior y mostramos el de arriba-izquierda */
+    .nh-badge--desktop { display: none; }
+    .nh-badge--mobile {
+      display: inline-block;
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      z-index: 2;
+      font-size: 0.5rem;
+      letter-spacing: 0.1em;
+      padding: 0.25rem 0.5rem;
+      margin: 0;
+    }
   }
 
   /* ── DESKTOP/TABLET: badge + título sobre la imagen, overlay activo, alineados a la izq ── */
