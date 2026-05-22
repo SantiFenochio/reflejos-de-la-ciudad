@@ -1,5 +1,6 @@
 // src/lib/schemas/articulo.ts
 import { defineField, defineType } from 'sanity'
+import AutoSlugInput from '../../../sanity/components/AutoSlugInput'
 
 export default defineType({
   name:  'articulo',
@@ -39,6 +40,7 @@ export default defineType({
       title: 'Slug (URL)',
       type:  'slug',
       options: { source: 'titulo', maxLength: 96 },
+      components: { input: AutoSlugInput },
       validation: Rule => Rule.required(),
       group: 'contenido',
     }),
