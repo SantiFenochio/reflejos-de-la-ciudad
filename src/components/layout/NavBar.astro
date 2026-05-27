@@ -33,27 +33,14 @@ const { secciones, publicSanityProjectId, publicSanityDataset, publicSanityApiVe
       ))}
     </div>
     <div class="nav-mobile-actions">
-      <!-- Lupa buscador mobile -->
+      <!-- Lupa buscador mobile — única acción, el menú hamburguesa se removió porque
+           el scroll horizontal ya da acceso a todas las secciones -->
       <button id="search-toggle-mob" class="nav-search-btn" aria-label="Abrir buscador" aria-expanded="false">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
         </svg>
       </button>
-      <button id="nav-toggle" class="nav-btn" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav-mobile-panel">
-        <svg id="icon-menu" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
-        </svg>
-        <svg id="icon-close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="display:none">
-          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-        </svg>
-      </button>
     </div>
-  </div>
-  <!-- Mobile panel -->
-  <div id="nav-mobile-panel" class="nav-panel" hidden>
-    {secciones.map((s) => (
-      <a href={s.href} class="nav-panel-lnk">{s.label}</a>
-    ))}
   </div>
 </nav>
 
@@ -122,27 +109,16 @@ const { secciones, publicSanityProjectId, publicSanityDataset, publicSanityApiVe
   .nav-mobile-sec-lnk:hover,
   .nav-mobile-sec-lnk:active { background-color: rgba(0,0,0,0.2); text-decoration: none; }
 
-  /* Acciones (lupa + burger) fijas a la derecha */
+  /* Acciones (solo lupa) fijas a la derecha */
   .nav-mobile-actions {
     display: flex;
     align-items: center;
-    gap: 0.25rem;
     flex-shrink: 0;
-    padding-right: 0.5rem;
-    background: #4c6a92; /* asegura que el fade del scroll no las "tape" */
+    padding-right: 0.25rem;
+    background: #4c6a92; /* asegura que el fade del scroll no la "tape" */
     position: relative;
     z-index: 1;
   }
-  .nav-btn {
-    background: none; border: none; cursor: pointer; color: #fff;
-    /* Área táctil mínima recomendada: 44x44px */
-    min-width: 44px; min-height: 44px;
-    padding: 0.6rem;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .nav-panel { background: #3b5475; border-top: 1px solid rgba(255,255,255,0.15); }
-  .nav-panel-lnk { display: block; padding: 0.75rem 1.25rem; font-family: var(--font-cuerpo); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #fff; border-bottom: 1px solid rgba(255,255,255,0.1); text-decoration: none; transition: background-color 0.15s; }
-  .nav-panel-lnk:hover { background-color: rgba(0,0,0,0.2); text-decoration: none; }
 
   /* BUSCADOR PANEL */
   .buscador-panel {
@@ -185,34 +161,6 @@ const { secciones, publicSanityProjectId, publicSanityDataset, publicSanityApiVe
 
 <script define:vars={{ publicSanityProjectId, publicSanityDataset, publicSanityApiVersion }}>
 (function() {
-  // ── Toggle mobile menu ──────────────────────────────────────────
-  const btn   = document.getElementById('nav-toggle');
-  const panel = document.getElementById('nav-mobile-panel');
-  const iM    = document.getElementById('icon-menu');
-  const iC    = document.getElementById('icon-close');
-  if (btn && panel) {
-    btn.addEventListener('click', function() {
-      const open = !panel.hidden;
-      panel.hidden = open;
-      btn.setAttribute('aria-expanded', String(!open));
-      btn.setAttribute('aria-label', open ? 'Abrir menú' : 'Cerrar menú');
-      if (iM) iM.style.display = open ? 'block' : 'none';
-      if (iC) iC.style.display = open ? 'none'  : 'block';
-      // Scroll-lock: bloquear scroll del fondo cuando el menú está abierto
-      document.body.style.overflow = open ? '' : 'hidden';
-    });
-    panel.querySelectorAll('a').forEach(function(a) {
-      a.addEventListener('click', function() {
-        panel.hidden = true;
-        btn.setAttribute('aria-expanded', 'false');
-        if (iM) iM.style.display = 'block';
-        if (iC) iC.style.display = 'none';
-        // Liberar scroll al navegar
-        document.body.style.overflow = '';
-      });
-    });
-  }
-
   // ── Buscador ────────────────────────────────────────────────────
   var SANITY_PROJECT = publicSanityProjectId;
   var SANITY_DATASET = publicSanityDataset;
