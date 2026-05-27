@@ -26,9 +26,13 @@ const { secciones, publicSanityProjectId, publicSanityDataset, publicSanityApiVe
   </div>
   <!-- Mobile head -->
   <div class="nav-mobile-head">
-    <!-- FIX #11: se eliminó el <span class="nav-brand"> "Reflejos de la Ciudad"
-         porque el logo ya está arriba — era redundante y ocupaba espacio valioso -->
-    <div style="display:flex;align-items:center;gap:0.5rem;margin-left:auto;">
+    <!-- Acceso rápido a secciones — scroll horizontal, llena el espacio antes de los iconos -->
+    <div class="nav-mobile-secs" aria-label="Acceso rápido a secciones">
+      {secciones.filter(s => s.href !== '/').map((s) => (
+        <a href={s.href} class="nav-mobile-sec-lnk">{s.label}</a>
+      ))}
+    </div>
+    <div class="nav-mobile-actions">
       <!-- Lupa buscador mobile -->
       <button id="search-toggle-mob" class="nav-search-btn" aria-label="Abrir buscador" aria-expanded="false">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -81,9 +85,54 @@ const { secciones, publicSanityProjectId, publicSanityDataset, publicSanityApiVe
   /* Lupa */
   .nav-search-btn { background: none; border: none; cursor: pointer; color: #fff; padding: 0.65rem 0.6rem; display: flex; align-items: center; transition: background-color 0.15s; margin-left: auto; }
   .nav-search-btn:hover { background-color: rgba(0,0,0,0.2); }
-  .nav-mobile-head { display: flex; justify-content: space-between; align-items: center; padding: 0 1rem; min-height: 44px; }
+  .nav-mobile-head { display: flex; justify-content: space-between; align-items: stretch; padding: 0; min-height: 44px; }
   @media (min-width: 768px) { .nav-mobile-head { display: none; } }
   .nav-brand { font-family: var(--font-titular); font-size: 1rem; font-weight: 700; color: #fff; }
+
+  /* Acceso rápido mobile: scroll horizontal de secciones, oculta scrollbar */
+  .nav-mobile-secs {
+    display: flex;
+    align-items: stretch;
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    /* Fade a la derecha indica que hay más para scrollear */
+    -webkit-mask-image: linear-gradient(to right, black 88%, transparent 100%);
+    mask-image: linear-gradient(to right, black 88%, transparent 100%);
+  }
+  .nav-mobile-secs::-webkit-scrollbar { display: none; }
+  .nav-mobile-sec-lnk {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-cuerpo);
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #fff;
+    padding: 0 0.65rem;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: background-color 0.15s;
+  }
+  .nav-mobile-sec-lnk:first-child { padding-left: 1rem; }
+  .nav-mobile-sec-lnk:hover,
+  .nav-mobile-sec-lnk:active { background-color: rgba(0,0,0,0.2); text-decoration: none; }
+
+  /* Acciones (lupa + burger) fijas a la derecha */
+  .nav-mobile-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    flex-shrink: 0;
+    padding-right: 0.5rem;
+    background: #4c6a92; /* asegura que el fade del scroll no las "tape" */
+    position: relative;
+    z-index: 1;
+  }
   .nav-btn {
     background: none; border: none; cursor: pointer; color: #fff;
     /* Área táctil mínima recomendada: 44x44px */

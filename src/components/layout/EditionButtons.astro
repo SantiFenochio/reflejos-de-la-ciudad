@@ -299,21 +299,18 @@ const linkEdicionActual: string = ultimaEdicion?.pdfUrl ?? '/edicionesanteriores
   @media (max-width: 767px) {
     .ediciones-mobile-bar {
       display: flex;
-      /* FIX mobile: altura mínima explícita en la barra */
-      min-height: 64px;
       background: #fff;
       border-top: 1px solid #D0D0D0;
       border-bottom: 2px solid #1C1C1C;
     }
     .edicion-mobile-btn {
       flex: 1;
-      min-height: 56px; /* reducido de 80px para ahorrar espacio vertical */
       display: flex;
       align-items: center;
       justify-content: center;
       color: #1C1C1C;
       text-decoration: none;
-      padding: 0.4rem 0.5rem;
+      padding: 0.25rem 0.25rem;
       border-right: 1px solid #D0D0D0;
       transition: background-color 0.15s;
     }
@@ -321,7 +318,7 @@ const linkEdicionActual: string = ultimaEdicion?.pdfUrl ?? '/edicionesanteriores
     .edicion-mobile-btn:active     { background: #e8e8e8; }
     .edicion-mobile-img {
       display: block;
-      height: 48px; /* reducido de 68px para ser proporcional */
+      height: 72px; /* +50% para llenar mejor el espacio horizontal de la barra */
       width: auto;
       max-width: 100%;
       object-fit: contain;
