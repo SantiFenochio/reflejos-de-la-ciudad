@@ -4,7 +4,7 @@ import { sanityClient } from '../../lib/sanity';
 import { Image } from 'astro:assets';
 import imgEdicionesAnteriores from '../../assets/Anteriores17.webp';
 import imgUltimaEdicion       from '../../assets/ultima17.webp';
-import imgIconoDerecha        from '../../assets/Nuevo96.webp';
+import imgIconoDerecha        from '../../assets/Nuevo97.webp';
 import imgLogoPrincipal       from '../../assets/NuevoLogo.webp';
 import { logger } from '../../lib/logger';
 
@@ -26,7 +26,7 @@ const linkEdicionActual: string = ultimaEdicion?.pdfUrl ?? '/edicionesanteriores
     <a href="/" aria-label="Inicio de Reflejos de la Ciudad" class="shrink-0">
       <Image
         src={imgIconoDerecha}
-        alt="96 Años de Periodismo Local"
+        alt="97 Años de Periodismo Local"
         class="w-20 h-auto"
       />
     </a>
@@ -72,7 +72,7 @@ const linkEdicionActual: string = ultimaEdicion?.pdfUrl ?? '/edicionesanteriores
 </div>
 <div class="logo-area">
 
-  <!-- ZONA IZQUIERDA: RRSS + Imagen 96 años -->
+  <!-- ZONA IZQUIERDA: RRSS + Imagen 97 años -->
   <div class="logo-zona-izq">
 
     <!-- 1: RRSS -->
@@ -105,12 +105,12 @@ const linkEdicionActual: string = ultimaEdicion?.pdfUrl ?? '/edicionesanteriores
       </a>
     </div>
 
-    <!-- 2: Ícono 96 años -->
+    <!-- 2: Ícono 97 años -->
     <div class="logo-col-derecha">
       <Image
         src={imgIconoDerecha}
-        alt="96 Años de Periodismo Local"
-        class="logo-btn-img logo-img-96"
+        alt="97 Años de Periodismo Local"
+        class="logo-btn-img logo-img-97"
       />
     </div>
 
@@ -204,7 +204,7 @@ const linkEdicionActual: string = ultimaEdicion?.pdfUrl ?? '/edicionesanteriores
     width: 40%;
   }
 
-  /* Zona derecha: Edición Actual + 96 años */
+  /* Zona derecha: Edición Actual + 97 años */
   .logo-zona-der {
     display: flex;
     align-items: center;
@@ -283,9 +283,9 @@ const linkEdicionActual: string = ultimaEdicion?.pdfUrl ?? '/edicionesanteriores
   .logo-img    { display: block; width: 560px; height: auto; max-width: 100%; }
   .logo-text   { display: none; font-family: var(--font-titular); font-weight: 900; font-size: 2.25rem; color: #1a1a1a; letter-spacing: -0.02em; }
 
-  /* 5 — Ícono 96 años: crecer junto al banner */
+  /* 5 — Ícono 97 años: crecer junto al banner */
   .logo-col-derecha { display: flex; align-items: center; flex-shrink: 0; }
-  .logo-img-96 { height: 234px !important; width: auto; object-fit: contain; }
+  .logo-img-97 { height: 234px !important; width: auto; object-fit: contain; }
 
   /* ── MOBILE < 768px: logo desktop oculto, usa bloque mobile ── */
   @media (max-width: 767px) {
