@@ -83,38 +83,45 @@ const heroSrcset = hero?.imagen
   <!-- Grid Container: 2 columnas en desktop (2fr 1fr), 1 columna en mobile -->
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 auto-rows-auto">
 
-    <!-- ── NOTA PRINCIPAL: ocupa 2 columnas y 2 filas en desktop ── -->
+    <!-- ── NOTA PRINCIPAL: card en mobile (imagen arriba + texto abajo), bento overlay en desktop ── -->
     {hero ? (
-      <article class="lg:col-span-2 lg:row-span-2 relative overflow-hidden bg-neutral-900 group">
-        <a href={`/nota/${hero.slug.current}`} class="block relative h-full min-h-[280px] lg:min-h-[400px]">
-          <img
-            src={heroImg}
-            srcset={heroSrcset}
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 66vw, 900px"
-            alt={hero.titulo}
-            width="900"
-            height="506"
-            class="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
-            loading="eager"
-            fetchpriority="high"
-            decoding="async"
-          />
-          <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent"></div>
-          <div class="absolute bottom-0 left-0 right-0 p-6 lg:p-8">
+      <article class="lg:col-span-2 lg:row-span-2 relative overflow-hidden bg-white lg:bg-neutral-900 group">
+        <a href={`/nota/${hero.slug.current}`} class="block lg:h-full lg:min-h-[400px] lg:relative">
+          <div class="relative w-full aspect-[16/10] lg:aspect-auto lg:absolute lg:inset-0 lg:h-full overflow-hidden bg-neutral-900">
+            <img
+              src={heroImg}
+              srcset={heroSrcset}
+              sizes="(max-width: 1024px) 100vw, 900px"
+              alt={hero.titulo}
+              width="900"
+              height="506"
+              class="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+            />
+            <div class="hidden lg:block absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent"></div>
             {hero.categoria && (
-              <span class="inline-block bg-acento text-white text-xs font-bold uppercase tracking-wider px-3 py-1.5 mb-3">
+              <span class="lg:hidden absolute top-3 left-3 bg-acento text-white text-[10px] font-bold uppercase tracking-wider px-2 py-1 shadow-lg">
                 {hero.categoria}
               </span>
             )}
-            <h1 class="text-white font-black text-2xl lg:text-4xl xl:text-5xl leading-tight mb-3 max-w-3xl drop-shadow-lg group-hover:underline underline-offset-4">
+          </div>
+          <div class="p-4 lg:p-8 lg:absolute lg:bottom-0 lg:left-0 lg:right-0">
+            {hero.categoria && (
+              <span class="hidden lg:inline-block bg-acento text-white text-xs font-bold uppercase tracking-wider px-3 py-1.5 mb-3">
+                {hero.categoria}
+              </span>
+            )}
+            <h1 class="text-neutral-900 lg:text-white font-black text-xl lg:text-4xl xl:text-5xl leading-tight mb-2 lg:mb-3 max-w-3xl lg:drop-shadow-lg group-hover:underline underline-offset-4">
               {hero.titulo}
             </h1>
             {hero.bajada && (
-              <p class="text-neutral-100 text-base lg:text-lg italic leading-relaxed mb-3 max-w-2xl">
+              <p class="text-neutral-600 lg:text-neutral-100 text-sm lg:text-lg italic leading-relaxed mb-2 lg:mb-3 max-w-2xl">
                 {hero.bajada}
               </p>
             )}
-            <p class="text-neutral-400 text-xs lg:text-sm flex items-center gap-2 flex-wrap">
+            <p class="text-neutral-500 lg:text-neutral-400 text-xs lg:text-sm flex items-center gap-2 flex-wrap">
               {hero.autor && <span>Por {hero.autor}</span>}
               {hero.autor && <span aria-hidden="true">•</span>}
               <span>{formatearFecha(hero.fechaPublicacion)}</span>
