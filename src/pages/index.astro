@@ -7,6 +7,8 @@ import type { Articulo } from '../types/article';
 import Publicidad from '../components/ui/Publicidad.astro';
 import { formatearFecha } from '../lib/utils';
 import { logger } from '../lib/logger';
+import bannerMujeres from '../assets/Banner_EspacioMujeres_500x100.gif';
+import bannerOrtopedica from '../assets/BannerOrtopedica.jpg';
 
 // Noticias: hero + hasta 9 cards en grilla (para dar lugar a intercalados)
 let notas: Articulo[] = [];
@@ -172,6 +174,45 @@ const heroSrcset = hero?.imagen
     })}
 
   </div>
+</section>
+
+<!-- ============================================================
+     BANNERS PUBLICITARIOS DUO — horizontal, una línea (desktop)
+     Se ubican debajo de las primeras notas y arriba del separador.
+     ============================================================ -->
+<section class="banners-duo" aria-label="Publicidad">
+  <a
+    href="https://sanmartin.gob.ar/comunidades/interna/mujeres-espacio-mujeres/"
+    class="banner-duo-item"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Espacio Mujeres — Municipio de San Martín"
+  >
+    <img
+      src={bannerMujeres.src}
+      width={bannerMujeres.width}
+      height={bannerMujeres.height}
+      alt="Espacio Mujeres — Municipio de General San Martín"
+      loading="lazy"
+      decoding="async"
+    />
+  </a>
+  <a
+    href="https://www.osanandres.com.ar/"
+    class="banner-duo-item"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Ortopedia OSAN Andrés"
+  >
+    <img
+      src={bannerOrtopedica.src}
+      width={bannerOrtopedica.width}
+      height={bannerOrtopedica.height}
+      alt="Ortopedia — OSAN Andrés"
+      loading="lazy"
+      decoding="async"
+    />
+  </a>
 </section>
 
 <!-- Separador triple estilo diario -->
@@ -376,6 +417,45 @@ const heroSrcset = hero?.imagen
   .separador-triple { display: flex; flex-direction: column; gap: 3px; margin: 2rem 0 2.25rem; }
   .sep-linea { border-top: 1px solid var(--color-periodico); }
   .sep-linea.gruesa { border-top-width: 3px; border-top-color: var(--color-acento); }
+
+  /* BANNERS PUBLICITARIOS DUO — dos banners horizontales en una línea */
+  .banners-duo {
+    display: flex;
+    gap: 1rem;
+    align-items: stretch;
+    justify-content: center;
+    margin: 2rem 0 0;
+  }
+  .banner-duo-item {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    background: #fff;
+    border: 1px solid var(--color-borde);
+    border-radius: 2px;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+  .banner-duo-item:hover {
+    box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+    transform: translateY(-2px);
+  }
+  .banner-duo-item img {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    max-height: 90px;
+    object-fit: contain;
+  }
+  /* Mobile: se apilan, ambos a ancho completo (igual de importantes) */
+  @media (max-width: 768px) {
+    .banners-duo { flex-direction: column; gap: 0.75rem; margin-top: 1.5rem; }
+    .banner-duo-item { width: 100%; }
+    .banner-duo-item img { max-height: 80px; }
+  }
 
   /* ENCABEZADO DE SECCION */
   .sec-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; }
