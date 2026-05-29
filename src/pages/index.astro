@@ -8,7 +8,7 @@ import Publicidad from '../components/ui/Publicidad.astro';
 import { formatearFecha } from '../lib/utils';
 import { logger } from '../lib/logger';
 import bannerMujeres from '../assets/Banner_EspacioMujeres_500x100.gif';
-import bannerOrtopedica from '../assets/BannerOrtopedica.jpg';
+import bannerOjos from '../assets/banner-instituto-medico-de-ojos.gif';
 
 // Noticias: hero + hasta 9 cards en grilla (para dar lugar a intercalados)
 let notas: Articulo[] = [];
@@ -197,22 +197,16 @@ const heroSrcset = hero?.imagen
       decoding="async"
     />
   </a>
-  <a
-    href="https://www.osanandres.com.ar/"
-    class="banner-duo-item"
-    target="_blank"
-    rel="noopener noreferrer"
-    aria-label="Ortopedia OSAN Andrés"
-  >
+  <div class="banner-duo-item" aria-label="Instituto Médico de Ojos">
     <img
-      src={bannerOrtopedica.src}
-      width={bannerOrtopedica.width}
-      height={bannerOrtopedica.height}
-      alt="Ortopedia — OSAN Andrés"
+      src={bannerOjos.src}
+      width={bannerOjos.width}
+      height={bannerOjos.height}
+      alt="Instituto Médico de Ojos"
       loading="lazy"
       decoding="async"
     />
-  </a>
+  </div>
 </section>
 
 <!-- Separador triple estilo diario -->
@@ -432,29 +426,22 @@ const heroSrcset = hero?.imagen
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0.5rem;
-    background: #fff;
-    border: 1px solid var(--color-borde);
-    border-radius: 2px;
-    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    transition: transform 0.2s ease, opacity 0.2s ease;
   }
-  .banner-duo-item:hover {
-    box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+  a.banner-duo-item:hover {
+    opacity: 0.9;
     transform: translateY(-2px);
   }
   .banner-duo-item img {
     display: block;
-    width: auto;
-    max-width: 100%;
+    width: 100%;
     height: auto;
-    max-height: 90px;
     object-fit: contain;
   }
   /* Mobile: se apilan, ambos a ancho completo (igual de importantes) */
   @media (max-width: 768px) {
     .banners-duo { flex-direction: column; gap: 0.75rem; margin-top: 1.5rem; }
     .banner-duo-item { width: 100%; }
-    .banner-duo-item img { max-height: 80px; }
   }
 
   /* ENCABEZADO DE SECCION */
