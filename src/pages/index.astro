@@ -9,6 +9,9 @@ import { formatearFecha } from '../lib/utils';
 import { logger } from '../lib/logger';
 import bannerMujeres from '../assets/Banner_EspacioMujeres_500x100.gif';
 import bannerOjos from '../assets/banner-instituto-medico-de-ojos.gif';
+import bannerDonLuis from '../assets/BannersCuadrados/banner-don-luis-260-X-260.gif';
+import bannerUnionIndustrial from '../assets/BannersCuadrados/banner-union-industrial-260-X-260.gif';
+import bannerCuadrado3 from '../assets/BannersCuadrados/ezgif-330bf48de539c120.gif';
 
 // Noticias: hero + hasta 9 cards en grilla (para dar lugar a intercalados)
 let notas: Articulo[] = [];
@@ -290,6 +293,51 @@ const heroSrcset = hero?.imagen
 )}
 
 <!-- ============================================================
+     BANNERS PUBLICITARIOS CUADRADOS — entre Destacadas y Ultimas Noticias
+     Se alinean por altura uniforme en una fila centrada (desktop)
+     y se apilan a ancho controlado en mobile.
+     ============================================================ -->
+<section class="banners-trio" aria-label="Publicidad">
+  <div class="banner-trio-item">
+    <img
+      src={bannerUnionIndustrial.src}
+      width={bannerUnionIndustrial.width}
+      height={bannerUnionIndustrial.height}
+      alt="Unión Industrial de General San Martín"
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
+  <div class="banner-trio-item">
+    <img
+      src={bannerCuadrado3.src}
+      width={bannerCuadrado3.width}
+      height={bannerCuadrado3.height}
+      alt="Publicidad"
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
+  <div class="banner-trio-item">
+    <img
+      src={bannerDonLuis.src}
+      width={bannerDonLuis.width}
+      height={bannerDonLuis.height}
+      alt="Delivery Don Luis"
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
+</section>
+
+<!-- Separador triple estilo diario -->
+<div class="separador-triple">
+  <div class="sep-linea"></div>
+  <div class="sep-linea gruesa"></div>
+  <div class="sep-linea"></div>
+</div>
+
+<!-- ============================================================
      CUERPO: GRILLA DE NOTICIAS + SIDEBAR
      ============================================================ -->
 <div class="cuerpo-grid">
@@ -448,6 +496,38 @@ const heroSrcset = hero?.imagen
   @media (max-width: 768px) {
     .banners-duo { flex-direction: column; gap: 0.75rem; margin-top: 1.5rem; }
     .banner-duo-item { width: 100%; }
+  }
+
+  /* BANNERS PUBLICITARIOS CUADRADOS — fila centrada alineada por altura */
+  .banners-trio {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    align-items: center;
+    justify-content: center;
+    margin: 2rem 0 0;
+  }
+  .banner-trio-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+  a.banner-trio-item:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+  }
+  .banner-trio-item img {
+    display: block;
+    height: 200px;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+  }
+  /* Mobile: se apilan centrados con ancho controlado */
+  @media (max-width: 768px) {
+    .banners-trio { flex-direction: column; gap: 1rem; margin-top: 1.5rem; }
+    .banner-trio-item img { height: auto; width: 100%; max-width: 320px; }
   }
 
   /* ENCABEZADO DE SECCION */
