@@ -33,6 +33,15 @@ export default defineType({
       },
       validation: (Rule) => Rule.required(),
     }),
+    defineField({
+      name:        'imagenPortada',
+      type:        'image',
+      title:       'Imagen de portada (primera página)',
+      description: 'Miniatura de la primera página del PDF. Se genera automáticamente con scripts/generar-portadas.js, pero podés reemplazarla acá.',
+      options: {
+        hotspot: true,
+      },
+    }),
   ],
   // Ordena por fecha DESC en el Studio para que la más reciente aparezca primero
   orderings: [

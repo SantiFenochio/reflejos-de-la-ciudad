@@ -37,6 +37,12 @@ scrape.mjs
 *.bat
 *_out.txt
 _cleanup*
+scripts/*-log.txt
+scripts/errores-*.json
+
+# PDFs fuente de ediciones (ya viven en Sanity, no van al repo)
+src/assets/Ediciones/
+src/assets/*.pdf
 
 .vercel
 .env*.local
