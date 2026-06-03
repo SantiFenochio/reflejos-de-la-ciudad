@@ -58,9 +58,10 @@ try {
       </p>
     </div>
   ) : (
+    <>
     <ul class="ediciones-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;list-style:none;padding:0;margin:0;">
-      {ediciones.map((ed) => (
-        <li class="card-hover-lift" style="background:#fff;border:1px solid var(--color-borde);border-radius:2px;padding:0;display:flex;flex-direction:column;overflow:hidden;">
+      {ediciones.map((ed, i) => (
+        <li class:list={["card-hover-lift", { "edicion-oculta": i >= 20 }]} style="background:#fff;border:1px solid var(--color-borde);border-radius:2px;padding:0;display:flex;flex-direction:column;overflow:hidden;">
           <!-- Portada: primera página del PDF como vista previa -->
           {ed.pdfUrl ? (
             <a href={ed.pdfUrl} target="_blank" rel="noopener noreferrer" class="portada-link" aria-label={`Ver edición: ${ed.titulo}`}>
@@ -121,14 +122,81 @@ try {
         </li>
       ))}
     </ul>
+
+    {ediciones.length > 20 && (
+      <div class="cargar-mas-wrap">
+        <button id="btn-cargar-mas" class="btn-cargar-mas" type="button">
+          Cargar más ediciones
+          <span class="cargar-mas-restantes">(<span id="cargar-mas-num">{ediciones.length - 20}</span> restantes)</span>
+        </button>
+      </div>
+    )}
+    </>
   )}
 
 </BaseLayout>
+
+<script>
+  // Revela las ediciones ocultas de a 20 por clic.
+  const PASO = 20;
+  const btn = document.getElementById('btn-cargar-mas');
+  const numEl = document.getElementById('cargar-mas-num');
+
+  btn?.addEventListener('click', () => {
+    const ocultas = document.querySelectorAll('.ediciones-grid > .edicion-oculta');
+    let reveladas = 0;
+    for (const el of ocultas) {
+      el.classList.remove('edicion-oculta');
+      reveladas += 1;
+      if (reveladas >= PASO) break;
+    }
+    const quedan = document.querySelectorAll('.ediciones-grid > .edicion-oculta').length;
+    if (numEl) numEl.textContent = String(quedan);
+    if (quedan === 0) btn.parentElement?.remove();
+  });
+</script>
 
 <style>
   /* FIX #8: grid responsivo para ediciones anteriores */
   @media (min-width: 640px)  { .ediciones-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 1.25rem !important; } }
   @media (min-width: 1024px) { .ediciones-grid { grid-template-columns: repeat(4, 1fr) !important; gap: 1.5rem !important; } }
+
+  /* Paginación: ediciones más allá de las primeras 20 ocultas hasta "Cargar más" */
+  .edicion-oculta { display: none !important; }
+
+  .cargar-mas-wrap {
+    display: flex;
+    justify-content: center;
+    margin-top: 2.25rem;
+  }
+  .btn-cargar-mas {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 2rem;
+    background: #fff;
+    color: var(--color-periodico);
+    border: 1.5px solid var(--color-periodico);
+    font-family: var(--font-cuerpo);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  }
+  .btn-cargar-mas:hover {
+    background: var(--color-periodico);
+    color: #fff;
+    transform: translateY(-2px);
+  }
+  .cargar-mas-restantes {
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    opacity: 0.7;
+  }
 
   /* Portada (vista previa de la primera página del PDF) */
   .portada-link {
