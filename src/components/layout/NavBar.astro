@@ -70,8 +70,9 @@ const { secciones, publicSanityProjectId, publicSanityDataset, publicSanityApiVe
   .nav-lnk { font-family: var(--font-cuerpo); font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #fff; padding: 0.65rem 0.6rem; display: inline-block; white-space: nowrap; text-decoration: none; transition: background-color 0.15s; }
   .nav-lnk:hover { background-color: rgba(0,0,0,0.2); text-decoration: none; }
   /* Lupa */
-  .nav-search-btn { background: none; border: none; cursor: pointer; color: #fff; padding: 0.65rem 0.6rem; display: flex; align-items: center; transition: background-color 0.15s; margin-left: auto; }
+  .nav-search-btn { background: none; border: none; cursor: pointer; color: #fff; padding: 0.65rem 0.6rem; display: flex; align-items: center; transition: background-color 0.15s, transform 0.12s var(--ease-out); margin-left: auto; }
   .nav-search-btn:hover { background-color: rgba(0,0,0,0.2); }
+  .nav-search-btn:active { transform: scale(0.9); }
   .nav-mobile-head { display: flex; justify-content: space-between; align-items: stretch; padding: 0; min-height: 44px; }
   @media (min-width: 768px) { .nav-mobile-head { display: none; } }
   .nav-brand { font-family: var(--font-titular); font-size: 1rem; font-weight: 700; color: #fff; }
@@ -125,7 +126,7 @@ const { secciones, publicSanityProjectId, publicSanityDataset, publicSanityApiVe
     background: #fff;
     border-bottom: 2px solid #D0D0D0;
     position: sticky; top: 44px; z-index: 49;
-    animation: slideDown 0.2s ease;
+    animation: slideDown 0.22s var(--ease-out);
     box-shadow: 0 4px 16px rgba(0,0,0,0.12);
   }
   @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }

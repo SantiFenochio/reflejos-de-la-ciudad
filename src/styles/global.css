@@ -46,6 +46,13 @@
   /* ── ESPACIADO ──────────────────────────────────────────────── */
   --spacing-columna: 1.5rem;
 
+  /* ── CURVA DE EASING (filosofía Emil Kowalski) ──────────────────
+     La curva nativa `ease-out` de CSS es "débil": le falta carácter.
+     Esta tiene más punch y se siente intencional. Al definirla en @theme
+     sobrescribe también la utilidad Tailwind `ease-out`, de modo que toda
+     la interfaz (CSS custom + clases Tailwind) comparte el mismo movimiento. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);    /* entradas y feedback: arranca rápido */
+
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -192,11 +199,15 @@
 
   /* Hover effects para imágenes */
   .img-zoom-hover {
-    transition: transform 0.3s ease;
+    transition: transform 0.3s var(--ease-out);
   }
 
-  .img-zoom-hover:hover {
-    transform: scale(1.05);
+  /* Solo en dispositivos con puntero fino (mouse): en touch el hover
+     "se queda pegado" tras el tap, lo que se ve como un bug. */
+  @media (hover: hover) and (pointer: fine) {
+    .img-zoom-hover:hover {
+      transform: scale(1.05);
+    }
   }
 
   /* Hover effects para enlaces */
@@ -224,7 +235,12 @@
     cursor: pointer;
     opacity: 0;
     visibility: hidden;
-    transition: all 0.3s ease;
+    /* Propiedades explícitas (no `all`): sólo transform/opacity corren en GPU */
+    transition: opacity 0.25s var(--ease-out),
+                visibility 0.25s,
+                transform 0.2s var(--ease-out),
+                background-color 0.2s ease,
+                box-shadow 0.2s var(--ease-out);
     z-index: 1000;
     border: none;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
@@ -239,6 +255,11 @@
     background: var(--color-periodico);
     transform: translateY(-4px);
     box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+  }
+
+  /* Feedback inmediato al presionar: la UI "responde" al dedo/click */
+  .btn-scroll-top:active {
+    transform: scale(0.94);
   }
 
   /* Mensajes de estado */
@@ -261,7 +282,9 @@
     padding: 0.875rem 2rem;
     border-radius: 4px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: background-color 0.2s ease,
+                transform 0.18s var(--ease-out),
+                box-shadow 0.2s var(--ease-out);
     display: inline-block;
     text-align: center;
     text-decoration: none;
@@ -271,6 +294,11 @@
     background: var(--color-periodico);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  /* Al presionar vuelve a su sitio y se comprime levemente */
+  .btn-primary:active {
+    transform: translateY(0) scale(0.97);
   }
 
   /* Placeholder de imagen */
@@ -294,12 +322,19 @@
 
   /* Card con elevación suave en hover */
   .card-hover-lift {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
   }
 
-  .card-hover-lift:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  @media (hover: hover) and (pointer: fine) {
+    .card-hover-lift:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+  }
+
+  /* En touch, el feedback es una compresión breve al tocar */
+  .card-hover-lift:active {
+    transform: scale(0.985);
   }
 
   /* Badge de categoría mejorado */
@@ -313,12 +348,14 @@
     text-transform: uppercase;
     letter-spacing: 0.05em;
     border-radius: 2px;
-    transition: background 0.2s ease, transform 0.2s ease;
+    transition: background-color 0.2s ease, transform 0.2s var(--ease-out);
   }
 
-  .badge-categoria:hover {
-    background: var(--color-acento-hover);
-    transform: scale(1.05);
+  @media (hover: hover) and (pointer: fine) {
+    .badge-categoria:hover {
+      background: var(--color-acento-hover);
+      transform: scale(1.05);
+    }
   }
 
   /* Separador circular para metadatos */
@@ -369,4 +406,22 @@
     border-bottom: 3px double var(--color-acento);
   }
 
+}
+
+/* ════════════════════════════════════════════════════════════════
+   ACCESIBILIDAD — Movimiento reducido
+   Si el usuario configuró "reducir movimiento" en su sistema, anulamos
+   animaciones y transiciones de posición/escala (pueden causar mareos).
+   No se eliminan del todo: se vuelven casi instantáneas para que la
+   interfaz siga siendo coherente, sólo sin desplazamientos bruscos.
+   ════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
