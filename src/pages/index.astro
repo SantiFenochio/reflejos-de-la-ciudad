@@ -48,8 +48,8 @@ Astro.response.headers.set('Vercel-CDN-Cache-Control', 's-maxage=300, stale-whil
 Astro.response.headers.set('Cache-Tag', 'home');
 
 const hero             = notas[0] ?? null;
-const notasSecundarias = notas.slice(1, 6);   // 5 notas: llenan exactamente los 5 espacios libres del bento (2 cols derecha + 3 abajo)
-const grilla           = notas.slice(6, 14);  // Arranca en 6 para no repetir las del hero
+const notasSecundarias = notas.slice(1, 5);   // 4 notas: grilla 2x2 a la derecha del hero (estilo Edición Calificada)
+const grilla           = notas.slice(5, 14);  // 9 notas: arranca en 5 para no repetir ni saltear (1 + 4 + 9 = 14)
 // Carrusel "Destacadas": usa las notas marcadas con featured en Sanity.
 // Si todavía no hay ninguna marcada, cae de vuelta a las notas recientes.
 const carrusel         = destacadas.length > 0 ? destacadas : grilla;
@@ -59,14 +59,14 @@ const mobileRemainingAds = publicidades.slice(mobileInlineAdsCount);
 
 // Hero image - responsive srcset para diferentes tamaños de pantalla
 const heroImg = hero?.imagen
-  ? urlFor(hero.imagen).width(900).height(506).fit('crop').format('webp').url()
-  : 'https://picsum.photos/seed/hero-rdlc/1400/620';
+  ? urlFor(hero.imagen).width(1000).height(750).fit('crop').crop('focalpoint').format('webp').url()
+  : 'https://picsum.photos/seed/hero-rdlc/1000/750';
 
 const heroSrcset = hero?.imagen
-  ? `${urlFor(hero.imagen).width(640).height(360).fit('crop').format('webp').url()} 640w,
-     ${urlFor(hero.imagen).width(900).height(506).fit('crop').format('webp').url()} 900w,
-     ${urlFor(hero.imagen).width(1200).height(675).fit('crop').format('webp').url()} 1200w,
-     ${urlFor(hero.imagen).width(1600).height(900).fit('crop').format('webp').url()} 1600w`
+  ? `${urlFor(hero.imagen).width(600).height(450).fit('crop').crop('focalpoint').format('webp').url()} 600w,
+     ${urlFor(hero.imagen).width(800).height(600).fit('crop').crop('focalpoint').format('webp').url()} 800w,
+     ${urlFor(hero.imagen).width(1000).height(750).fit('crop').crop('focalpoint').format('webp').url()} 1000w,
+     ${urlFor(hero.imagen).width(1200).height(900).fit('crop').crop('focalpoint').format('webp').url()} 1200w`
   : undefined;
 
 
@@ -82,94 +82,69 @@ const heroSrcset = hero?.imagen
   )}
 
 <!-- ============================================================
-     HERO — Bento Grid Layout Moderno
+     HERO — 1 grande + 4 a la derecha (grilla 2x2)
+     Estilo "título sobre la imagen" para las 5 fotos (mobile + desktop),
+     inspirado en Edición Calificada pero con la identidad de Reflejos.
      ============================================================ -->
-<section class="mt-8 -mx-4">
-  <!-- Grid Container: 2 columnas en desktop (2fr 1fr), 1 columna en mobile -->
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 auto-rows-auto">
+<section class="hero-bento-section mt-8 -mx-4">
+  <div class="hero-bento">
 
-    <!-- ── NOTA PRINCIPAL: card en mobile (imagen arriba + texto abajo), bento overlay en desktop ── -->
+    <!-- ── NOTA PRINCIPAL (grande): ocupa 2x2 en desktop ── -->
     {hero ? (
-      <article class="lg:col-span-2 lg:row-span-2 relative overflow-hidden bg-white lg:bg-neutral-900 group">
-        <a href={`/nota/${hero.slug.current}`} class="block lg:h-full lg:min-h-[400px] lg:relative">
-          <div class="relative w-full aspect-[16/10] lg:aspect-auto lg:absolute lg:inset-0 lg:h-full overflow-hidden bg-neutral-900">
-            <img
-              src={heroImg}
-              srcset={heroSrcset}
-              sizes="(max-width: 1024px) 100vw, 900px"
-              alt={hero.titulo}
-              width="900"
-              height="506"
-              class="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
-              loading="eager"
-              fetchpriority="high"
-              decoding="async"
-            />
-            <div class="hidden lg:block absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent"></div>
-            {hero.categoria && (
-              <span class="lg:hidden absolute top-3 left-3 bg-acento text-white text-[10px] font-bold uppercase tracking-wider px-2 py-1 shadow-lg">
-                {hero.categoria}
-              </span>
-            )}
-          </div>
-          <div class="p-4 lg:p-8 lg:absolute lg:bottom-0 lg:left-0 lg:right-0">
-            {hero.categoria && (
-              <span class="hidden lg:inline-block bg-acento text-white text-xs font-bold uppercase tracking-wider px-3 py-1.5 mb-3">
-                {hero.categoria}
-              </span>
-            )}
-            <h1 class="text-neutral-900 lg:text-white font-black text-xl lg:text-4xl xl:text-5xl leading-tight mb-2 lg:mb-3 max-w-3xl lg:drop-shadow-lg group-hover:underline underline-offset-4">
-              {hero.titulo}
-            </h1>
-            {hero.bajada && (
-              <p class="text-neutral-600 lg:text-neutral-100 text-sm lg:text-lg italic leading-relaxed mb-2 lg:mb-3 max-w-2xl">
-                {hero.bajada}
-              </p>
-            )}
-            <p class="text-neutral-500 lg:text-neutral-400 text-xs lg:text-sm flex items-center gap-2 flex-wrap">
+      <article class="hero-item hero-grande">
+        <a href={`/nota/${hero.slug.current}`} aria-label={hero.titulo}>
+          <img
+            src={heroImg}
+            srcset={heroSrcset}
+            sizes="(max-width: 1024px) 100vw, 600px"
+            alt={hero.titulo}
+            width="1000"
+            height="750"
+            class="hero-img"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+          />
+          <div class="hero-overlay" aria-hidden="true"></div>
+          <div class="hero-meta">
+            {hero.categoria && <span class="hero-badge">{hero.categoria}</span>}
+            <h1 class="hero-titulo hero-titulo-grande">{hero.titulo}</h1>
+            {hero.bajada && <p class="hero-bajada">{hero.bajada}</p>}
+            <p class="hero-fecha">
               {hero.autor && <span>Por {hero.autor}</span>}
-              {hero.autor && <span aria-hidden="true">•</span>}
+              {hero.autor && <span aria-hidden="true"> &middot; </span>}
               <span>{formatearFecha(hero.fechaPublicacion)}</span>
             </p>
           </div>
         </a>
       </article>
     ) : (
-      <div class="lg:col-span-2 lg:row-span-2 bg-neutral-200 flex items-center justify-center min-h-[400px]">
-        <p class="text-neutral-600 text-sm">Publica tu primera nota en Sanity para verla aquí</p>
+      <div class="hero-item hero-grande hero-empty">
+        <p>Publica tu primera nota en Sanity para verla aquí</p>
       </div>
     )}
 
-    <!-- ── NOTAS SECUNDARIAS: 4 cards en grid 2x2 (derecha) ── -->
+    <!-- ── 4 NOTAS SECUNDARIAS: grilla 2x2 a la derecha ── -->
     {notasSecundarias.map((nota) => {
       const imgSec = nota.imagen
-        ? urlFor(nota.imagen).width(400).height(400).fit('crop').crop('focalpoint').format('webp').url()
-        : `https://picsum.photos/seed/sec-${nota.slug.current}/400/400`;
+        ? urlFor(nota.imagen).width(600).height(450).fit('crop').crop('focalpoint').format('webp').url()
+        : `https://picsum.photos/seed/sec-${nota.slug.current}/600/450`;
       return (
-        <article class="relative border-l border-neutral-200 group transition-colors duration-200">
-          <a href={`/nota/${nota.slug.current}`} class="flex flex-col h-full min-h-[180px]">
-            <div class="relative overflow-hidden aspect-[4/3] w-full flex-shrink-0 bg-borde">
-              <img
-                src={imgSec}
-                alt={nota.titulo}
-                width="400"
-                height="400"
-                loading="eager"
-                class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
-              />
-              {nota.categoria && (
-                <span class="absolute top-3 left-3 bg-acento text-white text-[10px] font-bold uppercase tracking-wider px-2 py-1 shadow-lg">
-                  {nota.categoria}
-                </span>
-              )}
-            </div>
-            <div class="p-4 flex flex-col flex-1">
-              <h2 class="text-neutral-900 font-bold text-sm lg:text-base leading-snug mb-2 line-clamp-3 group-hover:text-blue-900 transition-colors">
-                {nota.titulo}
-              </h2>
-              <p class="text-neutral-500 text-[11px] mt-auto">
-                {formatearFecha(nota.fechaPublicacion)}
-              </p>
+        <article class="hero-item hero-chica">
+          <a href={`/nota/${nota.slug.current}`} aria-label={nota.titulo}>
+            <img
+              src={imgSec}
+              alt={nota.titulo}
+              width="600"
+              height="450"
+              loading="eager"
+              decoding="async"
+              class="hero-img"
+            />
+            <div class="hero-overlay" aria-hidden="true"></div>
+            <div class="hero-meta">
+              {nota.categoria && <span class="hero-badge hero-badge-sm">{nota.categoria}</span>}
+              <h2 class="hero-titulo hero-titulo-chica">{nota.titulo}</h2>
             </div>
           </a>
         </article>
@@ -450,6 +425,151 @@ const heroSrcset = hero?.imagen
 
 </BaseLayout>
 
+
+<style is:global>
+  /* ============================================================
+     HERO BENTO — 1 grande + 4 a la derecha (grilla 2x2)
+     Título sobre la imagen con degradado, badge de categoría y zoom al hover.
+     ============================================================ */
+  .hero-bento {
+    display: grid;
+    grid-template-columns: 1fr;   /* mobile: 1 columna, todas apiladas */
+    gap: 4px;                      /* gaps ajustados, estilo diario */
+  }
+  @media (min-width: 1024px) {
+    .hero-bento {
+      grid-template-columns: 2fr 1fr 1fr;  /* grande 50% + 2 columnas de 25% */
+    }
+    .hero-grande { grid-column: 1; grid-row: 1 / 3; }  /* ocupa el bloque 2x2 */
+  }
+
+  .hero-item {
+    position: relative;
+    overflow: hidden;
+    background: #14110e;
+    aspect-ratio: 4 / 3;           /* todas 4:3 (como Edición Calificada) */
+    border-radius: 2px;
+  }
+  @media (min-width: 1024px) {
+    .hero-grande { aspect-ratio: auto; }  /* en desktop llena su área 2x2 */
+  }
+  .hero-item > a {
+    position: absolute;
+    inset: 0;
+    display: block;
+    text-decoration: none;
+  }
+
+  .hero-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    transition: transform 0.5s var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .hero-item:hover .hero-img { transform: scale(1.06); }
+  }
+  .hero-item:active .hero-img { transform: scale(1.02); }
+
+  /* Degradado oscuro de abajo hacia arriba para legibilidad del título */
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.90) 0%, rgba(0,0,0,0.50) 36%, rgba(0,0,0,0) 66%);
+    transition: background 0.3s ease;
+    pointer-events: none;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .hero-item:hover .hero-overlay {
+      background: linear-gradient(to top, rgba(0,0,0,0.94) 0%, rgba(0,0,0,0.58) 42%, rgba(0,0,0,0.06) 72%);
+    }
+  }
+
+  /* Texto sobre la imagen */
+  .hero-meta {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    padding: 0.8rem 0.95rem;
+    z-index: 2;
+  }
+  .hero-grande .hero-meta { padding: 1.25rem 1.4rem; }
+
+  .hero-badge {
+    display: inline-block;
+    background: var(--color-acento);
+    color: #fff;
+    font-family: var(--font-cuerpo);
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0.28rem 0.6rem;
+    margin-bottom: 0.5rem;
+    border-radius: 2px;
+  }
+  .hero-badge-sm { font-size: 0.55rem; padding: 0.22rem 0.5rem; margin-bottom: 0.35rem; }
+
+  .hero-titulo {
+    font-family: var(--font-titular);
+    color: #fff;
+    font-weight: 800;
+    line-height: 1.18;
+    letter-spacing: -0.01em;
+    margin: 0;
+    text-shadow: 0 1px 14px rgba(0,0,0,0.5);
+  }
+  .hero-titulo-grande { font-size: clamp(1.4rem, 2.1vw, 2.3rem); }
+  .hero-titulo-chica {
+    font-size: 0.98rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  @media (min-width: 1024px) {
+    .hero-titulo-chica { font-size: 1rem; -webkit-line-clamp: 2; }
+  }
+  .hero-item:hover .hero-titulo { text-decoration: underline; text-underline-offset: 3px; }
+
+  /* Bajada: solo en la grande y solo en desktop (mobile prioriza el título) */
+  .hero-bajada { display: none; }
+  @media (min-width: 1024px) {
+    .hero-bajada {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      font-family: var(--font-cuerpo);
+      color: rgba(255,255,255,0.92);
+      font-style: italic;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin: 0.5rem 0 0;
+    }
+  }
+  .hero-fecha {
+    font-family: var(--font-cuerpo);
+    color: rgba(255,255,255,0.8);
+    font-size: 0.72rem;
+    margin: 0.55rem 0 0;
+  }
+
+  /* Placeholder sin nota */
+  .hero-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e5e5e0;
+  }
+  .hero-empty p { color: #666; font-size: 0.9rem; padding: 1rem; text-align: center; margin: 0; }
+  @media (min-width: 1024px) {
+    .hero-grande.hero-empty { min-height: 400px; }
+  }
+</style>
 
 <style is:global>
   /* BADGES MEJORADOS */
