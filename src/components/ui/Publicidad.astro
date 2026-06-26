@@ -7,6 +7,8 @@ interface Props {
     imagenUrl?:   string
     linkDestino?: string
     posicion:     string
+    imgW?:        number
+    imgH?:        number
   }
 }
 
@@ -15,9 +17,10 @@ const tieneImagen = !!pub?.imagenUrl
 
 // El asset id de Sanity codifica dimensiones: `...-{W}x{H}.{ext}`.
 // Las sacamos para poder setear width/height en el <img> y evitar layout shift (CLS).
+// Los avisos fijos locales pasan imgW/imgH directos (no matchean el patrón de Sanity).
 const dims = pub?.imagenUrl?.match(/-(\d+)x(\d+)\.[a-z]+/i)
-const imgW = dims ? Number(dims[1]) : undefined
-const imgH = dims ? Number(dims[2]) : undefined
+const imgW = pub?.imgW ?? (dims ? Number(dims[1]) : undefined)
+const imgH = pub?.imgH ?? (dims ? Number(dims[2]) : undefined)
 ---
 
 {tieneImagen && (

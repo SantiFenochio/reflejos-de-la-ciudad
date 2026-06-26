@@ -12,6 +12,8 @@ import bannerOjos from '../assets/banner-instituto-medico-de-ojos.gif';
 import bannerDonLuis from '../assets/BannersCuadrados/banner-don-luis-260-X-260.gif';
 import bannerUnionIndustrial from '../assets/BannersCuadrados/banner-union-industrial-260-X-260.gif';
 import bannerCuadrado3 from '../assets/BannersCuadrados/ezgif-330bf48de539c120.gif';
+import avisoCamaraEmpresaria from '../assets/Camara empresaria.jpeg';
+import avisoGreco from '../assets/Greco.jpeg';
 
 // Noticias: hero + hasta 9 cards en grilla (para dar lugar a intercalados)
 let notas: Articulo[] = [];
@@ -41,6 +43,30 @@ try {
 } catch (e) {
   logger.warn('index', 'No se pudo obtener publicidades', e);
 }
+
+// Avisos fijos locales (no vienen de Sanity). Van PRIMERO en el bloque "Publicidad",
+// tanto en el sidebar (desktop) como en los avisos inline (mobile).
+const avisosFijos = [
+  {
+    _id:         'fijo-camara-empresaria',
+    nombre:      'Cámara Empresaria',
+    linkDestino: 'https://camaraempresaria.com.ar/web/',
+    posicion:    'sidebar',
+    imagenUrl:   avisoCamaraEmpresaria.src,
+    imgW:        avisoCamaraEmpresaria.width,
+    imgH:        avisoCamaraEmpresaria.height,
+  },
+  {
+    _id:         'fijo-greco',
+    nombre:      'Greco',
+    linkDestino: 'https://www.grecosrl.com.ar/',
+    posicion:    'sidebar',
+    imagenUrl:   avisoGreco.src,
+    imgW:        avisoGreco.width,
+    imgH:        avisoGreco.height,
+  },
+];
+publicidades = [...avisosFijos, ...publicidades];
 
 // Cache CDN de Vercel: 5 min fresco, 1 hora stale-while-revalidate.
 // El webhook /api/revalidate invalida el tag 'home' al publicar contenido nuevo.
