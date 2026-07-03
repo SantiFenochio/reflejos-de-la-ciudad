@@ -69,9 +69,10 @@ if (publicidades.length === 0) {
   }
 }
 
-// Hero — 900×506 16:9 webp, crop respetando el punto focal marcado en Sanity
+// Hero — 900×675 4:3 webp, crop respetando el punto focal marcado en Sanity.
+// 4:3 en vez de 16:9: recorta mucho menos las fotos chicas/cuadradas sin hotspot definido.
 const imagenHero = articulo.imagen
-  ? urlFor(articulo.imagen).width(900).height(506).fit('crop').crop('focalpoint').format('webp').url()
+  ? urlFor(articulo.imagen).width(900).height(675).fit('crop').crop('focalpoint').format('webp').url()
   : null;
 
 // OG image 1200×630 — ArticleLayout se encarga de pasarla al SEO via buildArticleSeo()
@@ -136,7 +137,7 @@ const articleProps = {
 <section class="nh-section">
   <div class="nh-wrap">
     {imagenHero ? (
-      <img src={imagenHero} alt={articulo.titulo} width="900" height="506" class="nh-img w-full aspect-video object-cover object-center" loading="eager" />
+      <img src={imagenHero} alt={articulo.titulo} width="900" height="675" class="nh-img w-full aspect-[4/3] object-cover object-center" loading="eager" />
     ) : (
       <div class="nh-placeholder"></div>
     )}
@@ -425,7 +426,7 @@ const articleProps = {
   }
 
   .nh-wrap {
-    position: relative; width: 100%; aspect-ratio: 16/9;
+    position: relative; width: 100%; aspect-ratio: 4/3;
     overflow: hidden; background: #1a1a1a;
   }
 
@@ -486,7 +487,7 @@ const articleProps = {
         rgba(26,22,20,0.15) 65%,
         rgba(0,0,0,0) 100%);
     }
-    .nh-wrap { aspect-ratio: 4/3; }   /* foto un poco más alta = más espacio para el título */
+    /* .nh-wrap ya es 4/3 por defecto (ver regla base) */
 
     /* En mobile escondemos el badge del bloque inferior y mostramos el de arriba-izquierda */
     .nh-badge--desktop { display: none; }
