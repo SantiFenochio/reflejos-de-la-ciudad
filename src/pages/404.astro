@@ -58,7 +58,7 @@ const recientes: any[] = await sanityClient.fetch(
     <div class="p404-grid">
       {recientes.map((nota) => {
         const imgUrl = nota.imagen
-          ? urlFor(nota.imagen).width(600).height(338).url()
+          ? urlFor(nota.imagen).width(600).height(338).fit('crop').crop('focalpoint').format('webp').url()
           : `https://picsum.photos/seed/${nota.slug?.current}/600/338`;
         return (
           <article class="p404-card">

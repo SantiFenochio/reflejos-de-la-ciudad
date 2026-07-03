@@ -87,7 +87,7 @@ export const GET: APIRoute = async () => {
       const imgTag = n.imagen
         ? (() => {
             try {
-              const imgUrl = urlFor(n.imagen).width(1200).height(630).fit('crop').format('webp').url();
+              const imgUrl = urlFor(n.imagen).width(1200).height(630).fit('crop').crop('focalpoint').format('webp').url();
               return `
     <image:image>
       <image:loc>${escapeXml(imgUrl)}</image:loc>
