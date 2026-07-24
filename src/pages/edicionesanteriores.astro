@@ -3,6 +3,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { sanityClient } from '../lib/sanity';
 import { formatearFecha } from '../lib/utils';
+import { ordenarEdiciones, urlPortada } from '../lib/ediciones';
 import { logger } from '../lib/logger';
 
 interface Edicion {
@@ -23,7 +24,10 @@ const query = `*[_type == "edicionImpresa"] | order(fecha desc) {
 
 let ediciones: Edicion[] = [];
 try {
-  ediciones = await sanityClient.fetch(query);
+  // Reordenamos en JS además del order() de GROQ: si el campo `fecha` quedó mal
+  // cargado en el Studio, manda la fecha que figura en el título — que es la que
+  // ve el lector — y la grilla nunca aparece desordenada.
+  ediciones = ordenarEdiciones(await sanityClient.fetch<Edicion[]>(query));
 } catch (e) {
   logger.warn('edicionesanteriores', 'No se pudo obtener ediciones', e);
 }
@@ -65,23 +69,16 @@ try {
           <!-- Portada: primera página del PDF como vista previa -->
           {ed.pdfUrl ? (
             <a href={ed.pdfUrl} target="_blank" rel="noopener noreferrer" class="portada-link" aria-label={`Ver edición: ${ed.titulo}`}>
-              {ed.portadaUrl ? (
-                <img
-                  src={`${ed.portadaUrl}?w=440&q=72&auto=format`}
-                  alt={`Portada de la edición del ${ed.titulo}`}
-                  width="440"
-                  height="570"
-                  loading="lazy"
-                  class="portada-img"
-                />
-              ) : (
-                <div class="portada-placeholder" aria-hidden="true">
-                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#9aa7bb" stroke-width="1.5" stroke-linecap="round">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                    <polyline points="14 2 14 8 20 8"/>
-                  </svg>
-                </div>
-              )}
+              <!-- Si la edición todavía no tiene imagenPortada en Sanity, urlPortada()
+                   apunta a /api/portada/[id].jpg, que renderiza la 1ª hoja del PDF. -->
+              <img
+                src={urlPortada(ed)}
+                alt={`Portada de la edición del ${ed.titulo}`}
+                width="440"
+                height="570"
+                loading="lazy"
+                class="portada-img"
+              />
             </a>
           ) : (
             <div class="portada-placeholder" aria-hidden="true">

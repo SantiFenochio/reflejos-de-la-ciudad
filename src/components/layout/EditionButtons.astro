@@ -6,13 +6,21 @@ import imgEdicionesAnteriores from '../../assets/Anteriores17.webp';
 import imgUltimaEdicion       from '../../assets/ultima17.webp';
 import imgIconoDerecha        from '../../assets/Nuevo97.webp';
 import imgLogoPrincipal       from '../../assets/NuevoLogo.webp';
+import { ordenarEdiciones } from '../../lib/ediciones';
 import { logger } from '../../lib/logger';
 
-let ultimaEdicion: { pdfUrl: string | null } | null = null;
+type UltimaEdicion = { _id: string; titulo: string; fecha: string; pdfUrl: string | null };
+
+let ultimaEdicion: UltimaEdicion | null = null;
 try {
-  ultimaEdicion = await sanityClient.fetch<{ pdfUrl: string | null }>(
-    `*[_type == "edicionImpresa"] | order(_createdAt desc) [0] { "pdfUrl": archivoPdf.asset->url }`
+  // Por fecha de edición, no por _createdAt: si se sube una edición vieja después
+  // de una nueva, "Edición Actual" tiene que seguir apuntando a la más reciente.
+  const candidatas = await sanityClient.fetch<UltimaEdicion[]>(
+    `*[_type == "edicionImpresa"] | order(fecha desc) [0...5] {
+      _id, titulo, fecha, "pdfUrl": archivoPdf.asset->url
+    }`
   );
+  ultimaEdicion = ordenarEdiciones(candidatas ?? [])[0] ?? null;
 } catch (e) {
   logger.warn('EditionButtons', 'No se pudo obtener ultima edicion', e);
 }

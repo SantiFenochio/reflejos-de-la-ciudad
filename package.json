@@ -13,6 +13,8 @@
     "astro": "astro",
     "migrar:noticias": "node scripts/migrar-noticias.js",
     "migrar:noticias:rango": "node scripts/migrar-noticias-rango.js",
+    "ediciones:portadas": "node scripts/generar-portadas.js",
+    "ediciones:fechas": "node scripts/fix-fechas-ediciones.js",
     "lint": "echo No hay linter configurado",
     "typecheck": "tsc --noEmit",
     "test": "vitest",
@@ -25,6 +27,7 @@
   "dependencies": {
     "@astrojs/sitemap": "^3.7.1",
     "@astrojs/vercel": "^10.0.3",
+    "@napi-rs/canvas": "^0.1.100",
     "@portabletext/to-html": "^5.0.2",
     "@sanity/client": "^7.17.0",
     "@sanity/image-url": "^2.0.3",
@@ -38,6 +41,8 @@
     "dotenv": "^17.3.1",
     "mysql2": "^3.22.3",
     "nprogress": "^0.2.0",
+    "pdfjs-dist": "^5.6.205",
+    "sharp": "^0.34.5",
     "styled-components": "^6.3.12",
     "tailwindcss": "^4.2.1"
   },
@@ -51,7 +56,6 @@
     "happy-dom": "^20.8.9",
     "pdf-to-img": "^6.1.0",
     "sanity": "^5.16.0",
-    "sharp": "^0.34.5",
     "typescript": "^5.9.3",
     "vitest": "^4.1.2"
   }
