@@ -247,13 +247,15 @@ const heroSrcset = hero?.imagen
       <!-- Track con scroll-snap -->
       <div class="car-track" id="car-track">
         {carrusel.map((nota, i) => {
+          /* 4:3 = mismo ratio que .car-img-wrap, para que Sanity recorte una
+             sola vez (respetando el punto focal) y el CSS no vuelva a cortar. */
           const imgUrl = nota.imagen
-            ? urlFor(nota.imagen).width(600).height(338).fit('crop').crop('focalpoint').format('webp').url()
-            : `https://picsum.photos/seed/car-${nota.slug.current}/600/338`;
+            ? urlFor(nota.imagen).width(600).height(450).fit('crop').crop('focalpoint').format('webp').url()
+            : `https://picsum.photos/seed/car-${nota.slug.current}/600/450`;
           return (
             <div class="car-slide" data-index={i}>
               <a href={`/nota/${nota.slug.current}`} class="car-img-wrap">
-                <img src={imgUrl} alt={nota.titulo} width="600" height="400" loading="lazy" class="car-img" />
+                <img src={imgUrl} alt={nota.titulo} width="600" height="450" loading="lazy" class="car-img" />
               </a>
               <div class="car-body">
                 {nota.categoria && <span class="badge-rojo badge-sm">{nota.categoria}</span>}
@@ -924,7 +926,7 @@ const heroSrcset = hero?.imagen
   /* Imagen del slide */
   .car-img-wrap {
     display: block; overflow: hidden;
-    aspect-ratio: 3/2; background: #e5e5e5; margin-bottom: 0.65rem;
+    aspect-ratio: 4/3; background: #e5e5e5; margin-bottom: 0.65rem;
   }
   .car-img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s var(--ease-out); }
   @media (hover: hover) and (pointer: fine) {
