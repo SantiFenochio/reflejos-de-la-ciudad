@@ -132,8 +132,8 @@ const heroSrcset = hero?.imagen
             decoding="async"
           />
           <div class="hero-overlay" aria-hidden="true"></div>
+          {hero.categoria && <span class="hero-badge">{hero.categoria}</span>}
           <div class="hero-meta">
-            {hero.categoria && <span class="hero-badge">{hero.categoria}</span>}
             <h1 class="hero-titulo hero-titulo-grande">{hero.titulo}</h1>
             {hero.bajada && <p class="hero-bajada">{hero.bajada}</p>}
             <p class="hero-fecha">
@@ -168,8 +168,8 @@ const heroSrcset = hero?.imagen
               class="hero-img"
             />
             <div class="hero-overlay" aria-hidden="true"></div>
+            {nota.categoria && <span class="hero-badge hero-badge-sm">{nota.categoria}</span>}
             <div class="hero-meta">
-              {nota.categoria && <span class="hero-badge hero-badge-sm">{nota.categoria}</span>}
               <h2 class="hero-titulo hero-titulo-chica">{nota.titulo}</h2>
             </div>
           </a>
@@ -524,7 +524,12 @@ const heroSrcset = hero?.imagen
   }
   .hero-grande .hero-meta { padding: 1.25rem 1.4rem; }
 
+  /* Badge de categoría: flotante arriba a la derecha de la foto */
   .hero-badge {
+    position: absolute;
+    top: 0.6rem;
+    right: 0.6rem;
+    z-index: 3;
     display: inline-block;
     background: var(--color-acento);
     color: #fff;
@@ -534,10 +539,13 @@ const heroSrcset = hero?.imagen
     text-transform: uppercase;
     letter-spacing: 0.1em;
     padding: 0.28rem 0.6rem;
-    margin-bottom: 0.5rem;
     border-radius: 2px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.25);
   }
-  .hero-badge-sm { font-size: 0.55rem; padding: 0.22rem 0.5rem; margin-bottom: 0.35rem; }
+  .hero-badge-sm { font-size: 0.55rem; padding: 0.22rem 0.5rem; top: 0.5rem; right: 0.5rem; }
+  @media (min-width: 1024px) {
+    .hero-grande .hero-badge { top: 1rem; right: 1.1rem; }
+  }
 
   .hero-titulo {
     font-family: var(--font-titular);
@@ -766,7 +774,7 @@ const heroSrcset = hero?.imagen
   }
   /* Badge flotante sobre la imagen */
   .badge-sobre-img {
-    position: absolute; top: 0.5rem; left: 0.5rem;
+    position: absolute; top: 0.5rem; right: 0.5rem;
     margin-bottom: 0;          /* anula el margin del badge normal */
     border-radius: 3px;
     z-index: 2;
