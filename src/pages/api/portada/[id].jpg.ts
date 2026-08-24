@@ -13,6 +13,11 @@
 //   SANITY_API_WRITE_TOKEN — token de Sanity con permiso de escritura.
 //   Sin ella el endpoint igual funciona, pero re-renderiza el PDF cada vez que
 //   expira la caché del CDN en lugar de guardar la portada de forma permanente.
+//
+// Diagnóstico: cuando devuelve el placeholder, el motivo va en la cabecera
+// X-Portada-Error. En producción los console.log del logger no son visibles sin
+// abrir el dashboard, así que esa cabecera es la forma rápida de ver qué pasó:
+//   curl -sI https://.../api/portada/<id>.jpg | grep -i x-portada
 
 import type { APIRoute } from 'astro';
 import { createClient } from '@sanity/client';
@@ -27,6 +32,12 @@ const ID_VALIDO = /^[A-Za-z0-9._-]{1,128}$/;
 const CACHE_OK    = 'public, max-age=3600, s-maxage=31536000, stale-while-revalidate=86400';
 /** Corta, para que un fallo puntual (PDF pesado, timeout) se reintente solo. */
 const CACHE_ERROR = 'public, max-age=60, s-maxage=300';
+
+/**
+ * Tope para bajar el PDF. Las ediciones pesan ~10 MB; si a los 25 s no llegó,
+ * algo anda mal y conviene cortar antes de que Vercel mate la función entera.
+ */
+const DESCARGA_TIMEOUT_MS = 25_000;
 
 interface EdicionPdf {
   _id:        string;
@@ -46,17 +57,17 @@ const QUERY = `*[_type == "edicionImpresa" && _id == $id && !(_id in path("draft
 
 export const GET: APIRoute = async ({ params }) => {
   const id = params.id ?? '';
-  if (!ID_VALIDO.test(id)) return placeholder(400);
+  if (!ID_VALIDO.test(id)) return placeholder(400, 'id-invalido');
 
   let edicion: EdicionPdf | null = null;
   try {
     edicion = await sanityClient.fetch<EdicionPdf | null>(QUERY, { id });
   } catch (e) {
     logger.error('api/portada', 'No se pudo consultar la edición', { id, e });
-    return placeholder(502);
+    return placeholder(502, `sanity-query: ${mensaje(e)}`);
   }
 
-  if (!edicion) return placeholder(404);
+  if (!edicion) return placeholder(404, 'edicion-inexistente');
 
   // Ya tiene portada cargada (a mano o por una llamada anterior): que la sirva Sanity.
   if (edicion.portadaUrl) {
@@ -69,24 +80,37 @@ export const GET: APIRoute = async ({ params }) => {
     });
   }
 
-  if (!edicion.pdfUrl) return placeholder(404);
+  if (!edicion.pdfUrl) return placeholder(404, 'edicion-sin-pdf');
+
+  // Descarga y render van en bloques separados a propósito: así la cabecera de
+  // diagnóstico dice cuál de los dos pasos falló, que es lo primero que uno
+  // quiere saber cuando una portada no aparece.
+  let pdf: Uint8Array;
+  try {
+    const res = await fetch(edicion.pdfUrl, { signal: AbortSignal.timeout(DESCARGA_TIMEOUT_MS) });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    pdf = new Uint8Array(await res.arrayBuffer());
+  } catch (e) {
+    logger.error('api/portada', 'No se pudo descargar el PDF', { id, titulo: edicion.titulo, e });
+    return placeholder(502, `descarga: ${mensaje(e)}`);
+  }
 
   let jpeg: Buffer;
   try {
-    const res = await fetch(edicion.pdfUrl);
-    if (!res.ok) throw new Error(`descarga del PDF HTTP ${res.status}`);
-    jpeg = await renderPortada(new Uint8Array(await res.arrayBuffer()));
+    jpeg = await renderPortada(pdf);
   } catch (e) {
     logger.error('api/portada', 'No se pudo renderizar la portada', { id, titulo: edicion.titulo, e });
-    return placeholder(502);
+    return placeholder(502, `render: ${mensaje(e)}`);
   }
 
   // Persistir en Sanity para no volver a renderizar nunca más. Si falla, no importa:
   // la imagen ya está generada y se devuelve igual.
+  let guardada = 'si';
   try {
-    await guardarEnSanity(edicion, jpeg);
+    guardada = await guardarEnSanity(edicion, jpeg);
   } catch (e) {
     logger.warn('api/portada', 'Portada generada pero no se pudo guardar en Sanity', { id, e });
+    guardada = `no: ${mensaje(e)}`;
   }
 
   return new Response(new Uint8Array(jpeg), {
@@ -95,6 +119,9 @@ export const GET: APIRoute = async ({ params }) => {
       'Content-Type': 'image/jpeg',
       'Content-Length': String(jpeg.length),
       'Cache-Control': CACHE_OK,
+      // Si dice algo distinto de "si", la portada se re-renderiza en cada visita
+      // en lugar de quedar guardada: falta el token de escritura en Vercel.
+      'X-Portada-Guardada': recortar(guardada),
     },
   });
 };
@@ -106,14 +133,20 @@ function env(nombre: string): string | undefined {
   return (import.meta.env as Record<string, any>)[nombre] ?? process.env[nombre];
 }
 
-/** Sube la miniatura como image asset y la asocia al documento. */
-async function guardarEnSanity(edicion: EdicionPdf, jpeg: Buffer): Promise<void> {
-  // Orden a propósito: SANITY_API_TOKEN es el de sólo lectura del sitio y da 403 al
-  // subir el asset. Primero los que tienen permiso de escritura.
-  const token = env('SANITY_API_WRITE_TOKEN') ?? env('SANITY_MIGRATION_TOKEN') ?? env('SANITY_API_TOKEN');
+/**
+ * Sube la miniatura como image asset y la asocia al documento.
+ * @returns "si" si quedó guardada, o el motivo por el que no.
+ */
+async function guardarEnSanity(edicion: EdicionPdf, jpeg: Buffer): Promise<string> {
+  // Orden a propósito: SANITY_API_TOKEN / SANITY_TOKEN son los de sólo lectura del
+  // sitio y dan 403 al subir el asset. Primero los que tienen permiso de escritura.
+  const token = env('SANITY_API_WRITE_TOKEN')
+             ?? env('SANITY_MIGRATION_TOKEN')
+             ?? env('SANITY_API_TOKEN')
+             ?? env('SANITY_TOKEN');
   if (!token) {
     logger.info('api/portada', 'Sin token de escritura: la portada no se guarda en Sanity');
-    return;
+    return 'no: falta token de escritura';
   }
 
   const writeClient = createClient({
@@ -135,6 +168,18 @@ async function guardarEnSanity(edicion: EdicionPdf, jpeg: Buffer): Promise<void>
     .commit();
 
   logger.info('api/portada', 'Portada guardada en Sanity', { id: edicion._id, asset: asset._id });
+  return 'si';
+}
+
+/** Mensaje corto y en una sola línea de un error, apto para una cabecera HTTP. */
+function mensaje(e: unknown): string {
+  const raw = e instanceof Error ? `${e.name}: ${e.message}` : String(e);
+  return recortar(raw);
+}
+
+/** Las cabeceras HTTP no admiten saltos de línea ni caracteres de control. */
+function recortar(texto: string, max = 180): string {
+  return texto.replace(/[\r\n\t]+/g, ' ').replace(/[^\x20-\x7E]/g, '').slice(0, max);
 }
 
 /**
@@ -142,7 +187,7 @@ async function guardarEnSanity(edicion: EdicionPdf, jpeg: Buffer): Promise<void>
  * Devuelve un SVG con la misma proporción y el mismo ícono que la grilla, así la
  * tarjeta no queda con la imagen rota.
  */
-function placeholder(status: number): Response {
+function placeholder(status: number, motivo: string): Response {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 570" width="440" height="570" role="img" aria-label="Portada no disponible">
   <rect width="440" height="570" fill="#f0f2f5"/>
   <g transform="translate(200 265) scale(1.6)" fill="none" stroke="#9aa7bb" stroke-width="1.5" stroke-linecap="round">
@@ -156,6 +201,7 @@ function placeholder(status: number): Response {
     headers: {
       'Content-Type': 'image/svg+xml; charset=utf-8',
       'Cache-Control': status === 404 ? CACHE_OK : CACHE_ERROR,
+      'X-Portada-Error': recortar(motivo),
     },
   });
 }
