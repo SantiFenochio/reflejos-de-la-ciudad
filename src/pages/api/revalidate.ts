@@ -17,6 +17,7 @@ import type { APIRoute } from 'astro';
 import { isValidSignature, SIGNATURE_HEADER_NAME } from '@sanity/webhook';
 import { logger } from '../../lib/logger';
 import { notifyArticleUpdated } from '../../lib/indexnow';
+import { slugify } from '../../lib/utils';
 
 export const POST: APIRoute = async ({ request }) => {
   const secret    = import.meta.env.SANITY_WEBHOOK_SECRET;
@@ -70,9 +71,10 @@ export const POST: APIRoute = async ({ request }) => {
 
   // IndexNow: notificar a Bing/Yandex que la nota cambió.
   // Fire-and-forget — si falla no rompe el webhook.
-  if (payload._type === 'articulo') {
-    const slug = payload.slug?.current ?? payload.result?.slug?.current;
-    const cat  = payload.categoria     ?? payload.result?.categoria;
+  const doc = docOf(payload);
+  if (doc._type === 'articulo') {
+    const slug = doc.slug?.current;
+    const cat  = doc.categoria;
     if (slug) {
       try {
         const indexNowResults = await notifyArticleUpdated({
@@ -92,15 +94,28 @@ export const POST: APIRoute = async ({ request }) => {
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
 
+// Sanity manda el documento en la raíz del payload o envuelto en `result`,
+// según cómo esté armada la proyección del webhook. Leemos siempre por las dos
+// vías: antes `_type` sólo se miraba en la raíz, así que con payload envuelto
+// el `if` no entraba nunca y se purgaba únicamente 'home' — la nota se quedaba
+// con el HTML viejo (y su foto vieja) hasta que vencía el TTL.
+function docOf(payload: Record<string, any>): Record<string, any> {
+  return payload?.result && typeof payload.result === 'object' ? payload.result : payload;
+}
+
 function buildTags(payload: Record<string, any>): string[] {
   const tags: string[] = ['home'];
+  const doc = docOf(payload);
 
-  if (payload._type === 'articulo') {
-    const slug = payload.slug?.current ?? payload.result?.slug?.current;
-    const cat  = payload.categoria     ?? payload.result?.categoria;
+  if (doc._type === 'articulo') {
+    const slug = doc.slug?.current;
+    const cat  = doc.categoria;
 
     if (slug) tags.push(`nota-${slug}`);
-    if (cat)  tags.push(`seccion-${String(cat).toLowerCase()}`);
+    // La categoría en Sanity va en mayúsculas y con tilde ('POLÍTICA'), pero la
+    // ruta de sección y su Cache-Tag usan el slug sin tilde ('seccion-politica').
+    // Sin normalizar, el tag purgado nunca coincidía con el tag emitido.
+    if (cat)  tags.push(`seccion-${slugify(String(cat))}`);
   }
 
   return [...new Set(tags)];
