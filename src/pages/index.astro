@@ -11,7 +11,7 @@ import bannerMujeres from '../assets/Banner_EspacioMujeres_500x100.gif';
 import bannerOjos from '../assets/banner-instituto-medico-de-ojos.gif';
 import bannerDonLuis from '../assets/BannersCuadrados/banner-don-luis-260-X-260.gif';
 import bannerUnionIndustrial from '../assets/BannersCuadrados/banner-union-industrial-260-X-260.gif';
-import bannerCuadrado3 from '../assets/BannersCuadrados/ezgif-330bf48de539c120.gif';
+import bannerMundoTrigo from '../assets/BannersCuadrados/banner-mundo-trigo-1204x472.jpg';
 import avisoCamaraEmpresaria from '../assets/Camara empresaria.jpeg';
 import avisoGreco from '../assets/Greco.jpeg';
 
@@ -314,16 +314,17 @@ const heroSrcset = hero?.imagen
     </a>
   </div>
   <div class="banner-trio-item banner-trio-item--wide">
-    <a href="https://iballester.edu.ar/" target="_blank" rel="noopener noreferrer">
+    <!-- Sin link: el aviso se muestra tal cual, no es clickeable -->
+    <div class="banner-trio-media">
       <img
-        src={bannerCuadrado3.src}
-        width={bannerCuadrado3.width}
-        height={bannerCuadrado3.height}
-        alt="Publicidad"
+        src={bannerMundoTrigo.src}
+        width={bannerMundoTrigo.width}
+        height={bannerMundoTrigo.height}
+        alt="Mundo Trigo — Elaboración de productos panificados, sabor artesanal. Panes de panchos y de hamburguesas. Nuñez 7200 esq. Av. Juan Manuel de Rosas, José León Suárez. WhatsApp 11-6414-0878"
         loading="lazy"
         decoding="async"
       />
-    </a>
+    </div>
   </div>
   <div class="banner-trio-item">
     <a href="https://www.instagram.com/panaderiadonluis/?hl=es" target="_blank" rel="noopener noreferrer">
@@ -680,11 +681,16 @@ const heroSrcset = hero?.imagen
     justify-content: center;
     transition: transform 0.2s ease, opacity 0.2s ease;
   }
-  /* El banner apaisado (800x441) recibe más ancho para igualar la altura */
-  .banner-trio-item--wide { flex-grow: 1.81; }
-  .banner-trio-item a {
+  /* El banner apaisado (1204x472) recibe más ancho para igualar la altura.
+     flex-grow = su relación de aspecto exacta (1204/472 = 2.5508): así los
+     tres quedan a la misma altura al pixel, sin franjas ni bordes vacíos. */
+  .banner-trio-item--wide { flex-grow: 2.5508; }
+  .banner-trio-item a,
+  .banner-trio-media {
     display: block;
     width: 100%;
+  }
+  .banner-trio-item a {
     transition: transform 0.2s var(--ease-out), opacity 0.2s ease;
   }
   @media (hover: hover) and (pointer: fine) {
@@ -699,6 +705,15 @@ const heroSrcset = hero?.imagen
     width: 100%;
     height: auto;
     object-fit: contain;
+  }
+  /* El aviso apaisado es monocromo y sus bordes superior e izquierdo son casi
+     blancos (~243), a un par de puntos del papel (--color-hueso #F5F3EE): sin
+     filete ese lado quedaría sin contorno. Los bordes inferior y derecho son
+     más oscuros y ahí el filete sólo cierra la caja. Va como box-shadow y no
+     como border para no sumar 2px a la caja y mantener las tres alturas
+     idénticas. Mismo criterio que los avisos del sidebar (Publicidad.astro). */
+  .banner-trio-item--wide img {
+    box-shadow: 0 0 0 1px var(--color-borde);
   }
   /* Mobile: se apilan centrados con ancho controlado */
   @media (max-width: 768px) {
