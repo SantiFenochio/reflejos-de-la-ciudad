@@ -95,9 +95,14 @@ const urlEnc    = encodeURIComponent(paginaURL);
 const shareWA   = `https://wa.me/?text=${tituloEnc}%20${urlEnc}`;
 const shareFB   = `https://www.facebook.com/sharer/sharer.php?u=${urlEnc}`;
 
-// Cache CDN de Vercel: 1 hora fresco, 24 hs stale-while-revalidate.
+// Cache CDN de Vercel: 5 min fresco, 1 hora stale-while-revalidate — mismo TTL
+// que la Home y las secciones. Antes eran 3600/86400, y eso provocaba que al
+// reemplazar la foto de una nota ya publicada la portada (TTL 5 min) mostrara
+// la imagen nueva mientras la nota seguía sirviendo HTML viejo hasta 1 hora:
+// dos fotos distintas para la misma nota. Con TTL parejo cualquier desfasaje
+// se corrige solo en ≤5 min aunque el webhook de purga no llegue a dispararse.
 // El webhook /api/revalidate invalida 'home' + 'nota-{slug}' al publicar.
-Astro.response.headers.set('Vercel-CDN-Cache-Control', 's-maxage=3600, stale-while-revalidate=86400');
+Astro.response.headers.set('Vercel-CDN-Cache-Control', 's-maxage=300, stale-while-revalidate=3600');
 Astro.response.headers.set('Cache-Tag', `home,nota-${slug}`);
 
 const cuerpoHtml      = portableTextToHtml(articulo.cuerpo ?? []);
